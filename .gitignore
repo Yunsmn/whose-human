@@ -1,0 +1,29 @@
+# Raw logs and datasets (contain IP addresses) - never commit
+data/
+*.jsonl
+*.pcap
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.ipynb_checkpoints/
+.pytest_cache/
+
+# LaTeX build
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.out
+paper/*.synctex.gz
+paper/*.pdf
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
