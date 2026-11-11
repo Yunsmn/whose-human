@@ -40,5 +40,5 @@ Each track folder has its own code, tests, and a `hypotheses.md` where every fin
 ## Getting started
 
 1. Read [`AGENTS.md`](AGENTS.md) in full. It holds the project context, literature summary, ethics rules, log schema, and working rules for both humans and coding agents.
-2. Work only inside your assigned track folder. Changes to `infra/` or the schema go through a reviewed pull request.
+2. Check [`TEAM.md`](TEAM.md) for the division of work: every member owns one piece in each of the three tracks. Changes to `infra/` or the schema go through a reviewed pull request.
 3. Tag every experiment with a `run_id`, and keep your own development traffic out of experiment data.

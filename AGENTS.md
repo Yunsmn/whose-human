@@ -97,7 +97,7 @@ Each track folder contains its own code, tests, and a `hypotheses.md`.
 
 ## Rules for coding agents in this repo
 
-- Only edit files in the folder of the track you were assigned, plus its tests. Do not touch other tracks' folders.
+- Every member works on all three tracks; ownership is per piece, not per track (see `TEAM.md`). Only edit files belonging to the piece you were assigned, plus its tests. Do not touch other pieces' files without being asked.
 - Never change `infra/` or the schema without being explicitly told to; schema changes go through a reviewed pull request.
 - Never add hidden text, injected instructions or any probing of agents to test pages. See the ethics rules.
 - Never write real personal data, credentials or real IP addresses into committed files.
