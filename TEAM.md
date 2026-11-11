@@ -40,9 +40,31 @@ Owning a piece means you write its code and its entry in the track's `hypotheses
 | Paper: discussion, limitations, defenses | C |
 | Presentation | Everyone, one track section each |
 
-## Order of work
+## Dependencies and order of work
 
-1. **Week 1, everyone:** finish the infra pieces above and freeze the schema. Run 1a's local-or-server check first.
-2. **Collection:** 1a, 1b, 2a, 2b and 3a run in parallel. Modeling owners (1c, 2c, 3c, 3b) write feature and evaluation code on pilot data in the meantime.
+Track 3 looks like it has to wait for Tracks 1 and 2, but most of it doesn't:
+
+- **One collection campaign feeds all three tracks.** Every run logs `label_agent`, `label_model` and `label_user` together. The sessions from 1a and 2a, run by the personas in 3a, produce Track 3's data at the same time. Track 3 never waits for a separate round of runs.
+- **Track 3 reuses Track 1's feature code, not its results.** The environment signatures (3b) are built from the same TLS, header and timing features as the harness classifier (1c). C owns both, so C writes one feature extractor in `harness/features.py` and imports it in `linking/`.
+- **Track 2 is optional input for Track 3.** A user's preferred model can be an extra linking feature, but linking works without it. Add it at the end if 2c is ready.
+- **The one real blocker is 1a's check of whether agents fetch from the user's machine.** If an agent's fetches come from the provider's servers, that agent can't be linked to a user. Track 3 drops it.
+
+```
+week 1      infra (A, B, C)  +  1a local-or-server check (A)
+               |
+collection  1a, 1b, 2a, 2b, 3a  (one campaign, all labels logged)
+               |                        modeling code on pilot data:
+modeling    1c features --> 3b signatures --> 3c linking
+            2c classifier ..............> (optional feature for 3c)
+               |
+writing     each owner drafts methods and results for their pieces
+```
+
+1. **Week 1, everyone:** finish the infra pieces and freeze the schema. A runs the local-or-server check first.
+2. **Collection:** one campaign covering 1a, 1b, 2a, 2b and 3a. In the meantime, the modeling owners (1c, 2c, 3b, 3c) write their code against pilot data.
 3. **Modeling and evaluation:** train, evaluate, and record each result in `hypotheses.md` before starting the next experiment.
 4. **Writing:** each owner drafts the methods and results for their own pieces.
+
+## Branches and merging
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). In short: everyone works on their own branch, opens a pull request into `main`, and the PR merges only after CI passes and a teammate approves it.

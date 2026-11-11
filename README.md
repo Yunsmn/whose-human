@@ -41,4 +41,5 @@ Each track folder has its own code, tests, and a `hypotheses.md` where every fin
 
 1. Read [`AGENTS.md`](AGENTS.md) in full. It holds the project context, literature summary, ethics rules, log schema, and working rules for both humans and coding agents.
 2. Check [`TEAM.md`](TEAM.md) for the division of work: every member owns one piece in each of the three tracks. Changes to `infra/` or the schema go through a reviewed pull request.
-3. Tag every experiment with a `run_id`, and keep your own development traffic out of experiment data.
+3. Work on your own branch and open a pull request into `main`; see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch, review and CI rules.
+4. Tag every experiment with a `run_id`, and keep your own development traffic out of experiment data.

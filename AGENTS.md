@@ -99,6 +99,7 @@ Each track folder contains its own code, tests, and a `hypotheses.md`.
 
 - Every member works on all three tracks; ownership is per piece, not per track (see `TEAM.md`). Only edit files belonging to the piece you were assigned, plus its tests. Do not touch other pieces' files without being asked.
 - Never change `infra/` or the schema without being explicitly told to; schema changes go through a reviewed pull request.
+- Never push to `main`. Work on the member's own branch and open a pull request; it merges only after CI passes and a teammate approves (see `CONTRIBUTING.md`). Run the CI checks locally before pushing.
 - Never add hidden text, injected instructions or any probing of agents to test pages. See the ethics rules.
 - Never write real personal data, credentials or real IP addresses into committed files.
 - Every experiment run gets a `run_id`. Development traffic from your own fetches to our test servers must be tagged and kept out of experiment data.
