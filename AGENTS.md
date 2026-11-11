@@ -97,7 +97,7 @@ Each track folder contains its own code, tests, and a `hypotheses.md`.
 
 ## Rules for coding agents in this repo
 
-- Every member works on all three tracks; ownership is per piece, not per track (see `TEAM.md`). Only edit files belonging to the piece you were assigned, plus its tests. Do not touch other pieces' files without being asked.
+- Tracks 1 and 2 are owned per piece (see `TEAM.md`): only edit files belonging to the piece you were assigned, plus its tests, and do not touch other pieces' files without being asked. Track 3 (`linking/`) is joint work owned by all members.
 - Never change `infra/` or the schema without being explicitly told to; schema changes go through a reviewed pull request.
 - Never push to `main`. Work on the member's own branch and open a pull request; it merges only after CI passes and a teammate approves (see `CONTRIBUTING.md`). Run the CI checks locally before pushing.
 - Never add hidden text, injected instructions or any probing of agents to test pages. See the ethics rules.
