@@ -1,13 +1,13 @@
 # Division of work
 
 - **Tracks 1 and 2** are split into six pieces. Each member owns one Track 1 piece and one Track 2 piece. Each member's pair is a heavy piece plus a light one, or two medium ones, so the load is roughly even.
-- **Track 3** is the joint final task. It needs everyone's machines, operating systems and agents, plus the feature code from Track 1 and, optionally, the classifier from Track 2. All three members collect the data together. B and C lead the analysis; A carries the most collection and site work, so A has no analysis lead.
+- **Track 3** is the joint final task. It needs everyone's machines, operating systems and agents, plus the feature code from Track 1 and, optionally, the classifier from Track 2. All three members collect the data together; each member leads one part of the analysis.
 
 | Member | Track 1: Harness | Track 2: Model | Infra | Track 3 lead (joint) |
 |---|---|---|---|---|
-| **A** | 1a. Agent runs (medium) | 2a. Input page and agent text (medium) | Partner sites and served pages | None (joint collection only) |
+| **A** | 1a. Agent runs (medium) | 2a. Input page and agent text (medium) | Partner sites and served pages | 3b. Environment signatures |
 | **B** | 1b. Plain script baselines (light) | 2c. Text classifier (heavy) | Logging server (MARK / fingerproxy) | 3d. IP change and collisions |
-| **C** | 1c. Harness classifier (heavy) | 2b. API reference corpus (light) | `infra/loader.py` and `infra/schema.md` | 3b. Environment signatures and 3c. Linking across agents, sites and browser |
+| **C** | 1c. Harness classifier (heavy) | 2b. API reference corpus (light) | `infra/loader.py` and `infra/schema.md` | 3c. Linking across agents, sites and browser |
 
 Owning a piece means you write its code, record its results in the track's `hypotheses.md`, and draft its methods and results in the paper. Everyone reviews and helps on everything.
 
@@ -36,7 +36,7 @@ Owning a piece means you write its code, record its results in the track's `hypo
 
 **Analysis leads:**
 
-- **3b. Environment signatures (C).** Build a per-request environment signature with the feature extractor from 1c. Measure how stable it is within a user and how distinct it is between users.
+- **3b. Environment signatures (A).** Build a per-request environment signature with C's feature extractor from 1c. Measure how stable it is within a user and how distinct it is between users.
 - **3c. Linking across agents, sites and browser (C).** Builds directly on the 3b signatures. Build a pairwise same-user model and clustering. Report linking across agents, across sites and to the user's own browser visits, and compare against the Zimmeck 2017 and Bird 2020 baselines.
 - **3d. IP change and collisions (B).** Cover the hard cases: linking after the IP changes (H2), different users behind one shared IP (campus NAT), and different users with identical software setups. Optionally add the 2c classifier's model prediction as a linking feature.
 
