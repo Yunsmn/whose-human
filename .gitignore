@@ -1,5 +1,7 @@
 # Raw logs and datasets (contain IP addresses) - never commit
-data/
+# data/.gitkeep is tracked so a fresh clone has data/ owned by the user (Docker would create it as root)
+data/*
+!data/.gitkeep
 *.jsonl
 *.pcap
 *.log

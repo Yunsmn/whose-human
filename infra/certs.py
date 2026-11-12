@@ -91,6 +91,7 @@ def generate(directory: str | Path = "data/certs") -> tuple[Path, Path, Path]:
             serialization.NoEncryption(),
         )
     )
+    key_path.chmod(0o600)
     return ca_path, cert_path, key_path
 
 
