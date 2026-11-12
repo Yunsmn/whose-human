@@ -12,4 +12,5 @@ target-version = "py312"
 select = ["E", "F", "W", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
-testpaths = ["harness/tests", "model/tests", "linking/tests", "infra"]
+pythonpath = ["."]
+testpaths = ["infra/tests", "harness/tests", "model/tests", "linking/tests"]

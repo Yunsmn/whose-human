@@ -42,7 +42,7 @@ Unverified assumption to test early: that Claude Code's web fetch runs locally (
 Measured nine coding agents. Signatures (User-Agent, headers, pre-fetch behavior) were stable across trials. Most agents use generic HTTP runtimes: Claude Code (Node/axios), Cursor (Node/got), Cline and Junie (curl), Windsurf (Go/Colly), Antigravity (Go net/http). Only Aider and GitHub Copilot name themselves. 1 to 4 requests per prompt. Logged client IPs but never analyzed them. Did not include Codex CLI.
 
 **Kang et al. 2026, "Whose Agent Are You? Multi-Layer Fingerprinting and Attribution of Autonomous Web Agents"** (arXiv:2606.20910)
-Framework MARK, open source: https://github.com/SPIN-UMass/AI-agent-fingerprint. Go service on fingerproxy that logs raw TLS ClientHello (JA3, JA4), HTTP/2 Akamai fingerprint, headers and browser events to JSONL. Six web agents (not coding agents, which they explicitly exclude). Extra Trees classifier, 97% accuracy combined; no single layer suffices. Claude and Gemini near identical at TLS and HTTP. Combined features exceed 60% macro F1 after 3 requests; timing features are useless with few requests. Traditional crawlers (no JavaScript) had stable, distinct TLS fingerprints, which is what we expect coding agents to look like. Goal was content protection; they deliberately avoided logging participant IPs, so user linking is untouched. Their prompt told agents to use synthetic inputs, and they did not classify agent text.
+Framework MARK: https://github.com/SPIN-UMass/AI-agent-fingerprint (only the analysis scripts and a prebuilt server binary are published; the server source is not, so we built our own logger in `infra/server/`). Go service on fingerproxy that logs raw TLS ClientHello (JA3, JA4), HTTP/2 Akamai fingerprint, headers and browser events to JSONL. Six web agents (not coding agents, which they explicitly exclude). Extra Trees classifier, 97% accuracy combined; no single layer suffices. Claude and Gemini near identical at TLS and HTTP. Combined features exceed 60% macro F1 after 3 requests; timing features are useless with few requests. Traditional crawlers (no JavaScript) had stable, distinct TLS fingerprints, which is what we expect coding agents to look like. Goal was content protection; they deliberately avoided logging participant IPs, so user linking is untouched. Their prompt told agents to use synthetic inputs, and they did not classify agent text.
 
 **Lugoloobi et al. 2026, "Known By Their Actions: Fingerprinting LLM Browser Agents via UI Traces"** (arXiv:2605.14786)
 Identifies which of 14 LLMs drives a browser agent from click, scroll, key and timing traces (up to 96% F1). Needs rich interaction traces, which coding agents do not produce, so this approach does not transfer to our setting. Fingerprints are site conditioned (poor transfer across sites). Retraining on delayed traces recovers accuracy, so simple timing defenses fail.
@@ -83,9 +83,13 @@ Why the obvious alternatives were dropped:
 ## Repository layout
 
 ```
-infra/          shared logging server deployment and the log loader (frozen after setup)
-  loader.py     reads server JSONL into one table with a fixed schema
+infra/          shared infrastructure; setup steps in infra/README.md
+  server/       logging HTTPS server (TLS ClientHello, JA3/JA4, ordered headers, HTTP/2 fingerprint)
+  sites/        partner site content (site1, site2)
+  certs.py      local CA and certificates for site1.test / site2.test
+  loader.py     reads server JSONL into one table and joins the run manifests
   schema.md     the log schema; changes only by pull request reviewed by the team
+runs/           run manifests, one CSV per member (labels per run_id, no IPs)
 harness/        track 1: harness identification
 model/          track 2: model identification from agent text
 linking/        track 3: user linking across agents and sites
@@ -106,26 +110,9 @@ Each track folder contains its own code, tests, and a `hypotheses.md`.
 - Prefer small, readable scripts over frameworks. Python for analysis (pandas, scikit-learn). Classifiers should output probabilities (`predict_proba`), not only labels.
 - When an experiment finishes, record it in the track's `hypotheses.md` (template below) before starting the next one.
 
-## Log schema (proposed, to confirm when setting up infra)
+## Log schema
 
-One record per HTTP request, after loading:
-
-| field | meaning |
-|---|---|
-| `ts` | server timestamp (UTC, float seconds) |
-| `run_id` | experiment run identifier |
-| `site` | which partner site received the request |
-| `session_id` | session id embedded in the served page, when available |
-| `ip` | client IP (never committed) |
-| `method`, `path` | request line |
-| `http_version` | HTTP/1.1 or HTTP/2 |
-| `headers` | full header dict, original order preserved |
-| `ja3`, `ja4` | TLS fingerprints (from MARK) |
-| `h2_fp` | Akamai HTTP/2 fingerprint, if HTTP/2 |
-| `body` | request body (posted text), truncated |
-| `label_agent` | ground truth: claude_code, codex, cline, aider, script_axios, browser, ... |
-| `label_model` | ground truth model, if known |
-| `label_user` | ground truth persona or volunteer id |
+The log schema lives in `infra/schema.md` and is the single source of truth. Ground truth labels (`label_agent`, `label_model`, `label_user`) come from the run manifests in `runs/`, joined on `run_id` by `infra/loader.py`.
 
 ## Tracks and starting hypotheses
 

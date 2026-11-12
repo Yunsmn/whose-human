@@ -27,7 +27,8 @@ Given requests that cooperating websites collect passively from agent sessions, 
 ## Repository layout
 
 ```
-infra/      shared logging server and log loader (schema in infra/schema.md)
+infra/      shared logging server, partner sites, certificates and log loader (setup: infra/README.md)
+runs/       run manifests, one CSV per member
 harness/    track 1: harness identification
 model/      track 2: model identification from agent text
 linking/    track 3: user linking across agents and sites
@@ -40,6 +41,7 @@ Each track folder has its own code, tests, and a `hypotheses.md` where every fin
 ## Getting started
 
 1. Read [`AGENTS.md`](AGENTS.md) in full. It holds the project context, literature summary, ethics rules, log schema, and working rules for both humans and coding agents.
-2. Check [`TEAM.md`](TEAM.md) for the division of work: every member owns one piece in each of the three tracks. Changes to `infra/` or the schema go through a reviewed pull request.
-3. Work on your own branch and open a pull request into `main`; see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch, review and CI rules.
-4. Tag every experiment with a `run_id`, and keep your own development traffic out of experiment data.
+2. Check [`TEAM.md`](TEAM.md) for the division of work: every member owns one piece in Track 1 and one in Track 2, and leads one part of the joint Track 3. Changes to `infra/` or the schema go through a reviewed pull request.
+3. Set up the local server by following [`infra/README.md`](infra/README.md). Everyone runs the same setup, so logs can be pooled.
+4. Work on your own branch and open a pull request into `main`; see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch, review and CI rules.
+5. Tag every experiment with a `run_id`, and keep your own development traffic out of experiment data.

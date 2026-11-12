@@ -1,0 +1,20 @@
+[
+  {
+    "source": "FoxIO-LLC/ja4 python/test/testdata/browsers-x509.pcapng.json, stream 0 JA4.1 and JA4_r.1 (also matches technical_details/JA4.md worked hash)",
+    "legacy_version": 771,
+    "ciphers": [4865, 4866, 4867, 49195, 49199, 49196, 49200, 52393, 52392, 49171, 49172, 156, 157, 47, 53],
+    "extensions": [[27, ""], [0, ""], [51, ""], [16, ""], [17513, ""], [23, ""], [45, ""], [13, "001004030804040105030805050108060601"], [5, ""], [35, ""], [18, ""], [43, "0403040303"], [65281, ""], [11, ""], [10, "001d00170018"], [21, ""]],
+    "sni": "example.test",
+    "alpn": ["h2", "http/1.1"],
+    "ja4": "t13d1516h2_8daaf6152771_e5627efa2ab1"
+  },
+  {
+    "source": "GREASE invariance variant of FoxIO-LLC/ja4 browsers-x509.pcapng stream 0; GREASE cipher and extension 0x0a0a prepended",
+    "legacy_version": 771,
+    "ciphers": [2570, 4865, 4866, 4867, 49195, 49199, 49196, 49200, 52393, 52392, 49171, 49172, 156, 157, 47, 53],
+    "extensions": [[2570, ""], [27, ""], [0, ""], [51, ""], [16, ""], [17513, ""], [23, ""], [45, ""], [13, "001004030804040105030805050108060601"], [5, ""], [35, ""], [18, ""], [43, "0403040303"], [65281, ""], [11, ""], [10, "001d00170018"], [21, ""]],
+    "sni": "example.test",
+    "alpn": ["h2", "http/1.1"],
+    "ja4": "t13d1516h2_8daaf6152771_e5627efa2ab1"
+  }
+]
