@@ -1,0 +1,1 @@
+Each member maintains a separate CSV manifest (`a.csv`, `b.csv`, or `c.csv`) to reduce merge conflicts. Add one row per run using the header fields; never include IP addresses or other real personal data.

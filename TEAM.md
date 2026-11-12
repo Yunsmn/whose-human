@@ -5,9 +5,9 @@
 
 | Member | Track 1: Harness | Track 2: Model | Infra | Track 3 lead (joint) |
 |---|---|---|---|---|
-| **A** | 1a. Agent runs (medium) | 2a. Input page and agent text (medium) | Partner sites and served pages | 3b. Environment signatures |
-| **B** | 1b. Plain script baselines (light) | 2c. Text classifier (heavy) | Logging server (MARK / fingerproxy) | 3d. IP change and collisions |
-| **C** | 1c. Harness classifier (heavy) | 2b. API reference corpus (light) | `infra/loader.py` and `infra/schema.md` | 3c. Linking across agents, sites and browser |
+| **A** | 1a. Agent runs (medium) | 2a. Input page and agent text (medium) | Partner site content (`infra/sites/`) | 3b. Environment signatures |
+| **B** | 1b. Plain script baselines (light) | 2c. Text classifier (heavy) | Logging server (`infra/server/`) and, later, the shared VM | 3d. IP change and collisions |
+| **C** | 1c. Harness classifier (heavy) | 2b. API reference corpus (light) | `infra/loader.py`, `infra/schema.md` and `runs/` | 3c. Linking across agents, sites and browser |
 
 Owning a piece means you write its code, record its results in the track's `hypotheses.md`, and draft its methods and results in the paper. Everyone reviews and helps on everything.
 
@@ -53,7 +53,7 @@ Owning a piece means you write its code, record its results in the track's `hypo
 ## Order of work
 
 ```
-week 1      infra (A sites, B server, C loader)  +  1a local-or-server check  +  2a GET/POST pilot
+week 1      everyone runs the local setup (infra/README.md)  +  1a local-or-server check  +  2a GET/POST pilot
                |
 tracks 1-2  1a+2a (same sessions), 1b, 2b collect  ->  1c features + classifier, 2c classifier
                |                                        |
@@ -63,12 +63,21 @@ track 3     protocol + inventory  ->  joint campaign  ->  3b signatures (needs 1
 writing     each owner drafts their pieces; Track 3 results written together
 ```
 
-1. **Week 1, everyone:** finish the infra and freeze the schema. A runs the local-or-server check and the GET/POST pilot first.
+1. **Week 1, everyone:** set up the local server from `infra/README.md` and review the schema. A runs the local-or-server check and the GET/POST pilot first.
 2. **Tracks 1 and 2:** each member runs their two pieces. Draft the Track 3 protocol and machine inventory in parallel.
-3. **Track 3 campaign:** once the infra is stable, run it together. The campaign's logs are also extra data for Tracks 1 and 2.
+3. **Track 3 campaign:** run it together on one shared server (a free VM, for example Azure for Students), using the same `infra/server` with real certificates. The campaign's logs are also extra data for Tracks 1 and 2.
 4. **Track 3 analysis:** starts when the 1c feature extractor exists. It doesn't need 1c's classifier results.
 5. **Writing:** record each experiment in `hypotheses.md` first, then draft the paper.
 
 ## Branches and merging
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md). In short: work on your own branch, open a pull request into `main`, and merge only after CI passes and a teammate approves.
+
+## Where the work runs
+
+| What | Where | Why |
+|---|---|---|
+| Tracks 1 and 2, and building 3b/3c code | Each member's laptop, same `infra/server` setup | Free; TLS fingerprints and agent text don't depend on which server is hit |
+| Track 3 campaign, and confirming 1a and TLS results | One shared VM running the same `infra/server` | Real client IPs, linking across machines and sites, IP change runs |
+
+Local logs are shared through a private Drive/OneDrive folder, never git. `run_id`s start with your member prefix (`a-`, `b-`, `c-`), and `dev-` marks test traffic, which the loader drops by default.
