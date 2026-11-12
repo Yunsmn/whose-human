@@ -2,6 +2,7 @@
 #   docker compose run --rm certs     # once: local CA and certificate into data/certs/
 #   docker compose up -d --build      # start the server on https://site1.test:8443/
 #   docker compose run --rm checks    # lint + tests on your working copy, same as CI
+#   docker compose run --rm corpus --dry-run   # Track 2b API corpus (see model/README.md)
 # Set WH_SOURCE in a .env file next to this one (copy .env.example), e.g. WH_SOURCE=local-c.
 
 services:
@@ -34,4 +35,19 @@ services:
     command: ["ruff check --no-cache . && ruff format --no-cache --check . && pytest -q -p no:cacheprovider"]
     volumes:
       - .:/app:ro
+    profiles: ["tools"]
+
+  corpus:
+    # Track 2b: query model APIs for reference text. Keys come from .env (never committed).
+    #   docker compose run --rm corpus --dry-run
+    image: whose-human-server
+    build: .
+    entrypoint: ["python", "-m", "model.api_corpus"]
+    command: []
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - .:/app:ro
+      - ./data:/app/data
     profiles: ["tools"]
