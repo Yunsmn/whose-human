@@ -33,16 +33,16 @@ Keep PRs focused on one piece (see `TEAM.md`). If a PR changes `infra/` or `infr
 | Private data guard | No raw logs (`*.jsonl`, `*.pcap`, `*.har`, `*.log`, `data/`) and no public IP addresses in committed files |
 | `ruff check .` | Lint |
 | `ruff format --check .` | Formatting |
-| `pytest` | Tests in `harness/tests`, `model/tests`, `linking/tests`, `infra/` |
+| `pytest` | Tests in `harness/tests`, `model/tests`, `linking/tests`, `infra/tests` |
+| Docker build | `docker compose build`, then the test suite inside the image |
 
-Run the same checks locally before pushing:
+Run the same checks locally before pushing. No local Python needed:
 
 ```
-pip install -r requirements-dev.txt
-python .github/scripts/check_no_private_data.py
-ruff check . && ruff format --check .
-pytest
+docker compose run --rm checks
 ```
+
+Or natively, with a Python environment: `pip install -r requirements-dev.txt`, then `ruff check . && ruff format --check . && pytest`.
 
 `ruff format .` fixes formatting for you. In examples and tests, use documentation IP addresses (`192.0.2.x`, `198.51.100.x`, `203.0.113.x`); the guard lets them through.
 

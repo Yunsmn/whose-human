@@ -29,7 +29,7 @@ def is_reportable(candidate: str) -> bool:
 def find_problems(paths: list[str]) -> list[str]:
     problems = []
     for path in paths:
-        if path.startswith("data/") or path.endswith(FORBIDDEN_SUFFIXES):
+        if (path.startswith("data/") and path != "data/.gitkeep") or path.endswith(FORBIDDEN_SUFFIXES):
             problems.append(f"{path}: raw data file must not be committed")
             continue
         try:

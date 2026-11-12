@@ -185,10 +185,12 @@ def main(argv=None):
     parser.add_argument("--cert", default="data/certs/server.pem")
     parser.add_argument("--key", default="data/certs/server-key.pem")
     parser.add_argument("--log-dir", default="data/logs")
-    parser.add_argument("--source", default="local-x")
+    parser.add_argument("--source", default="", help="label for this server's logs, e.g. local-c or vm")
     parser.add_argument("--sites-dir", default="infra/sites")
     parser.add_argument("--alpn", default="h2,http/1.1")
     args = parser.parse_args(argv)
+    if not args.source:
+        parser.error("--source is required (with Docker: set WH_SOURCE in .env, e.g. WH_SOURCE=local-c)")
     servers = build_servers(args)
     for server in servers:
         threading.Thread(target=server.serve_forever, daemon=True).start()

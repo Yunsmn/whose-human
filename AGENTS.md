@@ -90,6 +90,7 @@ infra/          shared infrastructure; setup steps in infra/README.md
   loader.py     reads server JSONL into one table and joins the run manifests
   schema.md     the log schema; changes only by pull request reviewed by the team
 runs/           run manifests, one CSV per member (labels per run_id, no IPs)
+Dockerfile, docker-compose.yml   the server, cert generation and checks run in Docker (see infra/README.md)
 harness/        track 1: harness identification
 model/          track 2: model identification from agent text
 linking/        track 3: user linking across agents and sites
