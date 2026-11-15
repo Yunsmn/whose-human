@@ -61,6 +61,26 @@ and each experimental run begins from the documented agent and machine state. Th
 stable agent fingerprint as a stable human identity without testing across agents, sites, machines, and network
 conditions.
 
+### Member A machine-level extension
+
+Member A additionally evaluates a narrower claim for locally hosted models: whether an Omen session and a Queen
+session probably ran on the same enrolled PC. An ordinary TLS/HTTP request does not reveal CPU, GPU, RAM, token
+usage, or local inference duration. The consented experiment therefore adds an optional loopback-only Ollama
+collector that runs fixed synthetic prompts and discards prompts and generated text. It retains approximate time
+to first streamed chunk, model-reported load and evaluation durations, token counts and throughput, chunk-timing
+statistics, and the documented model, engine, and quantization.
+
+Repeated measurements are aggregated into one profile per session. For each profile feature $x_k$, the pairwise
+comparison uses the symmetric relative difference
+
+$$d_k(a,b)=\frac{|x_{a,k}-x_{b,k}|}{|x_{a,k}|+|x_{b,k}|+\epsilon}.$$
+
+A regularized logistic model produces a `same_pc_probability` score from these differences and software-match
+indicators. Only scores above a threshold fixed on separate validation machines receive `probably_same_pc`;
+all other pairs remain `unknown`. Evaluation holds out entire PCs, rather than randomly splitting requests, and
+reports precision, recall, F1, ROC-AUC, Brier score, false matches, and false non-matches. This is a performance
+fingerprint of an enrolled inference platform, not direct hardware telemetry or proof of a unique physical PC.
+
 ## Ethics and data handling
 
 The experiment is restricted to infrastructure operated by the research team. Participants are team members or

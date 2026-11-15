@@ -36,14 +36,14 @@ SIGNATURE_COLUMNS = [
 ]
 REPORT_FIELDS = [
     "run_count",
-    "labelled_run_count",
+    "machine_labelled_run_count",
     "signature_coverage",
-    "within_user_pairs",
-    "within_user_match_rate",
-    "between_user_pairs",
-    "between_user_collision_rate",
-    "cross_agent_within_user_pairs",
-    "cross_agent_within_user_match_rate",
+    "within_machine_pairs",
+    "within_machine_match_rate",
+    "between_machine_pairs",
+    "between_machine_collision_rate",
+    "cross_agent_within_machine_pairs",
+    "cross_agent_within_machine_match_rate",
 ]
 RUN_COLUMNS = [
     "run_id",
@@ -113,12 +113,12 @@ def per_run_signatures(signed: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=RUN_COLUMNS)
 
 
-def _pair_rate(rows: pd.DataFrame, same_user: bool, cross_agent: bool = False) -> tuple[int, float | None]:
+def _pair_rate(rows: pd.DataFrame, same_machine: bool, cross_agent: bool = False) -> tuple[int, float | None]:
     matches = []
-    usable = rows.dropna(subset=["environment_signature", "label_user"])
+    usable = rows.dropna(subset=["environment_signature", "machine"])
     for (_, left), (_, right) in combinations(usable.iterrows(), 2):
-        users_match = left["label_user"] == right["label_user"]
-        if users_match != same_user:
+        machines_match = left["machine"] == right["machine"]
+        if machines_match != same_machine:
             continue
         if cross_agent and (
             pd.isna(left.get("label_agent"))
@@ -131,23 +131,23 @@ def _pair_rate(rows: pd.DataFrame, same_user: bool, cross_agent: bool = False) -
 
 
 def signature_report(signed: pd.DataFrame) -> dict[str, int | float | None]:
-    """Measure within-user stability and between-user exact collisions per run."""
+    """Measure within-machine stability and between-machine exact collisions per run."""
     runs = per_run_signatures(signed)
-    labelled = runs.dropna(subset=["label_user"]) if "label_user" in runs else runs.iloc[0:0]
-    within_n, within_rate = _pair_rate(labelled, same_user=True)
-    between_n, between_rate = _pair_rate(labelled, same_user=False)
-    cross_n, cross_rate = _pair_rate(labelled, same_user=True, cross_agent=True)
+    labelled = runs.dropna(subset=["machine"])
+    within_n, within_rate = _pair_rate(labelled, same_machine=True)
+    between_n, between_rate = _pair_rate(labelled, same_machine=False)
+    cross_n, cross_rate = _pair_rate(labelled, same_machine=True, cross_agent=True)
     covered = runs["environment_signature"].notna().sum() if not runs.empty else 0
     return {
         "run_count": len(runs),
-        "labelled_run_count": len(labelled),
+        "machine_labelled_run_count": len(labelled),
         "signature_coverage": float(covered / len(runs)) if len(runs) else 0.0,
-        "within_user_pairs": within_n,
-        "within_user_match_rate": within_rate,
-        "between_user_pairs": between_n,
-        "between_user_collision_rate": between_rate,
-        "cross_agent_within_user_pairs": cross_n,
-        "cross_agent_within_user_match_rate": cross_rate,
+        "within_machine_pairs": within_n,
+        "within_machine_match_rate": within_rate,
+        "between_machine_pairs": between_n,
+        "between_machine_collision_rate": between_rate,
+        "cross_agent_within_machine_pairs": cross_n,
+        "cross_agent_within_machine_match_rate": cross_rate,
     }
 
 

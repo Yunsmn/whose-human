@@ -28,196 +28,177 @@
 \begin{document}
 \fontsize{8}{9.15}\selectfont
 \begin{center}
-{\LARGE\bfseries\color{navy} Member A: Local-Agent Measurement and User-Linking Baseline}\\[-1pt]
+{\LARGE\bfseries\color{navy} Member A: Local-Agent Measurement and Same-PC Linking}\\[-1pt]
 {\small A two-page engineering research brief for the consent-based ``Whose Human Are You?'' study}
 \end{center}
 
 \vspace{-2mm}
 \colorbox{pale}{\parbox{0.965\linewidth}{\textbf{Abstract.}
-Member A implemented the controlled agent-run workflow, visible text-submission pages, text-corpus extraction,
-partner-site content, and an interpretable environment-signature baseline. The design asks two different
-questions: \emph{which harness sent a request?} and \emph{can requests from different harnesses be linked to one
-pseudonymous participant?} All collection is restricted to team-operated sites, consenting participants, and
-fictional personas. Current evidence validates the software path, not the scientific hypothesis: no real
-multi-agent campaign or same-user classifier has yet been completed.}}
+Member A implemented controlled agent runs, visible text submission, an interpretable transport/runtime signature,
+and a privacy-minimised local-model timing pipeline. The narrow new question is: \emph{did Omen and Queen probably
+run on the same enrolled PC?} The system does not equate a PC with a human. It emits a probability-like score and
+returns \term{unknown} below a high validation-selected threshold. The engineering path is implemented and tested;
+no labelled multi-PC campaign has yet validated the scientific claim.}}
 
 \begin{multicols}{2}
-\section*{1. Member A objective and implementation}
-\textbf{Track 1a --- agent runs.} A manifest-safe CLI creates unique \term{a-*} run identifiers, records agent,
-model, persona, machine alias, and network category, and prints one fixed task. The task requires the agent's
-built-in fetch capability; substituting curl would measure curl rather than the harness. A locality audit compares
-the VM-observed peer address with a private expected address and emits only \term{local}, \term{remote},
-\term{mixed}, or \term{inconclusive}.
+\section*{1. Member A implementation}
+\textbf{Track 1a --- agent runs.} A manifest-safe CLI creates unique \term{a-*} run IDs, records agent, model,
+pseudonymous machine, and network category, and prints one fixed task. Locality is reported only as \term{local},
+\term{remote}, \term{mixed}, or \term{inconclusive}.
 
-\textbf{Track 2a --- visible text.} Two cooperating sites expose article text, a visible POST form, and a visible
-GET fallback. A corpus tool joins non-empty submissions with ground-truth labels and distinguishes POST, GET,
-fetch-without-submit, unrelated request, and no observed request.
+\textbf{Track 2a --- visible text.} Two partner sites expose article text plus visible POST and GET submission
+paths. The corpus tool distinguishes successful submission, fetch without submission, unrelated traffic, and no
+observed request. No hidden prompt or third-party site is used.
 
-\textbf{Track 3b --- environment baseline.} Each request is reduced to a versioned hash over selected TLS,
-HTTP-runtime, header, and HTTP/2 features:
+\textbf{Track 3b --- two evidence layers.} The server-side baseline hashes selected TLS, HTTP-runtime, header, and
+HTTP/2 features:
 \[
 E(r)=\texttt{env-v1}:\operatorname{Trunc}_{96}
 \left(\operatorname{SHA256}(\operatorname{canon}(x_r))\right).
 \]
-The vector excludes IP address, cookie, site, path, timing, body, and submitted text. A modal signature represents
-each run; this prevents repeated requests within one connection from inflating pair counts.
+It excludes IP, cookies, site, path, timing, body, and submitted text. This identifies an observable software stack,
+not CPU or GPU.
 
-\section*{2. Acquired calculations}
-The following are measured engineering checks from the local and temporary combined branches:
-
-\begin{center}
-\small
-\begin{tabularx}{\linewidth}{@{}Xrr@{}}
-\toprule
-Measure & Count & Result \\
-\midrule
-Member A unit tests & $15/15$ & $100\%$ \\
-Combined executed tests & $52/55$ & $94.5\%$ \\
-Live GET/POST endpoints & $3/3$ & $100\%$ \\
-Signed smoke-test runs & $2/2$ & $100\%$ \\
-\bottomrule
-\end{tabularx}
-\end{center}
-
+For consenting local-model experiments, a loopback-only Ollama collector runs five fixed synthetic cases. It
+discards prompts and generated text, retaining approximate first-chunk time, model-reported load and evaluation
+durations, counts, throughput, and chunk-interval statistics. For profile feature $x_k$,
 \[
-\text{pass rate}=\frac{52}{52+3}=0.945,\qquad
-\text{coverage}=\frac{2}{2}=1.00.
+d_k(a,b)=\frac{|x_{a,k}-x_{b,k}|}{|x_{a,k}|+|x_{b,k}|+\epsilon}.
 \]
-The combined suite also had one skipped platform-dependent test. All three failures share one integration contract:
-Member C's corpus parser requires the label prefix ``Summarize this page'', while Member A's page currently says
-``Summarize the two paragraphs above''. This is a wording mismatch, not an observed tracking failure.
+A regularized logistic model estimates $p=\sigma(\beta_0+\sum_k\beta_kd_k)$. Only $p\geq\theta$ becomes
+\term{probably\_same\_pc}; every lower score remains \term{unknown}.
 
-Let $M_s$ be matching same-user pairs, $N_s$ all same-user pairs, $M_d$ colliding different-user pairs, and
-$N_d$ all different-user pairs. The intended scientific measures are
+\section*{2. Evaluation calculations}
+The fixed plan has five cases and five repetitions, hence
 \[
-S_{\mathrm{within}}=M_s/N_s,\qquad C_{\mathrm{between}}=M_d/N_d.
+N_{\mathrm{session}}=5\times5=25\ \text{measurements}.
 \]
-They are \textbf{not yet estimable}: smoke runs used development IDs and had no participant labels.
+For $m$ machines with one Omen and one Queen profile, the positive cross-agent pairs are $m$ and the possible
+negative pairs are $m(m-1)$. Training caps the negative-to-positive ratio at $3{:}1$ to prevent class imbalance.
 
-\section*{3. Why this design, not the alternatives?}
+Let TP, FP, FN, and TN refer to same-PC decisions. Report
+\[
+P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN},\quad
+F_1=\frac{2PR}{P+R},
+\]
+plus ROC-AUC and Brier score $n^{-1}\sum_i(p_i-y_i)^2$. Entire machines, not requests, are held out. At least six
+labelled PCs are required by the implementation; more are needed for a credible result.
+
+\section*{3. Why this design?}
 \begin{itemize}
-\item \textbf{Visible submission, not prompt injection:} ethically models what a hostile page could request without
-hidden or coercive instructions.
-\item \textbf{TLS/HTTP layers, not canvas/WebGPU:} CLI agents may not execute JavaScript; GPU techniques are browser
-specific, crowded, and do not describe provider-hosted fetchers.
-\item \textbf{Submitted text, not timing-only model ID:} a coding-agent visit produces too few requests for robust
-timing inference; two visible sentences provide a direct model-style signal.
-\item \textbf{Exact signature before a black box:} the hash is reproducible and exposes collisions. A learned
-pairwise linker should follow only after labelled data exist.
-\item \textbf{Server-side cooperation, not a cross-domain cookie claim:} first-party cookies are site-scoped;
-partner sites instead compare consented records in a shared analysis service.
+\item \textbf{No JavaScript assumption:} CLI fetchers may never execute browser fingerprint code.
+\item \textbf{No fake hardware telemetry:} ordinary HTTPS does not expose CPU/GPU, token use, or memory. The optional
+collector measures only the consenting local inference platform.
+\item \textbf{Fixed curves, not one latency:} prompt size, output size, warm-up, repetition, and jitter reduce simple
+network and load confounding.
+\item \textbf{Whole-machine split:} sessions from one PC cannot leak into both training and test.
+\item \textbf{Conservative outcome:} sub-threshold evidence stays unknown rather than forcing a match or non-match.
 \end{itemize}
 
 \section*{4. Benefit, limitation, and completion}
-\textbf{Benefit.} The pipeline is reproducible, privacy-conscious, and compatible with the shared logger and feature
-extractor. It separates harness attribution from human linkage and prevents IP equality from being presented as a
-novel fingerprint.
+\textbf{Benefit.} The system combines transport/runtime evidence with repeatable local-model performance curves,
+keeps IP out of the novel fingerprint, and stores no generated content.
 
-\textbf{Limitation.} Exact environment hashes may change across agents because each bundles a different runtime.
-Same IP can mean campus NAT, and an IP change can hide one user. No real Claude/Codex/Cline/Aider campaign, shared
-VM locality study, cross-user collision study, or learned same-user clustering has been run.
+\textbf{Limitation.} It fingerprints an inference configuration, not a hardware serial. Identical PCs may collide;
+background load, reboot, thermal state, drivers, model, quantization, engine, and power mode may move one profile.
+Ollama stream chunks are not guaranteed to be tokens.
 
-\textbf{Completion.} \status{Engineering: implemented and smoke-tested.} \textbf{Empirical study: pending.}
-The project cannot claim that two agents belong to one person until labelled cross-agent, cross-site, shared-IP,
-and changed-IP trials are evaluated with held-out users.
+\textbf{Completion.} \status{Engineering: implemented and unit-tested.} \textbf{Empirical claim: pending.} The next
+step is an independent labelled campaign covering idle/load, reboot, same NAT, network change, and identical
+hardware, followed by a frozen threshold and one untouched-machine evaluation.
 \end{multicols}
 
 \vfill
-{\scriptsize \textbf{Selected foundations from the project review:} Borysenko (2026), HTTP signatures of coding
-agents; Kang et al. (2026), multi-layer web-agent fingerprints; Pasquini et al. (2025), text-based LLM
-fingerprinting; Zimmeck et al. (2017), cross-device linkage.}
+{\scriptsize \textbf{Interpretation rule:} ``probably same PC'' means similar to same-machine examples under this
+specific enrolled benchmark. It never means ``same human'' or globally unique physical device.}
 
 \newpage
 \begin{center}
-{\Large\bfseries\color{navy} Simulated Two-Agent, Two-Site Linking Walkthrough}\\[-1pt]
+{\Large\bfseries\color{navy} Simulated Omen/Queen Same-PC Walkthrough}\\[-1pt]
 \simulated
 \end{center}
 
 \centering
-\includegraphics[width=0.60\linewidth]{assets/member-a-linking-concept.png}\\[-1mm]
-{\scriptsize\emph{Concept only: one operator, two agents, two cooperating sites, and one pseudonymous correlator;
+\includegraphics[width=0.54\linewidth]{assets/member-a-linking-concept.png}\\[-1mm]
+{\scriptsize\emph{Concept only: one enrolled PC, two local agents, two partner sites, and one private correlator;
 no experiment was run.}}
 \vspace{1mm}
 
 \noindent
 \begin{minipage}[t]{0.485\linewidth}
-\colorbox{navy}{\parbox{0.965\linewidth}{\color{white}\bfseries Mock screenshot 1 --- Agent A / Site 1}}
+\colorbox{navy}{\parbox{0.965\linewidth}{\color{white}\bfseries Mock input 1 --- Omen / Site 1}}
 \fbox{\parbox{0.94\linewidth}{\scriptsize\ttfamily
-run: a-sim-agent-a-001\\
-agent: Agent A (harness classifier: 0.91)\\
-target: site1.test/input.html\\
-action: built-in fetch; POST summary\\
-server: HTTP/2, JA4=A7..., headers=H3...\\
-time: 10:00:00; network bucket=N4\\
-tracker event: req-101 accepted}}
+run: a-sim-omen-001\\
+agent: Omen; model: llama3.2:3b q4\\
+website record: TLS/HTTP req-101\\
+benchmark: 5 cases x 5 repeats\\
+TTFC median: 0.42 s\\
+evaluation: 30.8 tokens/s\\
+content stored: no; machine label: withheld}}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.485\linewidth}
-\colorbox{amber}{\parbox{0.965\linewidth}{\color{white}\bfseries Mock screenshot 2 --- Agent B / Site 2}}
+\colorbox{amber}{\parbox{0.965\linewidth}{\color{white}\bfseries Mock input 2 --- Queen / Site 2}}
 \fbox{\parbox{0.94\linewidth}{\scriptsize\ttfamily
-run: a-sim-agent-b-001\\
-agent: Agent B (harness classifier: 0.87)\\
-target: site2.test/input.html\\
-action: built-in fetch; GET fallback\\
-server: HTTP/1.1, JA4=B2..., headers=H8...\\
-time: 10:02:00; network bucket=N4\\
-tracker event: req-205 accepted}}
+run: a-sim-queen-001\\
+agent: Queen; model: llama3.2:3b q4\\
+website record: TLS/HTTP req-205\\
+benchmark: 5 cases x 5 repeats\\
+TTFC median: 0.44 s\\
+evaluation: 30.5 tokens/s\\
+content stored: no; machine label: withheld}}
 \end{minipage}
 
 \vspace{2mm}
 \begin{multicols}{2}
-\section*{Expected input and tracker reaction}
-The harness fingerprints differ, so the tracker first keeps the sessions separate. The cooperating backend then
-constructs a \emph{pair} feature vector rather than demanding identical request hashes:
+\section*{Expected input and reaction}
+The two harness signatures may differ. The linker therefore compares private session profiles instead of demanding
+identical request hashes. Two illustrative relative differences are
 \[
-z=(I_{\mathrm{sameIP}},\,s_{\mathrm{env}},\,\Delta t,\,I_{\mathrm{crossSite}})
-=(1,0.72,120\text{s},1).
+d_{\mathrm{TTFC}}=\frac{|0.42-0.44|}{0.42+0.44}=0.023,
 \]
-For illustration only, use an interpretable pre-model score
 \[
-L=0.45I_{\mathrm{sameIP}}+0.25s_{\mathrm{env}}
-+0.20e^{-\Delta t/900}+0.10I_{\mathrm{crossSite}}.
+d_{\mathrm{TPS}}=\frac{|30.8-30.5|}{30.8+30.5}=0.0049.
 \]
-Thus
-\[
-L=0.45+0.25(0.72)+0.20e^{-120/900}+0.10
-=0.905.
-\]
-With a hypothetical threshold $\theta=0.80$, the expected decision is $L\geq\theta$ and both sessions enter the
-same pseudonymous cluster. These weights and threshold are \textbf{illustrative, not fitted}.
+Suppose a fitted model returns $p(\mathrm{same\ PC})=0.960$. With a pre-registered $\theta=0.950$, the expected
+decision is \term{probably\_same\_pc}. The measurements, coefficients, score, and decision are illustrative. A
+website alone cannot obtain local inference timing.
 
 \section*{Expected tracker output}
 \fbox{\parbox{0.92\linewidth}{\scriptsize\ttfamily
-pair: req-101 $\leftrightarrow$ req-205\\
-agent labels: A $\neq$ B\\
-same-user score: 0.905 (simulated)\\
-decision: LINK\\
-cluster: tracker\_user\_002\\
-evidence: same network; compatible environment;\\
-120 s proximity; cooperating sites\\
-warning: probabilistic, not identity proof}}
+pair: omen-001 $\leftrightarrow$ queen-001\\
+agent labels: Omen $\neq$ Queen\\
+same-pc score: 0.960 (simulated)\\
+threshold: 0.950\\
+decision: probably\_same\_pc\\
+evidence: compatible benchmark curves\\
+warning: not human or serial identity}}
 
-\section*{What this simulation tests}
+\section*{Tracker workflow}
 \begin{enumerate}[leftmargin=*,nosep]
-\item Each site records only its own direct request.
-\item The harness classifier distinguishes Agent A from Agent B.
-\item The linker compares session pairs and creates a pseudonymous ID server-side.
-\item Ground truth comes only from the consented run manifest; it is never inferred from a real name.
-\item Evaluation reports precision, recall, false links under shared NAT, and missed links after IP change.
+\item Each partner site records only its own direct request.
+\item The loopback collector adds timing/count fields only in the consented testbed.
+\item Repetitions become one session profile; Omen and Queen profiles become a symmetric pair.
+\item Training labels are pseudonymous machine aliases, never hostnames or serial numbers.
+\item Evaluation reports false matches and false non-matches on held-out PCs.
 \end{enumerate}
 
-\section*{Counterexample and required next test}
-If the same user changes networks, $I_{\mathrm{sameIP}}=0$ while the other illustrative values stay fixed:
+\section*{Counterexample and required test}
+If background load changes Queen's example throughput to $20.0$ tokens/s,
 \[
-L_{\mathrm{IP-change}}=0+0.18+0.175+0.10=0.455<0.80.
+d_{\mathrm{TPS}}=\frac{|30.8-20.0|}{30.8+20.0}=0.213.
 \]
-The simple rule would miss the link. Conversely, two people behind one campus NAT may be falsely linked. This is
-why the final system must be trained and evaluated on labelled same-user/different-agent, different-user/same-IP,
-same-user/IP-change, and identical-software trials. Until then, \term{tracker\_user\_002} is an expected output
-for a protocol illustration, not a research result.
+The score may fall below $0.950$, yielding \term{unknown}, not a forced non-match. Conversely, two identical PCs
+may produce a false link. The final campaign must include idle/load, reboot, network-change, same-NAT, and
+identical-hardware conditions. Until then, the simulated match is not a research result.
+
+\section*{What is now feasible}
+The repository can preview the fixed plan, collect timing-only Ollama data, aggregate profiles, train with
+whole-machine holdout, score every cross-agent pair, and produce \term{same\_pc\_probability} plus a conservative
+decision. It cannot create scientific evidence without several independently labelled PCs and an untouched test.
 \end{multicols}
 
 \vfill
-\colorbox{pale}{\parbox{0.965\linewidth}{\small\textbf{Reproducibility note.} The actual implementation already
-supports controlled run IDs, visible GET/POST collection, feature extraction, and environment-signature coverage.
-The missing step is participant data and the joint Track 3 pairwise model/clustering evaluation.}}
+\colorbox{pale}{\parbox{0.965\linewidth}{\small\textbf{Reproducibility note.} Raw benchmark records, profiles,
+models, and scores stay in the gitignored \term{data/benchmarks} directory. The public repository contains only
+code, tests, the fixed protocol, and this explicitly simulated walkthrough.}}
 \end{document}

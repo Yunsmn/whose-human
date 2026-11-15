@@ -38,6 +38,10 @@ paper/      LaTeX for the final paper
 
 Each track folder has its own code, tests, and a `hypotheses.md` where every finished experiment is recorded.
 
+Member A's optional local-model extension makes a narrower machine-level claim: it tests whether Omen and Queen
+sessions probably came from the same enrolled PC using privacy-minimised timing profiles. See
+[`linking/machine_linking_protocol.md`](linking/machine_linking_protocol.md). It does not equate a PC with a human.
+
 ## Getting started
 
 1. Read [`AGENTS.md`](AGENTS.md) in full. It holds the project context, literature summary, ethics rules, log schema, and working rules for both humans and coding agents.

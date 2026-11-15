@@ -46,28 +46,28 @@ def test_per_run_uses_modal_signature_and_reports_variants():
     assert runs.loc[0, "environment_signature"] == signed.loc[0, "environment_signature"]
 
 
-def test_report_separates_stability_cross_agent_and_collisions():
+def test_report_separates_machine_stability_cross_agent_and_collisions():
     rows = [
-        feature_row("a-one", "user-a", "codex", "tls-a"),
-        feature_row("a-two", "user-a", "claude", "tls-a"),
-        feature_row("b-one", "user-b", "codex", "tls-b"),
-        feature_row("c-one", "user-c", "cline", "tls-a"),
+        {**feature_row("a-one", "user-a", "codex", "tls-a"), "machine": "pc-a"},
+        {**feature_row("a-two", "user-a", "claude", "tls-a"), "machine": "pc-a"},
+        {**feature_row("b-one", "user-b", "codex", "tls-b"), "machine": "pc-b"},
+        {**feature_row("c-one", "user-c", "cline", "tls-a"), "machine": "pc-c"},
     ]
     report = signature_report(add_environment_signatures(pd.DataFrame(rows)))
 
-    assert report["within_user_pairs"] == 1
-    assert report["within_user_match_rate"] == 1.0
-    assert report["cross_agent_within_user_pairs"] == 1
-    assert report["cross_agent_within_user_match_rate"] == 1.0
-    assert report["between_user_pairs"] == 5
-    assert report["between_user_collision_rate"] == 0.4
+    assert report["within_machine_pairs"] == 1
+    assert report["within_machine_match_rate"] == 1.0
+    assert report["cross_agent_within_machine_pairs"] == 1
+    assert report["cross_agent_within_machine_match_rate"] == 1.0
+    assert report["between_machine_pairs"] == 5
+    assert report["between_machine_collision_rate"] == 0.4
 
 
 def test_empty_input_has_zero_coverage():
-    empty = pd.DataFrame(columns=SIGNATURE_COLUMNS + ["run_id", "label_user", "label_agent"])
+    empty = pd.DataFrame(columns=SIGNATURE_COLUMNS + ["run_id", "label_user", "label_agent", "machine"])
 
     report = signature_report(add_environment_signatures(empty))
 
     assert report["run_count"] == 0
     assert report["signature_coverage"] == 0.0
-    assert report["within_user_match_rate"] is None
+    assert report["within_machine_match_rate"] is None
