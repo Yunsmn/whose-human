@@ -40,7 +40,9 @@ Each track folder has its own code, tests, and a `hypotheses.md` where every fin
 
 Member A's optional local-model extension makes a narrower machine-level claim: it tests whether Omen and Queen
 sessions probably came from the same enrolled PC using privacy-minimised timing profiles. See
-[`linking/machine_linking_protocol.md`](linking/machine_linking_protocol.md). It does not equate a PC with a human.
+[`linking/machine_linking_protocol.md`](linking/machine_linking_protocol.md). The first local exploratory run is
+summarised in [`paper/member_a_local_test_summary.md`](paper/member_a_local_test_summary.md). It does not equate a
+PC with a human.
 
 ## Getting started
 

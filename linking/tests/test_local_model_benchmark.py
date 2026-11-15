@@ -22,7 +22,9 @@ def test_plan_and_prompt_are_fixed_and_synthetic():
     assert len(plan) == len(CASES) * 3
     prompt = benchmark_prompt(CASES[0])
     assert "Synthetic performance benchmark" in prompt
-    assert prompt.count("neutral") == CASES[0].context_words
+    assert prompt.count("datum") == CASES[0].context_words
+    assert "datum0000" in prompt
+    assert "datum0127" in prompt
 
 
 def test_stream_summary_keeps_metrics_but_not_generated_content():
@@ -54,3 +56,17 @@ def test_stream_summary_keeps_metrics_but_not_generated_content():
     assert record["chunk_interval_median_s"] == pytest.approx(0.1)
     assert "response" not in json.dumps(record)
     assert "alpha" not in json.dumps(record)
+
+
+def test_stream_summary_records_privacy_safe_failure_reason():
+    record = summarise_stream(
+        [{"error": "prediction aborted, token repeat limit reached"}],
+        [1.0],
+        started_at=0.0,
+        finished_at=1.1,
+        metadata={"session_id": "a-omen-failed", "machine": "pc-a"},
+    )
+
+    assert record["success"] is False
+    assert record["failure_reason"] == "prediction aborted, token repeat limit reached"
+    assert "response" not in record

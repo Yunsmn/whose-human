@@ -18,7 +18,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
 
-BENCHMARK_VERSION = "local-llm-v1"
+BENCHMARK_VERSION = "local-llm-v2"
 LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
 
 
@@ -50,10 +50,11 @@ def validate_loopback_url(base_url: str) -> str:
 
 def benchmark_prompt(case: BenchmarkCase) -> str:
     """Build deterministic synthetic input without participant or repository data."""
-    filler = " ".join(["neutral"] * case.context_words)
+    filler = " ".join(f"datum{index:04d}" for index in range(case.context_words))
     return (
-        f"Synthetic performance benchmark. Context: {filler}. "
-        f"Return a numbered list of brief factual items, using at most {case.output_tokens} tokens."
+        f"Synthetic performance benchmark. Context labels: {filler}. "
+        "Generate consecutive integers beginning at 1, separated by single spaces. "
+        f"Continue until the server stops after at most {case.output_tokens} output tokens."
     )
 
 
@@ -96,12 +97,14 @@ def summarise_stream(
     ]
     intervals = [right - left for left, right in zip(content_times, content_times[1:], strict=False)]
     final = next((message for message in reversed(messages) if message.get("done")), {})
+    failure = next((message.get("error") for message in reversed(messages) if message.get("error")), None)
     prompt_duration = _seconds(final.get("prompt_eval_duration"))
     eval_duration = _seconds(final.get("eval_duration"))
     record = {
         **metadata,
         "benchmark_version": BENCHMARK_VERSION,
         "success": bool(final.get("done")),
+        "failure_reason": str(failure) if failure else None,
         "wall_total_s": finished_at - started_at,
         "first_chunk_s": content_times[0] - started_at if content_times else None,
         "chunk_count": len(content_times),
