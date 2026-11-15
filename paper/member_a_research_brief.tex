@@ -1,0 +1,223 @@
+\documentclass{article}
+\usepackage[letterpaper,margin=0.42in,top=0.42in,bottom=0.42in]{geometry}
+\usepackage{amsmath,booktabs,enumitem,graphicx,microtype,multicol,tabularx,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlength{\columnsep}{0.18in}
+\setlist[itemize]{leftmargin=*,nosep}
+\definecolor{navy}{HTML}{102A43}
+\definecolor{teal}{HTML}{0B7A75}
+\definecolor{amber}{HTML}{D97706}
+\definecolor{pale}{HTML}{EEF6F7}
+\definecolor{ink}{HTML}{243B53}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\scriptsize Whose Human Are You? --- Member A research brief}
+\rhead{\scriptsize 15 November 2026}
+\cfoot{\scriptsize \thepage\ / 2}
+\renewcommand{\headrulewidth}{0.3pt}
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}{0.8ex plus .2ex}{0.35ex}{\normalfont\normalsize\bfseries\color{navy}}}
+\makeatother
+\newcommand{\status}[1]{\textcolor{teal}{\textbf{#1}}}
+\newcommand{\simulated}{\textcolor{amber}{\textbf{SIMULATED --- NOT AN OBSERVED EXPERIMENT}}}
+\newcommand{\term}[1]{\texttt{#1}}
+
+\begin{document}
+\fontsize{8}{9.15}\selectfont
+\begin{center}
+{\LARGE\bfseries\color{navy} Member A: Local-Agent Measurement and User-Linking Baseline}\\[-1pt]
+{\small A two-page engineering research brief for the consent-based ``Whose Human Are You?'' study}
+\end{center}
+
+\vspace{-2mm}
+\colorbox{pale}{\parbox{0.965\linewidth}{\textbf{Abstract.}
+Member A implemented the controlled agent-run workflow, visible text-submission pages, text-corpus extraction,
+partner-site content, and an interpretable environment-signature baseline. The design asks two different
+questions: \emph{which harness sent a request?} and \emph{can requests from different harnesses be linked to one
+pseudonymous participant?} All collection is restricted to team-operated sites, consenting participants, and
+fictional personas. Current evidence validates the software path, not the scientific hypothesis: no real
+multi-agent campaign or same-user classifier has yet been completed.}}
+
+\begin{multicols}{2}
+\section*{1. Member A objective and implementation}
+\textbf{Track 1a --- agent runs.} A manifest-safe CLI creates unique \term{a-*} run identifiers, records agent,
+model, persona, machine alias, and network category, and prints one fixed task. The task requires the agent's
+built-in fetch capability; substituting curl would measure curl rather than the harness. A locality audit compares
+the VM-observed peer address with a private expected address and emits only \term{local}, \term{remote},
+\term{mixed}, or \term{inconclusive}.
+
+\textbf{Track 2a --- visible text.} Two cooperating sites expose article text, a visible POST form, and a visible
+GET fallback. A corpus tool joins non-empty submissions with ground-truth labels and distinguishes POST, GET,
+fetch-without-submit, unrelated request, and no observed request.
+
+\textbf{Track 3b --- environment baseline.} Each request is reduced to a versioned hash over selected TLS,
+HTTP-runtime, header, and HTTP/2 features:
+\[
+E(r)=\texttt{env-v1}:\operatorname{Trunc}_{96}
+\left(\operatorname{SHA256}(\operatorname{canon}(x_r))\right).
+\]
+The vector excludes IP address, cookie, site, path, timing, body, and submitted text. A modal signature represents
+each run; this prevents repeated requests within one connection from inflating pair counts.
+
+\section*{2. Acquired calculations}
+The following are measured engineering checks from the local and temporary combined branches:
+
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{@{}Xrr@{}}
+\toprule
+Measure & Count & Result \\
+\midrule
+Member A unit tests & $15/15$ & $100\%$ \\
+Combined executed tests & $52/55$ & $94.5\%$ \\
+Live GET/POST endpoints & $3/3$ & $100\%$ \\
+Signed smoke-test runs & $2/2$ & $100\%$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\[
+\text{pass rate}=\frac{52}{52+3}=0.945,\qquad
+\text{coverage}=\frac{2}{2}=1.00.
+\]
+The combined suite also had one skipped platform-dependent test. All three failures share one integration contract:
+Member C's corpus parser requires the label prefix ``Summarize this page'', while Member A's page currently says
+``Summarize the two paragraphs above''. This is a wording mismatch, not an observed tracking failure.
+
+Let $M_s$ be matching same-user pairs, $N_s$ all same-user pairs, $M_d$ colliding different-user pairs, and
+$N_d$ all different-user pairs. The intended scientific measures are
+\[
+S_{\mathrm{within}}=M_s/N_s,\qquad C_{\mathrm{between}}=M_d/N_d.
+\]
+They are \textbf{not yet estimable}: smoke runs used development IDs and had no participant labels.
+
+\section*{3. Why this design, not the alternatives?}
+\begin{itemize}
+\item \textbf{Visible submission, not prompt injection:} ethically models what a hostile page could request without
+hidden or coercive instructions.
+\item \textbf{TLS/HTTP layers, not canvas/WebGPU:} CLI agents may not execute JavaScript; GPU techniques are browser
+specific, crowded, and do not describe provider-hosted fetchers.
+\item \textbf{Submitted text, not timing-only model ID:} a coding-agent visit produces too few requests for robust
+timing inference; two visible sentences provide a direct model-style signal.
+\item \textbf{Exact signature before a black box:} the hash is reproducible and exposes collisions. A learned
+pairwise linker should follow only after labelled data exist.
+\item \textbf{Server-side cooperation, not a cross-domain cookie claim:} first-party cookies are site-scoped;
+partner sites instead compare consented records in a shared analysis service.
+\end{itemize}
+
+\section*{4. Benefit, limitation, and completion}
+\textbf{Benefit.} The pipeline is reproducible, privacy-conscious, and compatible with the shared logger and feature
+extractor. It separates harness attribution from human linkage and prevents IP equality from being presented as a
+novel fingerprint.
+
+\textbf{Limitation.} Exact environment hashes may change across agents because each bundles a different runtime.
+Same IP can mean campus NAT, and an IP change can hide one user. No real Claude/Codex/Cline/Aider campaign, shared
+VM locality study, cross-user collision study, or learned same-user clustering has been run.
+
+\textbf{Completion.} \status{Engineering: implemented and smoke-tested.} \textbf{Empirical study: pending.}
+The project cannot claim that two agents belong to one person until labelled cross-agent, cross-site, shared-IP,
+and changed-IP trials are evaluated with held-out users.
+\end{multicols}
+
+\vfill
+{\scriptsize \textbf{Selected foundations from the project review:} Borysenko (2026), HTTP signatures of coding
+agents; Kang et al. (2026), multi-layer web-agent fingerprints; Pasquini et al. (2025), text-based LLM
+fingerprinting; Zimmeck et al. (2017), cross-device linkage.}
+
+\newpage
+\begin{center}
+{\Large\bfseries\color{navy} Simulated Two-Agent, Two-Site Linking Walkthrough}\\[-1pt]
+\simulated
+\end{center}
+
+\centering
+\includegraphics[width=0.60\linewidth]{assets/member-a-linking-concept.png}\\[-1mm]
+{\scriptsize\emph{Concept only: one operator, two agents, two cooperating sites, and one pseudonymous correlator;
+no experiment was run.}}
+\vspace{1mm}
+
+\noindent
+\begin{minipage}[t]{0.485\linewidth}
+\colorbox{navy}{\parbox{0.965\linewidth}{\color{white}\bfseries Mock screenshot 1 --- Agent A / Site 1}}
+\fbox{\parbox{0.94\linewidth}{\scriptsize\ttfamily
+run: a-sim-agent-a-001\\
+agent: Agent A (harness classifier: 0.91)\\
+target: site1.test/input.html\\
+action: built-in fetch; POST summary\\
+server: HTTP/2, JA4=A7..., headers=H3...\\
+time: 10:00:00; network bucket=N4\\
+tracker event: req-101 accepted}}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.485\linewidth}
+\colorbox{amber}{\parbox{0.965\linewidth}{\color{white}\bfseries Mock screenshot 2 --- Agent B / Site 2}}
+\fbox{\parbox{0.94\linewidth}{\scriptsize\ttfamily
+run: a-sim-agent-b-001\\
+agent: Agent B (harness classifier: 0.87)\\
+target: site2.test/input.html\\
+action: built-in fetch; GET fallback\\
+server: HTTP/1.1, JA4=B2..., headers=H8...\\
+time: 10:02:00; network bucket=N4\\
+tracker event: req-205 accepted}}
+\end{minipage}
+
+\vspace{2mm}
+\begin{multicols}{2}
+\section*{Expected input and tracker reaction}
+The harness fingerprints differ, so the tracker first keeps the sessions separate. The cooperating backend then
+constructs a \emph{pair} feature vector rather than demanding identical request hashes:
+\[
+z=(I_{\mathrm{sameIP}},\,s_{\mathrm{env}},\,\Delta t,\,I_{\mathrm{crossSite}})
+=(1,0.72,120\text{s},1).
+\]
+For illustration only, use an interpretable pre-model score
+\[
+L=0.45I_{\mathrm{sameIP}}+0.25s_{\mathrm{env}}
++0.20e^{-\Delta t/900}+0.10I_{\mathrm{crossSite}}.
+\]
+Thus
+\[
+L=0.45+0.25(0.72)+0.20e^{-120/900}+0.10
+=0.905.
+\]
+With a hypothetical threshold $\theta=0.80$, the expected decision is $L\geq\theta$ and both sessions enter the
+same pseudonymous cluster. These weights and threshold are \textbf{illustrative, not fitted}.
+
+\section*{Expected tracker output}
+\fbox{\parbox{0.92\linewidth}{\scriptsize\ttfamily
+pair: req-101 $\leftrightarrow$ req-205\\
+agent labels: A $\neq$ B\\
+same-user score: 0.905 (simulated)\\
+decision: LINK\\
+cluster: tracker\_user\_002\\
+evidence: same network; compatible environment;\\
+120 s proximity; cooperating sites\\
+warning: probabilistic, not identity proof}}
+
+\section*{What this simulation tests}
+\begin{enumerate}[leftmargin=*,nosep]
+\item Each site records only its own direct request.
+\item The harness classifier distinguishes Agent A from Agent B.
+\item The linker compares session pairs and creates a pseudonymous ID server-side.
+\item Ground truth comes only from the consented run manifest; it is never inferred from a real name.
+\item Evaluation reports precision, recall, false links under shared NAT, and missed links after IP change.
+\end{enumerate}
+
+\section*{Counterexample and required next test}
+If the same user changes networks, $I_{\mathrm{sameIP}}=0$ while the other illustrative values stay fixed:
+\[
+L_{\mathrm{IP-change}}=0+0.18+0.175+0.10=0.455<0.80.
+\]
+The simple rule would miss the link. Conversely, two people behind one campus NAT may be falsely linked. This is
+why the final system must be trained and evaluated on labelled same-user/different-agent, different-user/same-IP,
+same-user/IP-change, and identical-software trials. Until then, \term{tracker\_user\_002} is an expected output
+for a protocol illustration, not a research result.
+\end{multicols}
+
+\vfill
+\colorbox{pale}{\parbox{0.965\linewidth}{\small\textbf{Reproducibility note.} The actual implementation already
+supports controlled run IDs, visible GET/POST collection, feature extraction, and environment-signature coverage.
+The missing step is participant data and the joint Track 3 pairwise model/clustering evaluation.}}
+\end{document}
