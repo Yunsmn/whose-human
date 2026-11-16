@@ -47,7 +47,7 @@ These choices follow Kang et al. 2026 (crawler baselines with defaults, same pag
 2. Node 22 or later: `cd harness/baselines/node && npm ci`
 3. Python 3.12: `pip install -r harness/baselines/python/requirements.txt`
 4. curl: the system curl. `--list` shows its version and TLS library.
-5. Go 1.22 or later, then once: `cd harness/baselines/go && go mod tidy` (creates `go.sum`; commit it).
+5. Go 1.24 or later (Colly v2.3.0 requires it). `go.sum` is committed; `go run` fetches the modules on first use.
 
 ## Running
 
@@ -68,7 +68,7 @@ python -m harness.baselines.run_baselines                     # real run: 30 tri
 
 ## Known issue: curl on Windows
 
-The system curl on Windows uses Schannel, which checks certificate revocation and fails with our local CA ("revocation status unknown"). Revocation flags are not neutral: in one test on 2026-11-12, curl without `--ssl-no-revoke` sent a ClientHello with 13 extensions and curl with it sent 12, so the JA4 differed. The runner therefore adds no revocation flag. Check whether curl succeeds once the CA is in the Windows store; if it doesn't, the Windows curl baseline needs the shared VM, which has a publicly trusted certificate.
+The system curl on Windows uses Schannel, which checks certificate revocation and fails with our local CA ("revocation status unknown"). Revocation flags are not neutral: in one test on 2026-11-12, curl without `--ssl-no-revoke` sent a ClientHello with 13 extensions and curl with it sent 12, so the JA4 differed. The runner therefore adds no revocation flag. Trusting the CA in the Windows store does not help: on 2026-11-16 curl still failed with `CRYPT_E_NO_REVOCATION_CHECK`. The Windows curl baseline therefore needs the shared VM, which has a publicly trusted certificate. Its failed handshakes are logged as `tls_failure` records, but without a run id, because the request line never arrives.
 
 The infra test `test_curl_tls_request_when_available` fails on Windows for the same reason; it passes in CI on Linux.
 
