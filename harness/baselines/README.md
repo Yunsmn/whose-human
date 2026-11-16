@@ -46,7 +46,7 @@ These choices follow Kang et al. 2026 (crawler baselines with defaults, same pag
 1. The local server and its CA, from `infra/README.md`, **including step 3 (trust the CA) and step 4 (hosts file)**. Go on Windows and macOS only trusts the system store.
 2. Node 22 or later: `cd harness/baselines/node && npm ci`
 3. Python 3.12: `pip install -r harness/baselines/python/requirements.txt`
-4. curl: the system curl. `--list` shows its version and TLS library.
+4. curl: the system curl and `bash` (`curl/fetch_curl.sh`). `--list` shows curl's version and TLS library. On Windows, Schannel curl is left out of `--stacks all` (see below); name it explicitly with `--stacks curl` to run it anyway, for example against the shared VM.
 5. Go 1.24 or later (Colly v2.3.0 requires it). `go.sum` is committed; `go run` fetches the modules on first use.
 
 ## Running
@@ -69,6 +69,10 @@ python -m harness.baselines.run_baselines                     # real run: 30 tri
 ## Known issue: curl on Windows
 
 The system curl on Windows uses Schannel, which checks certificate revocation and fails with our local CA ("revocation status unknown"). Revocation flags are not neutral: in one test on 2026-11-12, curl without `--ssl-no-revoke` sent a ClientHello with 13 extensions and curl with it sent 12, so the JA4 differed. The runner therefore adds no revocation flag. Trusting the CA in the Windows store does not help: on 2026-11-16 curl still failed with `CRYPT_E_NO_REVOCATION_CHECK`. The Windows curl baseline therefore needs the shared VM, which has a publicly trusted certificate. Its failed handshakes are logged as `tls_failure` records, but without a run id, because the request line never arrives.
+
+So the runner leaves Schannel curl out of `--stacks all`, and runs it only when named with `--stacks curl`.
+
+On Linux the script works: on 2026-11-16, `fetch_curl.sh` with curl 8.18.0 (OpenSSL 3.5) in WSL made all four requests (200 each) against a test HTTPS server using our local certificate, trusting the CA only through `CURL_CA_BUNDLE`. That check used a small stand-in server, not `infra/server`, so no TLS fingerprint was recorded; the first real Linux curl run will do that.
 
 The infra test `test_curl_tls_request_when_available` fails on Windows for the same reason; it passes in CI on Linux.
 

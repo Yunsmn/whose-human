@@ -91,16 +91,34 @@ def test_every_stack_builds_a_command_ending_in_the_run_url(name):
         assert cwd.is_dir()
 
 
-def test_curl_makes_the_same_four_requests_as_the_scripts():
-    built = [argv for argv, _ in rb.commands(rb.STACKS["curl"], "https://site1.test:8443/r/b-0001/")]
-    assert [argv[-1].rsplit("/", 1)[-1] for argv in built] == ["index.html", "input.html", "submit", "submit"]
-    assert "-G" in built[2] and "-G" not in built[3]
-    assert all(argv[0] == "curl" for argv in built)
+def test_curl_runs_its_shell_script_with_bash():
+    [(argv, cwd)] = rb.commands(rb.STACKS["curl"], "https://site1.test:8443/r/b-0001/")
+    assert argv[:2] == ["bash", "fetch_curl.sh"]
+    assert cwd == rb.HERE / "curl"
 
 
-def test_script_files_exist_for_node_and_python_stacks():
+def test_curl_script_makes_the_same_four_requests_as_the_other_stacks():
+    script = (rb.HERE / "curl" / "fetch_curl.sh").read_text()
+    steps = [line for line in script.splitlines() if line.startswith("step ")]
+    assert [line.split('"')[1] for line in steps] == [
+        "GET index.html",
+        "GET input.html",
+        "GET submit",
+        "POST submit",
+    ]
+    assert "-G" in steps[2] and "-G" not in steps[3]
+
+
+def test_schannel_curl_is_skipped_by_default_but_other_curls_are_not():
+    curl = rb.STACKS["curl"]
+    assert rb.skipped_by_default(curl, "curl 8.21.0; tls Schannel")
+    assert rb.skipped_by_default(curl, "curl 8.5.0; tls OpenSSL/3.0.13") is None
+    assert rb.skipped_by_default(rb.STACKS["got"], "got 16.2.0; node 22.23.2") is None
+
+
+def test_script_files_exist_for_every_stack():
     for stack in rb.STACKS.values():
-        if stack.kind in ("node", "python"):
+        if stack.kind in ("node", "python", "curl"):
             assert (rb.HERE / stack.kind / stack.target).is_file(), stack.name
         if stack.kind == "go":
             assert (rb.HERE / "go" / stack.target / "main.go").is_file(), stack.name

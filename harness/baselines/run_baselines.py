@@ -67,7 +67,7 @@ STACKS: dict[str, Stack] = {
         Stack("got", "node", "fetch_got.mjs", "got"),
         Stack("node-fetch", "node", "fetch_native.mjs"),
         Stack("node-https", "node", "fetch_https.mjs"),
-        Stack("curl", "curl", ""),
+        Stack("curl", "curl", "fetch_curl.sh"),
         Stack("requests", "python", "fetch_requests.py", "requests"),
         Stack("httpx", "python", "fetch_httpx.py", "httpx"),
         Stack("urllib", "python", "fetch_urllib.py"),
@@ -174,16 +174,20 @@ def commands(stack: Stack, url: str, text: str = SUBMISSION_TEXT) -> list[tuple[
     if stack.kind == "go":
         return [(["go", "run", stack.target, url, text], HERE / "go")]
     if stack.kind == "curl":
-        # One curl process per request, as agents that shell out to curl do. -sS, -o and -w only
-        # change what curl prints, not what it sends.
-        quiet = ["curl", "-sS", "-o", os.devnull, "-w", "%{http_code}\\n"]
-        return [
-            ([*quiet, url + "index.html"], HERE),
-            ([*quiet, url + "input.html"], HERE),
-            ([*quiet, "-G", "--data-urlencode", f"text={text}", url + "submit"], HERE),
-            ([*quiet, "--data-urlencode", f"text={text}", url + "submit"], HERE),
-        ]
+        return [(["bash", stack.target, url, text], HERE / "curl")]
     raise ValueError(f"unknown stack kind {stack.kind!r}")
+
+
+def skipped_by_default(stack: Stack, version: str | None) -> str | None:
+    """Return why a stack is left out of ``--stacks all`` on this machine, or None.
+
+    Schannel curl (Windows) can't check revocation for our local CA and fails every request,
+    while flags that skip the check change its ClientHello. It still runs when named
+    explicitly, for example against the shared VM's publicly trusted certificate.
+    """
+    if stack.kind == "curl" and version and "Schannel" in version:
+        return "Schannel curl fails the revocation check against the local CA (see README)"
+    return None
 
 
 def child_environment(ca: Path | None, environ: dict[str, str] | None = None) -> dict[str, str]:
@@ -312,8 +316,6 @@ def run_job(argv_list: list[tuple[list[str], Path]], env: dict[str, str]) -> tup
         output.append((result.stdout + result.stderr).strip())
         if result.returncode != 0:
             code = result.returncode
-        elif argv[0] == "curl" and result.stdout.strip() != "200":
-            code = 1
     return code, "\n".join(output)
 
 
@@ -355,15 +357,32 @@ def main(argv: list[str] | None = None) -> int:
     selected = list(STACKS.values()) if "all" in args.stacks else [STACKS[name] for name in args.stacks]
     versions = {stack.name: probe(stack) for stack in selected}
 
+    explicit = "all" not in args.stacks
+    skips = {
+        stack.name: (
+            "not installed"
+            if versions[stack.name] is None
+            else skipped_by_default(stack, versions[stack.name])
+        )
+        for stack in selected
+    }
+    if explicit:  # a stack named on the command line runs if it's installed, whatever its TLS library
+        skips = {name: reason if versions[name] is None else None for name, reason in skips.items()}
+
     if args.list:
         for stack in selected:
-            print(f"{stack.name:12} {stack.label:22} {versions[stack.name] or 'NOT AVAILABLE'}")
+            note = (
+                f"  [skipped by default: {skips[stack.name]}]"
+                if skips[stack.name] and versions[stack.name]
+                else ""
+            )
+            print(f"{stack.name:12} {stack.label:22} {versions[stack.name] or 'NOT AVAILABLE'}{note}")
         return 0
 
-    unavailable = [name for name, version in versions.items() if version is None]
-    if unavailable:
-        print(f"skipping stacks that can't run here: {', '.join(unavailable)}", file=sys.stderr)
-    stacks = [stack for stack in selected if versions[stack.name] is not None]
+    for name, reason in skips.items():
+        if reason:
+            print(f"skipping {name}: {reason}", file=sys.stderr)
+    stacks = [stack for stack in selected if not skips[stack.name]]
     if not stacks:
         print("no stack can run on this machine", file=sys.stderr)
         return 1
