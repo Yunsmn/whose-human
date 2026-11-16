@@ -1,0 +1,14 @@
+{
+  "name": "whose-human-baselines-node",
+  "private": true,
+  "description": "Track 1b plain script baselines: Node HTTP stacks with default settings",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "axios-1.8.4": "npm:axios@1.8.4",
+    "axios-current": "npm:axios@1.21.1",
+    "got": "16.2.0"
+  }
+}
