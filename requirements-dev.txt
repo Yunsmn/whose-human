@@ -3,3 +3,7 @@ scikit-learn==1.9.1
 pytest==9.2.0
 ruff==0.17.4
 httpx[http2]==0.28.1
+# Track 2b API corpus (model/api_corpus.py); imported only when a provider is called
+anthropic==2.8.0
+openai==3.49.0
+google-genai==3.2.0
