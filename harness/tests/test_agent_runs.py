@@ -53,15 +53,14 @@ def test_invalid_run_is_rejected(tmp_path, changes, message):
         append_manifest(tmp_path / "a.csv", sample_run(**changes))
 
 
-def test_fetch_prompt_uses_visible_2a_submission_and_forbids_other_tools():
+def test_fetch_prompt_is_natural_and_does_not_forbid_normal_tools():
     prompt = fixed_fetch_prompt("https://site1.example.test/r/a-one/input.html")
-    assert "built-in web or URL-fetch" in prompt
-    assert "not curl" in prompt
-    assert "exactly two sentences" in prompt
-    assert "visible form" in prompt
-    assert "visible GET fallback link" in prompt
-    assert "URL-encoded summary" in prompt
-    assert "without trying another tool" in prompt
+    assert prompt.startswith("Visit https://site1.example.test/r/a-one/input.html")
+    assert "summarize the page in two sentences" in prompt
+    assert "submit your summary" in prompt
+    assert "normally choose" in prompt
+    assert "not curl" not in prompt
+    assert "without trying" not in prompt
 
 
 def test_expected_addresses_accept_ipv4_ipv6_and_reject_empty():

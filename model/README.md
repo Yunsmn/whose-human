@@ -16,9 +16,10 @@ docker compose run --rm --entrypoint python checks -m model.agent_text data/logs
   --output data/corpus/agent/member-a-agent-text.csv
 ```
 
-The terminal output contains only aggregate counts for POST submitted, GET submitted, fetched but not submitted,
-other observed traffic, and no observed request. The CSV contains the submitted text and ground-truth labels for
-2c; keep it in the gitignored `data/` directory or approved private storage. See
+The terminal output contains only aggregate counts for POST submitted, GET submitted, placeholder submitted,
+fetched but not submitted, other observed traffic, and no observed request. A literal `YOUR_SUMMARY` submission is
+reported as `placeholder_submitted` and excluded from the CSV. The CSV contains only usable submitted text and
+ground-truth labels for 2c; keep it in the gitignored `data/` directory or approved private storage. See
 [`harness/member_a_1a_2a_protocol.md`](../harness/member_a_1a_2a_protocol.md) for the complete collection protocol.
 
 ## 2b: API reference corpus (`api_corpus.py`)

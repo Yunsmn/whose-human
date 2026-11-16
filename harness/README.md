@@ -19,7 +19,7 @@ Prepare one labelled combined 1a/2a run and print the task to paste into the age
 docker compose run --rm --entrypoint python checks -m harness.agent_runs prepare \
   --run-id a-codex-001 --agent codex-cli --model model-alias \
   --persona persona-a1 --machine machine-a1 --network home \
-  --base-url https://site1.example.test
+  --base-url https://site1.test
 ```
 
 After running agents against the shared VM, privately compare the logged peers with the participant network's
@@ -30,9 +30,9 @@ docker compose run --rm --entrypoint python checks -m harness.agent_runs audit d
   --expected-ip-file data/member-a-egress-ips.txt
 ```
 
-The task visits the visible input page and requests a two-sentence submission for Track 2a. See
-[`member_a_1a_2a_protocol.md`](member_a_1a_2a_protocol.md) before collecting experimental traffic. Do not replace a
-failed built-in fetch with curl, a browser, or another tool, because that would measure a different client.
+The task visits the visible input page and requests a two-sentence submission for Track 2a. It deliberately allows
+curl, a browser, or any other client the agent would normally choose: that choice is part of the Track 1 signature.
+See [`member_a_1a_2a_protocol.md`](member_a_1a_2a_protocol.md) before collecting experimental traffic.
 
 ## Feature contract (used by Track 3b)
 

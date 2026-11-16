@@ -22,14 +22,15 @@ Create the manifest row and print the fixed visible task:
 python -m harness.agent_runs prepare `
   --run-id a-codex-001 --agent codex-cli --model model-alias `
   --persona persona-a1 --machine machine-a1 --network home `
-  --base-url https://site1.example.test `
+  --base-url https://site1.test `
   --notes "agent version; model version; clean session"
 ```
 
-Paste the printed task into the named agent exactly as shown. The agent must use its built-in web/URL-fetch
-capability. It should submit with POST when supported; otherwise it may use the visible
-`submit?text=YOUR_SUMMARY` GET fallback on the page. Do not replace a failed built-in fetch or submission with
-curl, wget, PowerShell, a browser, or a custom script: that would measure a different client.
+Paste the printed task into the named agent exactly as shown. Do not prescribe the client: the agent may use curl,
+wget, PowerShell, a browser, a built-in fetcher, or another tool it would normally choose. The selected client,
+TLS library, version, and headers are part of the Track 1 observation. It should submit with POST when supported;
+otherwise it may replace `YOUR_SUMMARY` in the visible GET fallback. Record the observed tool from the request
+metadata when possible, but do not alter or rerun the task to force a different tool.
 
 Run at least three independent sessions per available harness. Cover Claude Code, Codex CLI, Cline, Aider, and
 other locally available agents, distribute runs across both partner sites, and use a new `a-...` run ID each time.
@@ -60,12 +61,13 @@ python -m model.agent_text data/logs `
 
 The terminal output contains only aggregate outcome counts. The private CSV contains submitted text and labels
 for Track 2c, so it must remain in `data/` or approved private storage. Outcomes distinguish POST submission, GET
-fallback submission, fetched-but-not-submitted, other observed traffic, and no observed request.
+fallback submission, literal `YOUR_SUMMARY` placeholder submission, fetched-but-not-submitted, other observed
+traffic, and no observed request. Placeholder submissions are excluded from the exported corpus.
 
 ## Completion criteria
 
 - Every experimental session has one unique `a-...` run ID and one row in `runs/a.csv`.
-- Every agent receives the same visible task and uses only its built-in fetch capability.
+- Every agent receives the same visible task and may choose its normal web or network tool.
 - Raw JSONL, expected addresses, and submitted text remain private.
 - 1a reports locality counts per harness; 2a reports submission outcomes and exports labelled text privately.
 - Only completed experimental results are added to the relevant `hypotheses.md` file.

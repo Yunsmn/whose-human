@@ -10,12 +10,14 @@ import pandas as pd
 
 from infra.loader import MANIFEST_COLUMNS, load_logs
 
+PLACEHOLDER_TEXT = "YOUR_SUMMARY"
 OUTCOME_COLUMNS = [
     "run_id",
     "label_agent",
     "label_model",
     "request_count",
     "submission_count",
+    "placeholder_count",
     "outcome",
 ]
 CORPUS_COLUMNS = [
@@ -48,9 +50,16 @@ def _non_empty_submissions(logs: pd.DataFrame) -> pd.DataFrame:
     return logs.loc[(logs["kind"] == "request") & text.notna() & text.astype(str).str.strip().ne("")].copy()
 
 
+def _placeholder_mask(submissions: pd.DataFrame) -> pd.Series:
+    if submissions.empty or "submitted_text" not in submissions:
+        return pd.Series(False, index=submissions.index, dtype=bool)
+    return submissions["submitted_text"].astype(str).str.strip().eq(PLACEHOLDER_TEXT)
+
+
 def submission_corpus(logs: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame:
-    """Return one labelled row per non-empty submission from a planned run."""
+    """Return labelled submissions, excluding the literal GET placeholder."""
     submitted = _non_empty_submissions(logs)
+    submitted = submitted.loc[~_placeholder_mask(submitted)].copy()
     if submitted.empty:
         return pd.DataFrame(columns=CORPUS_COLUMNS)
     request_columns = ["run_id", "ts", "site", "method", "submitted_text", "status"]
@@ -75,13 +84,18 @@ def run_outcomes(logs: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame:
         else:
             rows = logs.loc[(logs["run_id"] == run_id) & (logs["kind"] == "request")]
         submissions = _non_empty_submissions(rows)
-        methods = set(submissions.get("method", pd.Series(dtype=str)).dropna().astype(str).str.upper())
+        placeholder_mask = _placeholder_mask(submissions)
+        placeholders = submissions.loc[placeholder_mask]
+        corpus_submissions = submissions.loc[~placeholder_mask]
+        methods = set(corpus_submissions.get("method", pd.Series(dtype=str)).dropna().astype(str).str.upper())
         paths = rows.get("path", pd.Series(index=rows.index, dtype=str)).fillna("").astype(str)
         input_fetches = rows.loc[paths.str.contains("/input.html", regex=False)]
         if "POST" in methods:
             outcome = "post_submitted"
         elif "GET" in methods:
             outcome = "get_submitted"
+        elif not placeholders.empty:
+            outcome = "placeholder_submitted"
         elif not input_fetches.empty:
             outcome = "fetched_but_not_submitted"
         elif not rows.empty:
@@ -94,7 +108,8 @@ def run_outcomes(logs: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame:
                 "label_agent": planned["label_agent"],
                 "label_model": planned["label_model"],
                 "request_count": len(rows),
-                "submission_count": len(submissions),
+                "submission_count": len(corpus_submissions),
+                "placeholder_count": len(placeholders),
                 "outcome": outcome,
             }
         )

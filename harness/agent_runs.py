@@ -1,8 +1,8 @@
 """Prepare and audit Member A's combined Track 1a and 2a agent runs.
 
-The runner does not launch or wrap an agent. The operator pastes one fixed,
-visible fetch task into the harness under test so the measured HTTP/TLS stack
-belongs to that harness rather than to curl or an orchestration wrapper.
+The runner does not launch or wrap an agent. The operator pastes one short,
+visible task into the harness under test, and the agent chooses its normal web
+tool. That client choice is part of the measured HTTP/TLS behavior.
 """
 
 from __future__ import annotations
@@ -84,12 +84,8 @@ def validate_run(run: AgentRun) -> None:
 def fixed_fetch_prompt(target_url: str) -> str:
     """Return the same visible 1a/2a task for every harness run."""
     return (
-        "Using only your built-in web or URL-fetch capability (not curl, wget, PowerShell, "
-        f"a browser, or a custom script), visit {target_url}. Read the two visible paragraphs, "
-        "write a summary of exactly two sentences, and submit it using the visible form if your "
-        "built-in capability supports POST. Otherwise, use the page's visible GET fallback link and "
-        "replace YOUR_SUMMARY with the URL-encoded summary. Do not visit any other site or use another "
-        "network tool. If you cannot fetch or submit, report the failure without trying another tool."
+        f"Visit {target_url}, summarize the page in two sentences, and submit your summary. "
+        "Use the web or network tool you would normally choose for this task."
     )
 
 

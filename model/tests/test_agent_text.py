@@ -12,8 +12,9 @@ def manifest():
             ["a-post", "codex", "model-a", "user-a", "host-a", "home", ""],
             ["a-get", "claude", "model-b", "user-a", "host-a", "home", ""],
             ["a-fetch", "cline", "model-c", "user-a", "host-a", "home", ""],
-            ["a-other", "omen", "model-d", "user-a", "host-a", "home", ""],
-            ["a-absent", "aider", "model-e", "user-a", "host-a", "home", ""],
+            ["a-placeholder", "quinn", "model-d", "user-a", "host-a", "home", ""],
+            ["a-other", "omen", "model-e", "user-a", "host-a", "home", ""],
+            ["a-absent", "aider", "model-f", "user-a", "host-a", "home", ""],
         ],
         columns=["run_id", "label_agent", "label_model", "label_user", "machine", "network", "notes"],
     )
@@ -64,11 +65,21 @@ def logs():
             },
             {
                 "kind": "request",
+                "run_id": "a-placeholder",
+                "path": "/r/a-placeholder/submit?text=YOUR_SUMMARY",
+                "method": "GET",
+                "submitted_text": "YOUR_SUMMARY",
+                "ts": 5,
+                "site": "site1",
+                "status": 200,
+            },
+            {
+                "kind": "request",
                 "run_id": "a-other",
                 "path": "/r/a-other/",
                 "method": "GET",
                 "submitted_text": None,
-                "ts": 5,
+                "ts": 6,
                 "site": "site1",
                 "status": 200,
             },
@@ -78,7 +89,7 @@ def logs():
                 "path": "/r/unplanned/submit",
                 "method": "POST",
                 "submitted_text": "Do not include me. In the corpus.",
-                "ts": 6,
+                "ts": 7,
                 "site": "site1",
                 "status": 200,
             },
@@ -92,9 +103,12 @@ def test_run_outcomes_covers_every_planned_run():
     assert outcomes.loc["a-post", "outcome"] == "post_submitted"
     assert outcomes.loc["a-get", "outcome"] == "get_submitted"
     assert outcomes.loc["a-fetch", "outcome"] == "fetched_but_not_submitted"
+    assert outcomes.loc["a-placeholder", "outcome"] == "placeholder_submitted"
     assert outcomes.loc["a-other", "outcome"] == "request_observed_without_input_fetch"
     assert outcomes.loc["a-absent", "outcome"] == "no_request_observed"
     assert outcomes.loc["a-fetch", "submission_count"] == 0
+    assert outcomes.loc["a-placeholder", "submission_count"] == 0
+    assert outcomes.loc["a-placeholder", "placeholder_count"] == 1
 
 
 def test_submission_corpus_keeps_only_planned_non_empty_text_and_labels():
@@ -103,6 +117,7 @@ def test_submission_corpus_keeps_only_planned_non_empty_text_and_labels():
     assert list(corpus["run_id"]) == ["a-get", "a-post"]
     assert corpus.loc[corpus["run_id"] == "a-post", "label_agent"].item() == "codex"
     assert corpus["submitted_text"].str.strip().str.len().gt(0).all()
+    assert "YOUR_SUMMARY" not in set(corpus["submitted_text"])
     assert "unplanned" not in set(corpus["run_id"])
 
 
