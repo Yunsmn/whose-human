@@ -6,8 +6,33 @@ Owner of 1c (features and classifier): C. Baselines (1b): B. Agent runs (1a): A.
 
 | File | What it does |
 |---|---|
+| `agent_runs.py` | Prepares Member A's combined 1a/2a runs, prints the fixed visible task, and audits local-versus-provider origin without printing IPs |
+| `member_a_1a_2a_protocol.md` | Exact combined collection matrix, privacy rules, locality and submission interpretation, and completion criteria |
 | `features.py` | Turns loaded server logs (`infra.loader.load_logs`) into one row of features per request |
 | `classify.py` | Extra Trees classifier with grouped cross-validation (a `run_id` is never split across train and test) and `predict_proba` output |
+
+## 1a: Member A agent runs
+
+Prepare one labelled combined 1a/2a run and print the task to paste into the agent:
+
+```sh
+docker compose run --rm --entrypoint python checks -m harness.agent_runs prepare \
+  --run-id a-codex-001 --agent codex-cli --model model-alias \
+  --persona persona-a1 --machine machine-a1 --network home \
+  --base-url https://site1.example.test
+```
+
+After running agents against the shared VM, privately compare the logged peers with the participant network's
+expected egress address. The report prints only `local`, `remote`, `mixed`, or `inconclusive` and aggregate counts:
+
+```sh
+docker compose run --rm --entrypoint python checks -m harness.agent_runs audit data/logs \
+  --expected-ip-file data/member-a-egress-ips.txt
+```
+
+The task visits the visible input page and requests a two-sentence submission for Track 2a. See
+[`member_a_1a_2a_protocol.md`](member_a_1a_2a_protocol.md) before collecting experimental traffic. Do not replace a
+failed built-in fetch with curl, a browser, or another tool, because that would measure a different client.
 
 ## Feature contract (used by Track 3b)
 

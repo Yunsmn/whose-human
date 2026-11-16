@@ -2,6 +2,25 @@
 
 Owner of 2b (API reference corpus): C. 2a (agent text): A. 2c (classifier): B. See `TEAM.md`.
 
+## 2a: Visible input page and agent text (`agent_text.py`)
+
+Member A runs 2a during the same controlled sessions as 1a. The fixed task sends the agent directly to a visible
+`input.html` page, asks for exactly two summary sentences, and requests submission through the form POST or the
+page's visible `submit?text=YOUR_SUMMARY` GET fallback. There is no hidden text or injected instruction.
+
+Audit every planned run and optionally export the private labelled text corpus:
+
+```sh
+docker compose run --rm --entrypoint python checks -m model.agent_text data/logs \
+  --manifest runs/a.csv \
+  --output data/corpus/agent/member-a-agent-text.csv
+```
+
+The terminal output contains only aggregate counts for POST submitted, GET submitted, fetched but not submitted,
+other observed traffic, and no observed request. The CSV contains the submitted text and ground-truth labels for
+2c; keep it in the gitignored `data/` directory or approved private storage. See
+[`harness/member_a_1a_2a_protocol.md`](../harness/member_a_1a_2a_protocol.md) for the complete collection protocol.
+
 ## 2b: API reference corpus (`api_corpus.py`)
 
 Sends the same page text and visible instruction that agents see on our input page (`infra/sites/<site>/input.html`) **directly to model APIs**, with no agent in between. The replies are the reference for H2: does an agent harness's system prompt shift the text enough to hurt a classifier trained on raw API output?
