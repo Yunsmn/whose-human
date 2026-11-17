@@ -39,6 +39,14 @@ python3 -m model.cli_corpus --max-requests 4
 
 Rows append to `data/corpus/cli/corpus-<YYYYMMDD>.jsonl` (gitignored). Claude Code's `--system-prompt` still prepends `You are a Claude agent, built on Anthropic's Claude Agent SDK.`, so its `minimal` condition is not raw API. Codex's `model_instructions_file` replaces its base instructions, while tool definitions and environment context remain; measured input usage was about 11.8k tokens in minimal versus 15.2k by default. Codex does not report the response model, and it sometimes takes an extra step (a command or other item) before answering; such rows have `stop_reason` `end_turn+<n>_items` and can be filtered out. Gemini is not wired yet.
 
+Which models a CLI can run depends on the login. A ChatGPT login without them rejects `gpt-6-astra` and `gpt-6.1-sol` (the row's `error` says `not supported when using Codex with a ChatGPT account`). Whoever has a login that offers them runs only those models:
+
+```sh
+python3 -m model.cli_corpus --models gpt-6-astra,gpt-6.1-sol
+```
+
+and shares the resulting `data/corpus/cli/corpus-<YYYYMMDD>.jsonl` with whoever trains 2c (it is gitignored, so not through the repo). Rows from several machines can sit in the same folder; resume skips rows that are already done, and failed rows are retried.
+
 2c can read these rows with `load_corpus("data/corpus/cli")` (`label_model` is the row's `name`), or use `predict.py` with `--id-column id`.
 
 The direct-API collector (`api_corpus.py`) below is kept as an alternative; `cli_corpus.py` is the one we use.

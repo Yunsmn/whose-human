@@ -264,3 +264,13 @@ def test_windows_claude_exe_path_uses_the_claude_parser(tmp_path):
     )
     row = json.loads(next(tmp_path.glob("*.jsonl")).read_text())
     assert result["m"]["errors"] == 0 and row["text"] == "answer" and row["error"] is None
+
+
+def test_failed_codex_exit_records_the_json_error():
+    stdout = json.dumps({"type": "turn.failed", "error": {"message": "model is not supported"}})
+
+    def runner(argv, cwd, timeout):
+        return subprocess.CompletedProcess(argv, 1, stdout, "Reading additional input from stdin...")
+
+    with pytest.raises(cli.CliError, match="status 1: .*model is not supported"):
+        cli._invoke(runner, ["codex"], None, 5, cli.parse_codex)
