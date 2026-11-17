@@ -116,6 +116,7 @@ def parse_claude(stdout: str) -> Reply:
 
 def parse_codex(stdout: str) -> Reply:
     thread_id = stop_reason = None
+    last_error = None
     text = None
     input_tokens = output_tokens = None
     extra_items = 0
@@ -130,7 +131,12 @@ def parse_codex(stdout: str) -> Reply:
         if event_type == "thread.started":
             thread_id = event.get("thread_id")
         elif event_type in {"error", "turn.failed"}:
-            raise CliError(str(event.get("message") or event.get("error") or event))
+            detail = event.get("error")
+            message = detail.get("message") if isinstance(detail, dict) else detail
+            message = message or event.get("message")
+            if event_type == "turn.failed":
+                raise CliError(str(message or last_error or event))
+            last_error = str(message or event)
         elif event_type == "item.completed":
             item = event.get("item") or {}
             if item.get("type") == "agent_message":
@@ -138,9 +144,12 @@ def parse_codex(stdout: str) -> Reply:
             else:
                 extra_items += 1
         elif event_type == "turn.completed":
+            last_error = None  # A successful retry can follow a reconnect diagnostic.
             usage = event.get("usage") or {}
             input_tokens = (input_tokens or 0) + (usage.get("input_tokens") or 0)
             output_tokens = (output_tokens or 0) + (usage.get("output_tokens") or 0)
+    if last_error:
+        raise CliError(last_error)
     if text is None:
         raise CliError("Codex returned no agent_message")
     # Non-message items (commands, reasoning, file reads) mean the reply was not a single plain answer.
