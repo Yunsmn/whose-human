@@ -69,7 +69,7 @@ def test_codex_command_variants_and_minimal_file(tmp_path):
     assert cli.codex_command("codex", "gpt", "prompt", tmp_path, "default") == base + ["prompt"]
     command = cli.codex_command("codex", "gpt", "prompt", tmp_path, "minimal")
     path = tmp_path / "minimal-system-prompt.txt"
-    assert command == base + ["-c", f'model_instructions_file="{path}"', "prompt"]
+    assert command == base + ["-c", f"model_instructions_file='{path}'", "prompt"]
     assert path.read_text() == cli.MINIMAL_SYSTEM_PROMPT
 
 
@@ -238,3 +238,29 @@ def test_parse_codex_flags_non_message_items():
     ]
     reply = cli.parse_codex("\n".join(json.dumps(event) for event in events))
     assert reply.text == "answer" and reply.stop_reason == "end_turn+1_items"
+
+
+def test_codex_minimal_path_is_a_toml_literal_string(tmp_path):
+    import tomllib
+
+    argv = cli.codex_command("codex", "m", "prompt", tmp_path, "minimal")
+    value = argv[argv.index("-c") + 1]
+    assert tomllib.loads(value)["model_instructions_file"] == str(tmp_path / "minimal-system-prompt.txt")
+    windows = "C:\\Users\\tester\\AppData\\Local\\Temp\\tmpab\\minimal-system-prompt.txt"
+    assert tomllib.loads(f"model_instructions_file='{windows}'")["model_instructions_file"] == windows
+
+
+def test_windows_claude_exe_path_uses_the_claude_parser(tmp_path):
+    runner = FakeRunner()
+    result = cli.run_collection(
+        [api_corpus.ModelSpec("m", "anthropic", "model", True)],
+        [api_corpus.Prompt("site1", "p1", "article\n\nSummarize")],
+        1,
+        ["default"],
+        tmp_path,
+        runner,
+        executable_map={"anthropic": "C:\\Users\\tester\\.local\\bin\\claude.EXE"},
+        version_map={"anthropic": "v"},
+    )
+    row = json.loads(next(tmp_path.glob("*.jsonl")).read_text())
+    assert result["m"]["errors"] == 0 and row["text"] == "answer" and row["error"] is None

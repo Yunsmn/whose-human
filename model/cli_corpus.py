@@ -84,7 +84,8 @@ def codex_command(executable: str, model: str, prompt: str, workdir: Path, condi
     if condition == "minimal":
         path = workdir / "minimal-system-prompt.txt"
         path.write_text(MINIMAL_SYSTEM_PROMPT, encoding="utf-8")
-        argv.extend(["-c", f'model_instructions_file="{path}"'])
+        # TOML literal string ('...'): Windows backslashes (C:\Users\...) are not escape sequences.
+        argv.extend(["-c", f"model_instructions_file='{path}'"])
     return [*argv, prompt]
 
 
@@ -152,7 +153,9 @@ def _stderr_tail(stderr: str) -> str:
     return f"; stderr: {tail}" if tail else ""
 
 
-def _invoke(runner: Runner, argv: list[str], workdir: Path, timeout: int) -> Reply:
+def _invoke(
+    runner: Runner, argv: list[str], workdir: Path, timeout: int, parse: Callable[[str], Reply]
+) -> Reply:
     try:
         result = runner(argv, workdir, timeout)
     except subprocess.TimeoutExpired as exc:
@@ -160,7 +163,7 @@ def _invoke(runner: Runner, argv: list[str], workdir: Path, timeout: int) -> Rep
     if result.returncode:
         raise CliError(f"CLI exited with status {result.returncode}{_stderr_tail(result.stderr or '')}")
     try:
-        return parse_claude(result.stdout) if Path(argv[0]).name == "claude" else parse_codex(result.stdout)
+        return parse(result.stdout)
     except CliError as exc:
         raise CliError(f"{exc}{_stderr_tail(result.stderr or '')}") from exc
 
@@ -238,12 +241,14 @@ def _collect_one(
     try:
         with tempfile.TemporaryDirectory() as temporary:
             workdir = Path(temporary)
-            message = cli_prompt(prompt).user_message
+            message = prompt.user_message
             if model.provider == "anthropic":
                 argv = claude_command(executable_map[model.provider], model.model, message, condition)
+                parse = parse_claude
             else:
                 argv = codex_command(executable_map[model.provider], model.model, message, workdir, condition)
-            reply = _invoke(runner, argv, workdir, timeout)
+                parse = parse_codex
+            reply = _invoke(runner, argv, workdir, timeout, parse)
         text, stop, response_model = reply.text, reply.stop_reason, reply.response_model
         input_tokens, output_tokens, raw_id = reply.input_tokens, reply.output_tokens, reply.raw_id
     except (CliError, OSError, KeyError) as exc:
@@ -284,6 +289,7 @@ def run_collection(
     timeout: int = 300,
     max_requests: int = 200,
 ) -> dict[str, dict[str, int]]:
+    """Run the plan; `prompts` must already be converted with `cli_prompt` (main does this)."""
     executable_map = executable_map or resolve_preflight(models)
     version_map = version_map or {p: cli_version(executable_map[p], runner) for p in executable_map}
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -336,8 +342,7 @@ def _dry_run(
     executables: dict[str, str],
 ) -> None:
     for prompt in prompts:
-        converted = cli_prompt(prompt)
-        print(f"{prompt.site} prompt_id={converted.prompt_id} message={converted.user_message}")
+        print(f"{prompt.site} prompt_id={prompt.prompt_id} message={prompt.user_message}")
     for provider, executable in executables.items():
         model = next(m for m in models if m.enabled and m.provider == provider)
         for condition in conditions:
@@ -375,7 +380,7 @@ def main(argv: list[str] | None = None, runner: Runner = _default_runner) -> int
             raise PreflightError("no enabled models selected")
         if not conditions or any(c not in {"default", "minimal"} for c in conditions):
             raise PreflightError("conditions must be default,minimal")
-        prompts = [cli_prompt(prompt) for prompt in build_prompts(args.sites.split(","))]
+        prompts = [cli_prompt(prompt) for prompt in build_prompts(args.sites.split(","))]  # converted once
         executables = resolve_preflight(models)
         if args.dry_run:
             _dry_run(models, prompts, args.samples or config.samples_per_prompt, conditions, executables)
