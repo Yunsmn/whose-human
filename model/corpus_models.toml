@@ -20,16 +20,41 @@ provider = "anthropic"
 model = "claude-haiku-5-5"
 enabled = true
 
-# Fill in the exact id from the provider's model list.
+# OpenAI: the three tiers 2c's classifier outputs. Needs OPENAI_API_KEY.
 [[models]]
-name = "openai-placeholder"
+name = "gpt-6-astra"
 provider = "openai"
+model = "gpt-6-astra"
+enabled = true
+
+[[models]]
+name = "gpt-6.1-sol"
+provider = "openai"
+model = "gpt-6.1-sol"
+enabled = true
+
+[[models]]
+name = "gpt-6-luna"
+provider = "openai"
+model = "gpt-6-luna"
+enabled = true
+
+# Gemini: added later if we get access (3.1 Pro, 3.8 Flash, 3.5 Flash-Lite).
+# Copy the exact ids from Google's model list, then set enabled = true.
+[[models]]
+name = "gemini-3.1-pro"
+provider = "google"
 model = "FILL_ME"
 enabled = false
 
-# Fill in the exact id from the provider's model list.
 [[models]]
-name = "gemini-placeholder"
+name = "gemini-3.8-flash"
+provider = "google"
+model = "FILL_ME"
+enabled = false
+
+[[models]]
+name = "gemini-3.5-flash-lite"
 provider = "google"
 model = "FILL_ME"
 enabled = false
