@@ -1,7 +1,8 @@
 """Run the Track 1b plain script baselines against our own partner sites.
 
-Each trial gets its own run id (``b-0001``, ``b-0002``, ...), which goes into the URL as
-``/r/<run_id>/`` and into one row of ``runs/b.csv`` with the label ``script_<stack>``. The
+Each trial gets its own run id (``b-0001``, ``b-0002``, ...; ``--member c`` gives ``c-0001``, ...),
+which goes into the URL as ``/r/<run_id>/`` and into one row of ``runs/<member>.csv`` with the label
+``script_<stack>``. The
 server logs the traffic; ``infra.loader.load_logs`` joins the labels later.
 
 The scripts run natively on this machine, never in Docker: the host's runtime and TLS library
@@ -34,13 +35,12 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = ROOT / "harness" / "baselines"
-MANIFEST = ROOT / "runs" / "b.csv"
+MEMBERS = ("a", "b", "c")
 MANIFEST_COLUMNS = ["run_id", "label_agent", "label_model", "label_user", "machine", "network", "notes"]
 DEFAULT_CA = ROOT / "data" / "certs" / "ca.pem"
 DEFAULT_URL_TEMPLATE = "https://{site}.test:8443/r/{run_id}/"
 DEFAULT_ALLOWED_HOSTS = ("site1.test", "site2.test", "localhost", "127.0.0.1")
 SUBMISSION_TEXT = "baseline script submission"
-RUN_ID_PATTERN = re.compile(r"^b-(\d+)$")
 TIMEOUT_SECONDS = 180
 
 
@@ -81,25 +81,26 @@ STACKS: dict[str, Stack] = {
 # ---------------------------------------------------------------- run ids and the manifest
 
 
-def next_run_number(manifest: Path) -> int:
-    """Return the next free number for ``b-<number>`` ids in the manifest."""
+def next_run_number(manifest: Path, member: str = "b") -> int:
+    """Return the next free number for ``<member>-<number>`` ids in the manifest."""
+    pattern = re.compile(rf"^{re.escape(member)}-(\d+)$")
     if not manifest.exists():
         return 1
     with manifest.open(encoding="utf-8", newline="") as stream:
         numbers = [
             int(match.group(1))
             for row in csv.DictReader(stream)
-            if (match := RUN_ID_PATTERN.match((row.get("run_id") or "").strip()))
+            if (match := pattern.match((row.get("run_id") or "").strip()))
         ]
     return max(numbers, default=0) + 1
 
 
-def format_run_id(number: int) -> str:
-    return f"b-{number:04d}"
+def format_run_id(number: int, member: str = "b") -> str:
+    return f"{member}-{number:04d}"
 
 
-def dev_run_id() -> str:
-    return f"dev-b-{secrets.token_hex(3)}"
+def dev_run_id(member: str = "b") -> str:
+    return f"dev-{member}-{secrets.token_hex(3)}"
 
 
 def append_manifest_row(manifest: Path, row: dict[str, str]) -> None:
@@ -331,16 +332,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--dev", action="store_true", help="use dev- run ids and write no manifest row")
     parser.add_argument("--user", default="baseline", help="label_user for these runs (default baseline)")
     parser.add_argument(
+        "--member",
+        choices=MEMBERS,
+        default="b",
+        help="who runs the baselines: sets the run id prefix and the default manifest (default b)",
+    )
+    parser.add_argument(
         "--machine",
-        default=f"b-{platform.system().lower()}",
-        help="short machine label, never a hostname",
+        default=None,
+        help="short machine label, never a hostname (default <member>-<os>)",
     )
     parser.add_argument("--network", default="local", help="one word: local, home, campus, mobile or vpn")
     parser.add_argument("--url-template", default=DEFAULT_URL_TEMPLATE)
     parser.add_argument("--ca", type=Path, default=DEFAULT_CA, help="CA certificate the stacks should trust")
     parser.add_argument("--gap", type=float, default=2.0, help="seconds between trials (default 2)")
     parser.add_argument("--seed", type=int, default=None, help="random seed for the trial order")
-    parser.add_argument("--manifest", type=Path, default=MANIFEST)
+    parser.add_argument("--manifest", type=Path, default=None, help="default runs/<member>.csv")
     parser.add_argument("--list", action="store_true", help="list stacks and their versions, then exit")
     parser.add_argument("--dry-run", action="store_true", help="print the plan and commands, run nothing")
     args = parser.parse_args(argv)
@@ -349,6 +356,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     unknown = [name for name in args.stacks if name != "all" and name not in STACKS]
     if unknown:
         parser.error(f"unknown stack(s): {', '.join(unknown)}")
+    if args.manifest is None:
+        args.manifest = ROOT / "runs" / f"{args.member}.csv"
+    if args.machine is None:
+        args.machine = f"{args.member}-{platform.system().lower()}"
     return args
 
 
@@ -400,10 +411,10 @@ def main(argv: list[str] | None = None) -> int:
     machine_os = os_description()
     print(f"{len(jobs)} trials, seed {seed}, {'dev' if args.dev else 'manifest ' + str(args.manifest)}")
 
-    number = next_run_number(args.manifest)
+    number = next_run_number(args.manifest, args.member)
     failures = 0
     for index, job in enumerate(jobs, 1):
-        run_id = dev_run_id() if args.dev else format_run_id(number)
+        run_id = dev_run_id(args.member) if args.dev else format_run_id(number, args.member)
         url = base_url(args.url_template, job.site, run_id, hosts)
         argv_list = commands(job.stack, url)
         prefix = f"[{index}/{len(jobs)}] {run_id} {job.stack.name} {job.site} trial {job.trial}"
