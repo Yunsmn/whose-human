@@ -26,6 +26,23 @@ ground-truth labels for 2c; keep it in the gitignored `data/` directory or appro
 
 Sends the same page text and visible instruction that agents see on our input page (`infra/sites/<site>/input.html`) **directly to model APIs**, with no agent in between. The replies are the reference for H2: does an agent harness's system prompt shift the text enough to hurt a classifier trained on raw API output?
 
+### Collecting through the CLIs
+
+`cli_corpus.py` collects reference text using the locally installed Claude Code and Codex CLIs. It uses the same six models as 2c's head, through the agents' own logins. It runs each model and prompt under two conditions: `default` keeps the CLI's own system prompt; `minimal` replaces it with `You are a helpful assistant.` This directly measures H2, the effect of the harness system prompt on generated text.
+
+The collector sends this exact visible instruction after each page article: `Summarize this page in two sentences. Reply with only your summary.` It must run natively on the host where the CLIs and their logins are installed, not in Docker. Start with a plan preview, then a small capped collection:
+
+```sh
+python3 -m model.cli_corpus --dry-run
+python3 -m model.cli_corpus --max-requests 4
+```
+
+Rows append to `data/corpus/cli/corpus-<YYYYMMDD>.jsonl` (gitignored). Claude Code's `--system-prompt` still prepends `You are a Claude agent, built on Anthropic's Claude Agent SDK.`, so its `minimal` condition is not raw API. Codex's `model_instructions_file` replaces its base instructions, while tool definitions and environment context remain; measured input usage was about 11.8k tokens in minimal versus 15.2k by default. Codex does not report the response model, and it sometimes takes an extra step (a command or other item) before answering; such rows have `stop_reason` `end_turn+<n>_items` and can be filtered out. Gemini is not wired yet.
+
+2c can read these rows with `load_corpus("data/corpus/cli")` (`label_model` is the row's `name`), or use `predict.py` with `--id-column id`.
+
+The direct-API collector (`api_corpus.py`) below is kept as an alternative; `cli_corpus.py` is the one we use.
+
 Design choices, so the corpus stays a clean reference:
 
 - **The prompt is read from the live page.** If A edits a page, the prompt (and its `prompt_id`, a hash of the text) changes with it.
