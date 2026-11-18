@@ -64,6 +64,7 @@ python -m harness.baselines.run_baselines                     # real run: 30 tri
 - **Order:** every (stack, site, trial) is shuffled with a recorded seed, and runs one at a time with a 2 second gap (`--gap`).
 - **Only our servers:** the runner refuses any host outside `site1.test`, `site2.test`, `localhost` and `127.0.0.1`. Add the shared VM's hostnames with `WH_ALLOWED_HOSTS=host1,host2` and `--url-template`.
 - **Failures:** a failed trial still gets its manifest row, with its exit code in `notes`, so any records it left stay labelled. Check the output before handing data to C.
+- **Another member running them:** `--member c` (or `a`) numbers runs `c-0001`, ... and writes them to `runs/c.csv`, with machine label `c-<os>`, so ids never clash with B's.
 - Options: `--stacks`, `--sites`, `--trials`, `--machine` (a short label, never a hostname), `--network`, `--seed`.
 
 ## Known issue: curl on Windows

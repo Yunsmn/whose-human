@@ -162,3 +162,16 @@ def test_dry_run_writes_no_manifest_row(tmp_path, capsys):
 def test_unknown_stack_is_rejected():
     with pytest.raises(SystemExit):
         rb.parse_args(["--stacks", "wget"])
+
+
+def test_member_sets_run_id_prefix_manifest_and_machine(tmp_path):
+    manifest = tmp_path / "c.csv"
+    manifest.write_text("run_id,label_agent\nc-0004,x\nb-0009,y\n", encoding="utf-8")
+    assert rb.next_run_number(manifest, "c") == 5
+    assert rb.format_run_id(5, "c") == "c-0005"
+    assert rb.dev_run_id("c").startswith("dev-c-")
+    args = rb.parse_args(["--member", "c"])
+    assert args.manifest == rb.ROOT / "runs" / "c.csv"
+    assert args.machine.startswith("c-")
+    default = rb.parse_args([])
+    assert default.manifest == rb.ROOT / "runs" / "b.csv" and default.machine.startswith("b-")
