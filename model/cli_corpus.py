@@ -161,7 +161,13 @@ def _invoke(
     except subprocess.TimeoutExpired as exc:
         raise CliError(f"timed out after {timeout}s") from exc
     if result.returncode:
-        raise CliError(f"CLI exited with status {result.returncode}{_stderr_tail(result.stderr or '')}")
+        # Codex reports the real reason (e.g. an unsupported model) as a JSON event on stdout.
+        reason = f"CLI exited with status {result.returncode}"
+        try:
+            parse(result.stdout)
+        except CliError as exc:
+            reason = f"{reason}: {exc}"
+        raise CliError(f"{reason}{_stderr_tail(result.stderr or '')}")
     try:
         return parse(result.stdout)
     except CliError as exc:
