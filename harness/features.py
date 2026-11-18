@@ -296,14 +296,16 @@ def _timing_features(rows: pd.DataFrame) -> list[dict]:
     gap_by_pos = dict(zip(ordered["_position"], gaps, strict=True))
     # Run-level values, repeated on every request of the run: they use the whole run, so they suit
     # scoring a finished run rather than a single request as it arrives.
-    run_max_gap = gaps.groupby(ordered["run_id"], dropna=False).transform("max")
+    run_max_gap = gaps.groupby(ordered["run_id"]).transform("max")
     max_gap_by_pos = dict(zip(ordered["_position"], run_max_gap, strict=True))
     is_submit = (
-        ordered["path"].astype(str).str.contains("/submit", regex=False) if "path" in ordered else None
+        ordered["path"].astype("string").str.fullmatch(r"(?:/r/[^/?]+)?/submit(?:\?.*)?", na=False)
+        if "path" in ordered
+        else None
     )
     submit_wait = {}
     if is_submit is not None:
-        for run_id, group in ordered.assign(_gap=gaps, _submit=is_submit).groupby("run_id", dropna=False):
+        for run_id, group in ordered.assign(_gap=gaps, _submit=is_submit).groupby("run_id"):
             first = group[group["_submit"]].head(1)
             submit_wait[run_id] = first["_gap"].iloc[0] if not first.empty else None
     for position, (_, row) in enumerate(valid.iterrows()):
