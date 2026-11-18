@@ -27,20 +27,30 @@ Next:
 
 ### H1, step 2: Claude Code and Codex on the same Linux machine
 Date: 2026-11-18
-Run ids: c-claude-h-001, c-claude-h-002, c-claude-i-001, c-codex-h-001, c-codex-i-001, c-claude-{wf,sh}-site{1,2}-00{1,2,3} (runs/c.csv)
+Run ids: 17 agent ids in runs/c.csv: c-claude-h-001, c-claude-h-002, c-claude-i-001, c-codex-h-001, c-codex-i-001, c-claude-{wf,sh}-site{1,2}-00{1,2,3}
 Setup:
 - Same machine as the 1b baselines (C, Linux). Claude Code 2.1.327 (claude-opus-5-5), Codex CLI 0.167.1 (gpt-6-luna). Fixed visible task from `harness.agent_runs`, fresh session each run, run from an empty folder outside the repo.
-- Interactive (user's own settings) vs headless. Headless Claude Code ran in two tool conditions: WebFetch only (`--allowedTools WebFetch --disallowedTools Bash`) and WebFetch plus Bash (`--allowedTools WebFetch Bash`), 3 runs per condition per site, shuffled. Codex headless used `--sandbox danger-full-access`.
-- c-claude-i-001 holds two interactive sessions (WebFetch, then told to use curl); see its notes.
+- 18 agent sessions under 17 ids: `c-claude-i-001` holds two interactive sessions, a natural one (WebFetch) and a second one explicitly told to use curl. The directed session is excluded from every tool-choice count and timing figure below; analyses grouped by run id must drop `c-claude-i-001` or split it by User-Agent (WebFetch vs curl).
+- Interactive sessions used the user's own settings (Claude Code in auto permission mode, Codex in its default sandbox). Headless Claude Code ran in two tool conditions, 3 runs per condition per site in shuffled order: WebFetch only (`--allowedTools WebFetch --disallowedTools Bash`) and WebFetch plus Bash (`--allowedTools WebFetch Bash`); plus c-claude-h-001 (WebFetch and Bash) and c-claude-h-002 (WebFetch only). Codex headless used `--sandbox danger-full-access`.
 Result:
-- The tool decides the fingerprint, not the mode. WebFetch headless and WebFetch interactive gave identical requests in every logged field.
-- WebFetch (8 runs, 16 requests): one variant. HTTP/1.1, User-Agent `Claude-User (claude-code/2.1.327; +https://support.anthropic.com/)`, Accept `text/markdown, text/html, */*`, JA4 `t13d181000_...`. Header order and Accept-Encoding equal axios's defaults, but the JA4 matches none of the Node baselines (`t13d521100_...`), so even without the User-Agent TLS separates it from a plain axios script. It always submits through the visible GET fallback. Claude Code also runs Haiku on the fetched page (both models in its usage).
-- Shell allowed: 5 of 6 runs used curl only, 1 fetched with WebFetch and submitted with curl. Agent curl is identical to the `script_curl` baseline in JA4, JA3, HTTP/2 fingerprint, ALPN, header order and User-Agent. Only the request body format varied (form-urlencoded or multipart, the command Claude wrote); Codex's curl added a Cookie header.
-- Interactive Claude Code in the user's auto permission mode blocked `curl -sk` and fell back to WebFetch. Interactive Codex in its default sandbox used its web tool, which never reached the local `.test` site: no request was logged, consistent with Codex web browsing running on OpenAI's side.
-- Timing: agents took 3 to 13 s between page fetch and submit (WebFetch 8 to 13 s, curl about 3 s); the 4-request curl script took 0.16 s in total.
-Conclusion: supported when the agent shells out (agent curl is indistinguishable from curl at the TLS and header layers); rejected for Claude Code's WebFetch (it names itself and has its own TLS fingerprint). Which case a site sees depends on the user's permission settings.
+- Tool choice (natural sessions only):
+  - WebFetch only: 7 of 7 headless runs used WebFetch.
+  - WebFetch and Bash allowed: 6 of 7 headless runs fetched with curl (c-claude-h-001 and 5 of the 6 `sh` runs); c-claude-sh-site1-001 fetched with WebFetch and submitted with curl.
+  - Interactive Claude Code (auto mode): its `curl -sk` attempt was blocked, and it used WebFetch.
+  - Interactive Codex (default sandbox): used its web tool; no request reached the local `.test` site.
+  - Codex headless: curl.
+- WebFetch (9 sessions with WebFetch requests): one variant of every logged field. HTTP/1.1, User-Agent `Claude-User (claude-code/2.1.327; +https://support.anthropic.com/)`, Accept `text/markdown, text/html, */*`, JA4 `t13d181000_...`. Header order and Accept-Encoding equal axios's defaults, but the JA4 matches none of the Node baselines (`t13d521100_...`). It always submitted through the visible GET fallback. The headless and interactive WebFetch requests were identical in every logged field. Claude Code also runs Haiku on the fetched page (both models in its usage).
+- Agent curl vs `script_curl`, per field:
+  - GET (page fetch): JA4, JA3, HTTP/2 fingerprint, ALPN, HTTP version, header order, User-Agent `curl/8.23.0` and Accept all matched in every agent curl request.
+  - POST (submit): TLS and HTTP/2 fields, User-Agent and Accept matched. Two differences: in 5 Claude Code runs (c-claude-h-001, c-claude-sh-site1-002, -003, c-claude-sh-site2-001, -003) the body was `multipart/form-data` instead of `application/x-www-form-urlencoded` (the curl command Claude wrote); Codex's POST (c-codex-h-001) added a `Cookie` header, giving the order `user-agent, accept, content-type, content-length, cookie`.
+- Timing, same endpoints on both sides (first `input.html` request to the first `submit` request of the run):
+  - all 1b scripts: median 0.005 s, max 0.056 s (722 runs); `script_curl`: median 0.037 s, max 0.056 s (60 runs);
+  - Claude Code with curl: median 3.21 s, range 3.12 to 3.63 s (6 runs);
+  - Claude Code with WebFetch: median 8.83 s, range 7.92 to 12.94 s (8 headless runs);
+  - Codex headless: 5.21 s (1 run).
+Conclusion: for agents that shell out, supported at the TLS and HTTP/2 layers; at the header layer the page fetch matched exactly, and the submit differed only by command choices (multipart body, an added Cookie header). Rejected for Claude Code's WebFetch, which names itself and has its own JA4. On this Linux setup, headless and interactive sessions that use the same tool produce the same fingerprint; whether they choose the same tool under other permission settings is open.
 Next:
-- Headless runs with an explicit tool allowlist are a faithful, cheaper substitute for interactive runs; use them for the larger collection.
+- Headless runs with an explicit tool allowlist reproduce a tool's fingerprint, so use them for the larger collection, and report the allowlist with each condition.
 - A (Codex is A's main agent): Codex interactive and headless runs on A's machine; the web tool needs the shared VM with a real domain to be observed at all.
 - Repeat on Windows, where curl uses Schannel.
 
