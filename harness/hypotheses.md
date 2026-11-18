@@ -20,7 +20,7 @@ Result:
 - TLS only: accuracy 0.583, macro F1 0.477. All errors are within those shared-JA4 groups.
 - HTTP and HTTP/2 only: 1.000. The User-Agent alone also gives 1.000, because these scripts send library defaults.
 - HTTP without the User-Agent columns: accuracy 0.917, macro F1 0.889. The only remaining confusion is axios 1.8.4 vs axios 1.21.1 (same library, two versions); header order and set separate everything else, including Go net/http vs Colly.
-Conclusion: inconclusive for H1 (no agent traffic yet), but the premise holds: on one machine the TLS layer identifies the runtime, not the library or tool. Supports the H2 direction: headers separate stacks even without the User-Agent.
+Conclusion: inconclusive for H1 (no agent traffic yet), but the premise holds: on one machine the TLS layer mostly identifies the runtime (the Node stacks built on node https share one JA4, Go and Colly share one), not the tool; Python stacks split into three JA4s. Supports the H2 direction: headers separate stacks even without the User-Agent.
 Next:
 - Run Claude Code and Codex on the same Linux machine (c- run ids) and compare them with these baselines, with and without the User-Agent.
 - Repeat on Windows with A's agent runs and B's baselines.
