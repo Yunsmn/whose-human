@@ -55,4 +55,24 @@ Next:
 - Repeat on Windows, where curl uses Schannel.
 
 ## H2: Header order, header set and request timing separate them anyway.
-Status: open
+Status: open (first result below, one Linux machine)
+
+Date: 2026-11-18
+Run ids: c-0001..c-0722 (1b scripts) and the 15 Claude Code ids from H1 step 2. The directed curl session in c-claude-i-001 is dropped (its 2 curl requests); its natural WebFetch session is kept. Codex is left out (1 run with traffic).
+Setup:
+- 1c Extra Trees, grouped 5-fold cross-validation by run_id; 13 classes (claude-code + 12 script stacks), 2,888 script requests and 30 Claude Code requests (17 WebFetch, 13 curl).
+- New run-level timing features in `harness/features.py`: `run_max_gap_s` (slowest gap between consecutive requests of the run) and `run_submit_wait_s` (gap before the run's first `/submit`). They use the whole run, so they score a finished run, not a request as it arrives.
+- Run-count features (`run_n_requests`, `run_n_conns`) and body length are not used: the scripts make 4 requests with a fixed text by design.
+Result:
+- Per request, share of Claude Code requests labelled claude-code (WebFetch / curl), and macro F1 over 13 classes:
+  - TLS only: 1.00 / 0.00, macro F1 0.519. Every curl request was labelled `script_curl`.
+  - TLS + HTTP + HTTP/2: 1.00 / 0.00, macro F1 0.963.
+  - TLS + HTTP without User-Agent: 1.00 / 0.00, macro F1 0.861.
+  - plus the per-request gap: 1.00 / 0.46, macro F1 0.909. The first request of a run has no gap.
+  - plus the run-level timing features: 1.00 / 1.00, macro F1 0.934, and no script request labelled claude-code. The rest of the error is axios 1.8.4 vs 1.21.1 without the User-Agent.
+- Claude Code's curl vs `script_curl` only (7 vs 60 runs): TLS only macro F1 0.211; TLS + HTTP 0.497; run-level timing alone 1.000.
+- Per run, slowest gap: scripts 0.008 to 0.105 s (722 runs); Claude Code with curl 3.1 to 3.6 s (6), with WebFetch 7.9 to 16.2 s (8), both tools 10.7 s (1). A 1 s threshold flags 15 of 15 Claude Code runs and 0 of 722 script runs.
+Conclusion: supported on this machine, through timing rather than headers. Header order and set do not separate Claude Code's curl from plain curl (they only separate script stacks from each other); the model's pause before submitting does, once the whole run is scored. The threshold was chosen after seeing the data, with 15 agent runs. The scripts are fast by construction, and a person typing curl took 136 s, so this separates an LLM in the loop from an automated script, not an agent from a human.
+Next:
+- Repeat on A's and B's machines and on the VM, with more agent runs.
+- Add human-typed runs as a class, to test agent vs human timing.
