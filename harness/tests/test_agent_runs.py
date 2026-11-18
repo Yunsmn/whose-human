@@ -160,5 +160,11 @@ def test_other_members_run_ids_go_to_their_own_manifest(tmp_path, monkeypatch, c
     assert agent_runs.main(argv) == 0
     assert (tmp_path / "runs" / "c.csv").read_text().count("c-claude-001") == 1
     assert not (tmp_path / "runs" / "a.csv").exists()
+    argv[2] = ""
+    with pytest.raises(SystemExit) as exc:
+        agent_runs.main(argv)
+    assert exc.value.code == 2
+    assert "member letter" in capsys.readouterr().err
+    assert not (tmp_path / "runs" / ".csv").exists()
     with pytest.raises(ValueError, match="member letter"):
         agent_runs.validate_run(agent_runs.AgentRun("d-x", "a", "m", "p", "m", "n", "https://site1.test"))

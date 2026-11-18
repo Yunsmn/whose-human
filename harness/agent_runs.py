@@ -199,7 +199,7 @@ def _prepare(args: argparse.Namespace) -> int:
         base_url=args.base_url,
         notes=args.notes,
     )
-    manifest = args.manifest or f"runs/{run.run_id[0]}.csv"
+    manifest = args.manifest or f"runs/{run.run_id[:1]}.csv"
     append_manifest(manifest, run)
     print(f"Recorded {run.run_id} in {manifest}")
     print(fixed_fetch_prompt(run.target_url))
