@@ -267,10 +267,32 @@ def test_windows_claude_exe_path_uses_the_claude_parser(tmp_path):
 
 
 def test_failed_codex_exit_records_the_json_error():
-    stdout = json.dumps({"type": "turn.failed", "error": {"message": "model is not supported"}})
+    events = [
+        {"type": "error", "message": "Reconnecting... 1/5"},
+        {"type": "turn.failed", "error": {"message": "model is not supported"}},
+    ]
+    stdout = "\n".join(map(json.dumps, events))
 
     def runner(argv, cwd, timeout):
         return subprocess.CompletedProcess(argv, 1, stdout, "Reading additional input from stdin...")
 
-    with pytest.raises(cli.CliError, match="status 1: .*model is not supported"):
+    with pytest.raises(cli.CliError) as exc:
         cli._invoke(runner, ["codex"], None, 5, cli.parse_codex)
+    assert (
+        str(exc.value)
+        == "CLI exited with status 1: model is not supported; stderr: Reading additional input from stdin..."
+    )
+
+
+def test_codex_reconnect_without_terminal_failure():
+    retry = '{"type":"error","message":"Reconnecting... 1/5"}'
+    with pytest.raises(cli.CliError, match="Reconnecting"):
+        cli.parse_codex(retry)
+    stdout = "\n".join(
+        [
+            retry,
+            '{"type":"item.completed","item":{"type":"agent_message","text":"ok"}}',
+            '{"type":"turn.completed"}',
+        ]
+    )
+    assert cli.parse_codex(stdout).text == "ok"
