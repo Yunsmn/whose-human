@@ -42,7 +42,7 @@ def test_manifest_writes_one_unique_member_a_run(tmp_path):
 @pytest.mark.parametrize(
     "changes, message",
     [
-        ({"run_id": "b-wrong"}, "must start"),
+        ({"run_id": "d-wrong"}, "member letter"),
         ({"agent": ""}, "agent must not be empty"),
         ({"base_url": "http://site1.example.test"}, "HTTPS origin"),
         ({"base_url": "https://site1.example.test/?x=1"}, "without a query"),
@@ -133,3 +133,32 @@ def test_locality_summary_counts_runs_by_agent():
 
     assert summary.loc[("codex", "local"), "runs"] == 2
     assert summary.loc[("cline", "remote"), "runs"] == 1
+
+
+def test_other_members_run_ids_go_to_their_own_manifest(tmp_path, monkeypatch, capsys):
+    from harness import agent_runs
+
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "runs").mkdir()
+    argv = [
+        "prepare",
+        "--run-id",
+        "c-claude-001",
+        "--agent",
+        "claude-code",
+        "--model",
+        "m",
+        "--persona",
+        "persona-c1",
+        "--machine",
+        "c-linux",
+        "--network",
+        "local",
+        "--base-url",
+        "https://site1.test:8443",
+    ]
+    assert agent_runs.main(argv) == 0
+    assert (tmp_path / "runs" / "c.csv").read_text().count("c-claude-001") == 1
+    assert not (tmp_path / "runs" / "a.csv").exists()
+    with pytest.raises(ValueError, match="member letter"):
+        agent_runs.validate_run(agent_runs.AgentRun("d-x", "a", "m", "p", "m", "n", "https://site1.test"))
