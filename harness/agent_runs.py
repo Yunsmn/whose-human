@@ -29,7 +29,7 @@ MANIFEST_FIELDS = [
     "network",
     "notes",
 ]
-RUN_ID = re.compile(r"^a-[a-z0-9][a-z0-9-]*$")
+RUN_ID = re.compile(r"^[abc]-[a-z0-9][a-z0-9-]*$")
 LOCAL_SOURCE_PREFIXES = ("local-", "dev-")
 REPORT_COLUMNS = [
     "run_id",
@@ -72,7 +72,10 @@ class AgentRun:
 
 def validate_run(run: AgentRun) -> None:
     if not RUN_ID.fullmatch(run.run_id):
-        raise ValueError("run_id must start with 'a-' and contain lowercase letters, digits, or hyphens")
+        raise ValueError(
+            "run_id must start with a member letter ('a-', 'b-' or 'c-') "
+            "and contain lowercase letters, digits, or hyphens"
+        )
     for field in ("agent", "model", "persona", "machine", "network"):
         if not getattr(run, field).strip():
             raise ValueError(f"{field} must not be empty")
@@ -196,8 +199,9 @@ def _prepare(args: argparse.Namespace) -> int:
         base_url=args.base_url,
         notes=args.notes,
     )
-    append_manifest(args.manifest, run)
-    print(f"Recorded {run.run_id} in {args.manifest}")
+    manifest = args.manifest or f"runs/{run.run_id[:1]}.csv"
+    append_manifest(manifest, run)
+    print(f"Recorded {run.run_id} in {manifest}")
     print(fixed_fetch_prompt(run.target_url))
     return 0
 
@@ -226,7 +230,7 @@ def parser() -> argparse.ArgumentParser:
     prepare.add_argument("--network", required=True)
     prepare.add_argument("--base-url", required=True, help="instrumented HTTPS origin")
     prepare.add_argument("--notes", default="")
-    prepare.add_argument("--manifest", default="runs/a.csv")
+    prepare.add_argument("--manifest", default=None, help="default runs/<member>.csv from the run id")
     prepare.set_defaults(handler=_prepare)
 
     audit = commands.add_parser("audit", help="compare logged peers with private expected addresses")
