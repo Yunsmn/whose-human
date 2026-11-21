@@ -26,7 +26,7 @@ In scope: agents that execute locally and fetch pages from the user's machine (c
 
 Out of scope: chat assistants such as claude.ai and chatgpt.com. Their URL fetches run on the provider's servers and carry nothing about the user (Borysenko 2026 observed server side fetches, with Claude's backend even using separate IPs for parallel requests).
 
-Unverified assumption to test early: that Claude Code's web fetch runs locally (Borysenko saw an `axios/1.8.4` User-Agent, consistent with a local Node client, but marked this as interpretation). Codex CLI was not measured by Borysenko. Our understanding is that Codex web search may go through OpenAI's servers while shell commands like curl run locally. Confirm both by checking whether the logged client IP matches the user's machine.
+Locality, first checked on 2026-11-18 on one Linux machine (`harness/hypotheses.md`, H1 step 2): Claude Code's WebFetch runs locally (it reached our local `.test` site; version 2.1.327 sends `Claude-User (claude-code/<version>; ...)`, not Borysenko's `axios/1.8.4`). Codex CLI's web tool, in its default sandbox, never reached the local site, consistent with fetching from OpenAI's servers; shell commands such as curl run locally for both agents. Still to confirm on the shared VM by checking whether the logged client IP matches the user's machine.
 
 ## Ethics and safety rules (hard rules)
 
@@ -34,15 +34,15 @@ Unverified assumption to test early: that Claude Code's web fetch runs locally (
 - No hidden text, no injected instructions, no prompt injection of any kind. Pages ask for input in plain visible text (for example "summarize this page in two sentences and submit it in this field").
 - This visible request deliberately models what a malicious site could achieve with hidden prompt injection, in a safe and lawful way. Do not "improve" it into a hidden or coercive version.
 - Participants are team members or volunteers who consent. They use fictitious personas and no real personal data.
-- Do not commit raw logs containing real IP addresses to the public repo. Keep data in the gitignored `data/` folder or in private storage.
+- Never commit raw logs or IP addresses to this repo. Raw data lives in the gitignored `data/` folder, which is a clone of the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs).
 
 ## Key findings from the literature
 
 **Borysenko 2026, "Developer Experience with AI Coding Agents: HTTP Behavioral Signatures in Documentation Portals"** (arXiv:2604.02544)
-Measured nine coding agents. Signatures (User-Agent, headers, pre-fetch behavior) were stable across trials. Most agents use generic HTTP runtimes: Claude Code (Node/axios), Cursor (Node/got), Cline and Junie (curl), Windsurf (Go/Colly), Antigravity (Go net/http). Only Aider and GitHub Copilot name themselves. 1 to 4 requests per prompt. Logged client IPs but never analyzed them. Did not include Codex CLI.
+Measured nine coding agents. Signatures (User-Agent, headers, pre-fetch behavior) were stable across trials. Most agents use generic HTTP runtimes: Claude Code (Node/axios), Cursor (Node/got), Cline and Junie (curl), Windsurf (Go/Colly), Antigravity (Go net/http). Only Aider and GitHub Copilot name themselves. 1 to 4 requests per prompt. Logged client IPs but never analyzed them. Did not include Codex CLI. The anonymised headers (no TLS, 3 trials) are published under Apache 2.0: https://github.com/oborys/AI-Agents-HTTP-level-behaviour
 
 **Kang et al. 2026, "Whose Agent Are You? Multi-Layer Fingerprinting and Attribution of Autonomous Web Agents"** (arXiv:2606.20910)
-Framework MARK: https://github.com/SPIN-UMass/AI-agent-fingerprint (only the analysis scripts and a prebuilt server binary are published; the server source is not, so we built our own logger in `infra/server/`). Go service on fingerproxy that logs raw TLS ClientHello (JA3, JA4), HTTP/2 Akamai fingerprint, headers and browser events to JSONL. Six web agents (not coding agents, which they explicitly exclude). Extra Trees classifier, 97% accuracy combined; no single layer suffices. Claude and Gemini near identical at TLS and HTTP. Combined features exceed 60% macro F1 after 3 requests; timing features are useless with few requests. Traditional crawlers (no JavaScript) had stable, distinct TLS fingerprints, which is what we expect coding agents to look like. Goal was content protection; they deliberately avoided logging participant IPs, so user linking is untouched. Their prompt told agents to use synthetic inputs, and they did not classify agent text.
+Framework MARK: https://github.com/SPIN-UMass/AI-agent-fingerprint (we built our own logger in `infra/server/` while only the analysis scripts and a server binary were published; the repo now also has the server source and the raw request logs of 6 agents, humans and 3 crawlers, 30 trials each, with real IPs and no licence file). Go service on fingerproxy that logs raw TLS ClientHello (JA3, JA4), HTTP/2 Akamai fingerprint, headers and browser events to JSONL. Six web agents (not coding agents, which they explicitly exclude). Extra Trees classifier, 97% accuracy combined; no single layer suffices. Claude and Gemini near identical at TLS and HTTP. Combined features exceed 60% macro F1 after 3 requests; timing features are useless with few requests. Traditional crawlers (no JavaScript) had stable, distinct TLS fingerprints, which is what we expect coding agents to look like. Goal was content protection; they deliberately avoided logging participant IPs, so user linking is untouched. Their prompt told agents to use synthetic inputs, and they did not classify agent text.
 
 **Lugoloobi et al. 2026, "Known By Their Actions: Fingerprinting LLM Browser Agents via UI Traces"** (arXiv:2605.14786)
 Identifies which of 14 LLMs drives a browser agent from click, scroll, key and timing traces (up to 96% F1). Needs rich interaction traces, which coding agents do not produce, so this approach does not transfer to our setting. Fingerprints are site conditioned (poor transfer across sites). Retraining on delayed traces recovers accuracy, so simple timing defenses fail.
@@ -94,7 +94,7 @@ Dockerfile, docker-compose.yml   the server, cert generation and checks run in D
 harness/        track 1: harness identification
 model/          track 2: model identification from agent text
 linking/        track 3: user linking across agents and sites
-data/           gitignored; raw logs and datasets
+data/           gitignored; a clone of the private whose-human-runs repo (raw logs, corpora)
 paper/          LaTeX for the final paper
 ```
 

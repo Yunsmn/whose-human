@@ -2,7 +2,7 @@
 
 Status: **v1**. Changes only by a pull request the whole team reviews.
 
-The server (`infra/server`) appends one JSON object per line to `data/logs/<source>-<YYYYMMDD>.jsonl`. Raw logs contain participant IP addresses: they stay in the gitignored `data/` folder or private storage and are never committed.
+The server (`infra/server`) appends one JSON object per line to `data/logs/<source>-<YYYYMMDD>.jsonl`. Raw logs contain participant IP addresses: they stay in the gitignored `data/` folder (a clone of the private `whose-human-runs` repo) and are never committed here.
 
 ## Record kinds
 

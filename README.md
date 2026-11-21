@@ -22,7 +22,7 @@ Given requests that cooperating websites collect passively from agent sessions, 
 - Tracking happens **only on our own instrumented test sites**. No third party sites are probed or scraped.
 - **No hidden text or prompt injection.** Pages ask for input in plain visible text.
 - Participants are consenting team members or volunteers using fictitious personas.
-- Raw logs (which contain IP addresses) are **never committed**; they live in the gitignored `data/` folder or private storage.
+- Raw logs (which contain IP addresses) are **never committed** here; they live in the gitignored `data/` folder, a clone of the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs).
 
 ## Repository layout
 
@@ -32,7 +32,7 @@ runs/       run manifests, one CSV per member
 harness/    track 1: harness identification
 model/      track 2: model identification from agent text
 linking/    track 3: user linking across agents and sites
-data/       gitignored; raw logs and datasets
+data/       gitignored; a clone of the private whose-human-runs repo (raw logs, corpora)
 paper/      LaTeX for the final paper
 ```
 
