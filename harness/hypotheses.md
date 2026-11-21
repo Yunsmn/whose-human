@@ -9,8 +9,8 @@ Date: 2026-11-18
 Run ids: c-0001..c-0722 (runs/c.csv)
 Setup:
 - 12 plain script stacks (1b) on one Linux machine (C): Node 26 (axios 1.8.4, axios 1.21.1, got, node https, node fetch), Python 3.14 (requests, httpx, aiohttp, urllib), curl 8.23 / OpenSSL 4.1, Go (net/http, Colly).
-- 2 sites, 30 trials each (httpx and requests 31), 4 requests per run: 2,888 requests, all status 200.
-- 1c Extra Trees, 5-fold cross-validation grouped by run_id, one label per stack.
+- 2 sites, 30 trials per stack per site (31 for httpx on site2 and for requests on site1, from a restarted run), 4 requests per run: 2,888 requests, all status 200.
+- 1c Extra Trees, 5-fold cross-validation grouped by run_id, one label per stack. TLS only, and HTTP and HTTP/2 only, are the standard sets of `python -m harness.classify`. "HTTP without the User-Agent" and "User-Agent alone" use the same model and splits on custom column sets that `harness.classify` does not have: the `http` and `h2` columns minus `http_ua`, `http_ua_family` and `http_ua_version`, and those three columns alone.
 Result:
 - Every stack kept one JA4 across all its runs. The 12 stacks share 7 JA4s:
   - axios 1.8.4, axios 1.21.1, got and node https: one JA4;
