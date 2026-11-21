@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"whose-human/baselines/internal/think"
 )
 
 func status(resp *http.Response, err error) int {
@@ -32,19 +34,27 @@ func main() {
 	if !strings.HasSuffix(base, "/") {
 		base += "/"
 	}
+	think.Check()
 	steps := []struct {
 		name string
-		code int
+		do   func() int
 	}{
-		{"GET index.html", status(http.Get(base + "index.html"))},
-		{"GET input.html", status(http.Get(base + "input.html"))},
-		{"GET submit", status(http.Get(base + "submit?" + url.Values{"text": {text}}.Encode()))},
-		{"POST submit", status(http.PostForm(base+"submit", url.Values{"text": {text}}))},
+		{"GET index.html", func() int { return status(http.Get(base + "index.html")) }},
+		{"GET input.html", func() int { return status(http.Get(base + "input.html")) }},
+		{"GET submit", func() int { return status(http.Get(base + "submit?" + url.Values{"text": {text}}.Encode())) }},
+		{"POST submit", func() int { return status(http.PostForm(base+"submit", url.Values{"text": {text}})) }},
+	}
+	codes := make([]int, len(steps))
+	for i, step := range steps {
+		if i > 0 {
+			think.Pause()
+		}
+		codes[i] = step.do()
 	}
 	failed := false
-	for _, step := range steps {
-		fmt.Println(step.name, step.code)
-		if step.code != 200 {
+	for i, step := range steps {
+		fmt.Println(step.name, codes[i])
+		if codes[i] != 200 {
 			failed = true
 		}
 	}
