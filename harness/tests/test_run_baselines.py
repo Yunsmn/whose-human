@@ -175,3 +175,39 @@ def test_member_sets_run_id_prefix_manifest_and_machine(tmp_path):
     assert args.machine.startswith("c-")
     default = rb.parse_args([])
     assert default.manifest == rb.ROOT / "runs" / "b.csv" and default.machine.startswith("b-")
+
+
+def test_think_time_is_validated_and_normalized():
+    assert rb.parse_think_time(None) == ""
+    assert rb.parse_think_time("") == ""
+    assert rb.parse_think_time("0") == ""
+    assert rb.parse_think_time("3") == "3"
+    assert rb.parse_think_time(" 2.5-6.0 ") == "2.5-6"
+    assert rb.parse_think_time("4-4") == "4"
+    for bad in ("x", "6-2", "-1", "1-", f"1-{rb.MAX_THINK_SECONDS + 1}"):
+        with pytest.raises(ValueError):
+            rb.parse_think_time(bad)
+    with pytest.raises(SystemExit):
+        rb.parse_args(["--think-time", "6-2"])
+    assert rb.parse_args(["--think-time", "2-6"]).think_time == "2-6"
+    assert rb.parse_args([]).think_time == ""
+
+
+def test_think_time_reaches_the_stacks_and_stray_values_are_removed(tmp_path):
+    env = rb.child_environment(None, {"PATH": "x", "WH_THINK_TIME": "9"})
+    assert "WH_THINK_TIME" not in env  # not asked for, so not passed on
+    env = rb.child_environment(None, {"PATH": "x"}, think_time="2-6")
+    assert env["WH_THINK_TIME"] == "2-6" and env["PATH"] == "x"
+
+
+def test_python_stacks_read_the_same_think_time_format():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("baseline_common", rb.HERE / "python" / "common.py")
+    common = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(common)
+    assert common.think_range(None) == (0.0, 0.0)
+    assert common.think_range("3") == (3.0, 3.0)
+    assert common.think_range("2-6") == (2.0, 6.0)
+    with pytest.raises(SystemExit):
+        common.think_range("6-2")

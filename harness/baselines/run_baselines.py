@@ -42,6 +42,8 @@ DEFAULT_URL_TEMPLATE = "https://{site}.test:8443/r/{run_id}/"
 DEFAULT_ALLOWED_HOSTS = ("site1.test", "site2.test", "localhost", "127.0.0.1")
 SUBMISSION_TEXT = "baseline script submission"
 TIMEOUT_SECONDS = 180
+THINK_ENV = "WH_THINK_TIME"
+MAX_THINK_SECONDS = 30  # 3 pauses per visit must stay well inside TIMEOUT_SECONDS
 
 
 @dataclass(frozen=True)
@@ -191,14 +193,45 @@ def skipped_by_default(stack: Stack, version: str | None) -> str | None:
     return None
 
 
-def child_environment(ca: Path | None, environ: dict[str, str] | None = None) -> dict[str, str]:
+def parse_think_time(value: str | None) -> str:
+    """Validate --think-time and return it normalized ("" for none, "3", or "2-6").
+
+    Every stack pauses for a random time in this range (seconds) before each request after the
+    first, so H2 can compare agents with scripts that wait between requests too.
+    """
+    if value is None or not value.strip():
+        return ""
+    low, dash, high = value.strip().partition("-")
+    try:
+        lo = float(low)
+        hi = float(high) if dash else lo
+    except ValueError as exc:
+        raise ValueError(f"--think-time {value!r}: use seconds (3) or a range (2-6)") from exc
+    if not 0 <= lo <= hi:
+        raise ValueError(f"--think-time {value!r}: the range must be non-negative and not decrease")
+    if hi > MAX_THINK_SECONDS:
+        raise ValueError(f"--think-time {value!r}: at most {MAX_THINK_SECONDS} seconds per pause")
+    if hi == 0:
+        return ""
+    return f"{lo:g}" if lo == hi else f"{lo:g}-{hi:g}"
+
+
+def child_environment(
+    ca: Path | None, environ: dict[str, str] | None = None, think_time: str = ""
+) -> dict[str, str]:
     """Point every stack at our local CA. This changes which certificates are trusted, never
     what the client sends in its ClientHello. Go on Windows and macOS ignores these variables
-    and needs the CA in the system store (infra/README.md, step 3)."""
+    and needs the CA in the system store (infra/README.md, step 3).
+
+    ``think_time`` goes to the stacks as WH_THINK_TIME; without it any inherited value is removed,
+    so a stray variable in the shell can't add pauses to a run that doesn't record them."""
     env = dict(os.environ if environ is None else environ)
     if ca is not None:
         for variable in ("NODE_EXTRA_CA_CERTS", "REQUESTS_CA_BUNDLE", "SSL_CERT_FILE", "CURL_CA_BUNDLE"):
             env[variable] = str(ca)
+    env.pop(THINK_ENV, None)
+    if think_time:
+        env[THINK_ENV] = think_time
     return env
 
 
@@ -346,6 +379,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--url-template", default=DEFAULT_URL_TEMPLATE)
     parser.add_argument("--ca", type=Path, default=DEFAULT_CA, help="CA certificate the stacks should trust")
     parser.add_argument("--gap", type=float, default=2.0, help="seconds between trials (default 2)")
+    parser.add_argument(
+        "--think-time",
+        default="",
+        help="pause in seconds before each request after the first, inside a visit: 3, or a random "
+        f"range such as 2-6 (at most {MAX_THINK_SECONDS}; default none)",
+    )
     parser.add_argument("--seed", type=int, default=None, help="random seed for the trial order")
     parser.add_argument("--manifest", type=Path, default=None, help="default runs/<member>.csv")
     parser.add_argument("--list", action="store_true", help="list stacks and their versions, then exit")
@@ -353,6 +392,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if args.trials < 1:
         parser.error("--trials must be at least 1")
+    try:
+        args.think_time = parse_think_time(args.think_time)
+    except ValueError as exc:
+        parser.error(str(exc))
     unknown = [name for name in args.stacks if name != "all" and name not in STACKS]
     if unknown:
         parser.error(f"unknown stack(s): {', '.join(unknown)}")
@@ -407,9 +450,13 @@ def main(argv: list[str] | None = None) -> int:
     ca = args.ca if args.ca.exists() else None
     if ca is None:
         print(f"warning: CA file {args.ca} not found; stacks will use their default trust", file=sys.stderr)
-    env = child_environment(ca)
+    env = child_environment(ca, think_time=args.think_time)
     machine_os = os_description()
-    print(f"{len(jobs)} trials, seed {seed}, {'dev' if args.dev else 'manifest ' + str(args.manifest)}")
+    think_note = f", think time {args.think_time} s" if args.think_time else ""
+    print(
+        f"{len(jobs)} trials, seed {seed}{think_note}, "
+        f"{'dev' if args.dev else 'manifest ' + str(args.manifest)}"
+    )
 
     number = next_run_number(args.manifest, args.member)
     failures = 0
@@ -434,7 +481,9 @@ def main(argv: list[str] | None = None) -> int:
         if not args.dev:
             notes = (
                 f"{versions[job.stack.name]}; os {machine_os}; site {job.site}; "
-                f"trial {job.trial}/{args.trials}; seed {seed}; exit {code}"
+                f"trial {job.trial}/{args.trials}; seed {seed}; "
+                + (f"think {args.think_time}s; " if args.think_time else "")
+                + f"exit {code}"
             )
             append_manifest_row(
                 args.manifest,

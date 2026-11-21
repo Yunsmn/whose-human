@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/gocolly/colly/v2"
+
+	"whose-human/baselines/internal/think"
 )
 
 func main() {
@@ -23,6 +25,7 @@ func main() {
 	if !strings.HasSuffix(base, "/") {
 		base += "/"
 	}
+	think.Check()
 
 	c := colly.NewCollector()
 	codes := map[string]int{}
@@ -39,7 +42,10 @@ func main() {
 		{"GET submit", "GET", getSubmit},
 		{"POST submit", "POST", base + "submit"},
 	}
-	for _, step := range steps {
+	for i, step := range steps {
+		if i > 0 {
+			think.Pause() // the collector is synchronous, so each request finishes before the pause
+		}
 		if step.method == "POST" {
 			c.Post(step.url, map[string]string{"text": text})
 		} else {
