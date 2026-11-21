@@ -1,5 +1,5 @@
 run_id,label_agent,label_model,label_user,machine,network,notes
-a-codex-win-i01,codex-cli,default,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; 0 run-tagged HTTP requests
+a-codex-win-i01,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; 0 run-tagged HTTP requests; one untagged TLS failure in overlapping i01/i02 windows; source unknown
 a-0001,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
 a-0002,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
 a-0003,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
@@ -13,27 +13,27 @@ a-0010,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; o
 a-0011,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
 a-0012,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
 a-0013,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
-a-codex-win-h01,codex-cli,default,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests
+a-codex-win-h01,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
 a-0014,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
 a-0015,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
 a-0016,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
-a-codex-win-h02,codex-cli,default,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests
+a-codex-win-h02,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
 a-0017,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
 a-0018,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
 a-0019,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
-a-codex-win-h03,codex-cli,default,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests
+a-codex-win-h03,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
 a-0020,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
 a-0021,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
-a-codex-win-h04,codex-cli,default,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests
+a-codex-win-h04,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
 a-0022,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
 a-0023,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
 a-0024,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
-a-codex-win-h05,codex-cli,default,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests
+a-codex-win-h05,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
 a-0025,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
 a-0026,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
 a-0027,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
 a-0028,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
-a-codex-win-h06,codex-cli,default,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests
+a-codex-win-h06,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
 a-0029,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
 a-0030,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
 a-0031,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
@@ -81,7 +81,7 @@ a-0072,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os W
 a-0073,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
 a-0074,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
 a-0075,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
-a-codex-win-i02,codex-cli,default,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; 0 run-tagged HTTP requests
+a-codex-win-i02,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; 0 run-tagged HTTP requests; one untagged TLS failure in overlapping i01/i02 windows; source unknown
 a-0076,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
 a-0077,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
 a-0078,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
@@ -131,7 +131,7 @@ a-0121,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; 
 a-0122,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
 a-0123,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
 a-0124,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
-a-codex-win-i03,codex-cli,default,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; 0 run-tagged HTTP requests
+a-codex-win-i03,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; 0 run-tagged HTTP requests
 a-0125,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
 a-0126,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
 a-0127,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
@@ -153,7 +153,7 @@ a-0142,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10
 a-0143,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
 a-0144,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
 a-0145,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
-a-codex-win-i04,codex-cli,default,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; 0 run-tagged HTTP requests
+a-codex-win-i04,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; 0 run-tagged HTTP requests
 a-0146,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
 a-0147,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
 a-0148,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
@@ -669,5 +669,5 @@ a-0657,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Window
 a-0658,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
 a-0659,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
 a-0660,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
-a-codex-win-i05,codex-cli,default,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; stopped at 180 s; 0 run-tagged HTTP requests
-a-codex-win-i06,codex-cli,default,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; stopped at 180 s; 0 run-tagged HTTP requests
+a-codex-win-i05,codex-cli,gpt-5.6-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; stopped at 180 s; 0 run-tagged HTTP requests
+a-codex-win-i06,codex-cli,gpt-5.6-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; stopped at 180 s; 0 run-tagged HTTP requests
