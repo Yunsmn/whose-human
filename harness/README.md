@@ -43,7 +43,7 @@ See [`member_a_1a_2a_protocol.md`](member_a_1a_2a_protocol.md) before collecting
 | `tls` | `tls_ja4` and its three parts, `tls_ja3_md5`, ALPN, groups (incl. post-quantum `tls_has_pq`), signature algorithms, extension order, GREASE | Re-parsed from the raw ClientHello, so it can be extended later without re-collecting data |
 | `http` | version, method, header order and set hashes, header case (HTTP/1.1), User-Agent family and version, Accept, Accept-Encoding, Sec-Fetch, Connection | Ordered request headers |
 | `h2` | Akamai fingerprint, SETTINGS, WINDOW_UPDATE, pseudo-header order | HTTP/2 frames before the first request |
-| `timing` | requests per connection and per run, connections per run, gap to the previous request of the run, connection setup time | Timestamps and ids |
+| `timing` | requests per connection and per run, connections per run, gap to the previous request of the run, connection setup time; run-level: slowest gap in the run (`run_max_gap_s`) and wait before the first `/submit` (`run_submit_wait_s`) | Timestamps, ids and paths |
 | `body` | body length, whether text was submitted | Request body |
 
 `CATEGORICAL_COLUMNS` lists the string features; all others (`NUMERIC_COLUMNS`) are floats, with booleans as 0/1 and NaN when missing. Changing a column name or meaning is a contract change, so tell A (3b) and C (3c) in the PR.

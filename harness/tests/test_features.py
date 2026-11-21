@@ -150,3 +150,29 @@ def test_tls_only_and_malformed_hello_warn_without_mutating_input():
     assert len(result) == 2
     assert pd.isna(result.iloc[0].tls_ja4)
     assert result.iloc[1].kind == "tls_failure"
+
+
+def test_run_level_gap_and_submit_wait():
+    rows = [
+        _row(ts=10.0, conn_id="c1", run_id="r1", path="/r/r1/input.html"),
+        _row(ts=14.5, conn_id="c1", run_id="r1", path="/r/r1/submit"),
+        _row(ts=15.0, conn_id="c1", run_id="r1", path="/r/r1/submit"),
+        _row(ts=30.0, conn_id="c2", run_id="r2", path="/r/r2/input.html"),
+    ]
+    result = extract_features(pd.DataFrame(rows))
+    assert list(result.run_max_gap_s[:3]) == [4.5, 4.5, 4.5]
+    assert list(result.run_submit_wait_s[:3]) == [4.5, 4.5, 4.5]
+    assert pd.isna(result.iloc[3].run_max_gap_s) and pd.isna(result.iloc[3].run_submit_wait_s)
+
+
+def test_timing_uses_the_submit_route_and_requires_a_run_id():
+    rows = [
+        _row(ts=1.0, run_id="r1", path="/r/r1/input.html?next=/submit"),
+        _row(ts=3.0, run_id="r1", path="/r/r1/submitted.html"),
+        _row(ts=9.0, run_id="r1", path="/r/r1/submit?text=hello"),
+        _row(ts=10.0, run_id=None, path="/input.html"),
+        _row(ts=30.0, run_id=None, path="/submit"),
+    ]
+    result = extract_features(pd.DataFrame(rows))
+    assert result.run_submit_wait_s.iloc[:3].tolist() == [6.0] * 3
+    assert result.iloc[3:][["run_max_gap_s", "run_submit_wait_s"]].isna().all().all()

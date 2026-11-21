@@ -721,3 +721,21 @@ c-0719,script_axios-1.8.4,,baseline,c-linux,local,"axios 1.8.4; node 26.13.1; os
 c-0720,script_aiohttp,,baseline,c-linux,local,"aiohttp 3.14.5; python 3.14.10; os Linux 7.2.15-arch1-1 (#1 SMP PREEMPT_DYNAMIC Tue, 03 Nov 2026 12:37:21 +0000); site site2; trial 10/30; seed 983390250; exit 0"
 c-0721,script_aiohttp,,baseline,c-linux,local,"aiohttp 3.14.5; python 3.14.10; os Linux 7.2.15-arch1-1 (#1 SMP PREEMPT_DYNAMIC Tue, 03 Nov 2026 12:37:21 +0000); site site1; trial 8/30; seed 983390250; exit 0"
 c-0722,script_go-nethttp,,baseline,c-linux,local,"net/http; go1.27.4-X:nodwarf5; os Linux 7.2.15-arch1-1 (#1 SMP PREEMPT_DYNAMIC Tue, 03 Nov 2026 12:37:21 +0000); site site2; trial 3/30; seed 983390250; exit 0"
+c-claude-h-001,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327 / codex-cli 0.167.1; default settings; fresh session; mode-comparison pilot
+c-claude-i-001,claude-code,claude-opus-5-5,persona-c1,c-linux,local,"mode interactive; claude-code 2.1.327 / codex-cli 0.167.1; default settings; fresh session; mode-comparison pilot; contains two interactive sessions: session 1 WebFetch (first 2 requests), session 2 told to use curl (last 2 requests, POST)"
+c-codex-h-001,codex-cli,gpt-6-luna,persona-c1,c-linux,local,mode headless; claude-code 2.1.327 / codex-cli 0.167.1; default settings; fresh session; mode-comparison pilot
+c-codex-i-001,codex-cli,gpt-6-luna,persona-c1,c-linux,local,mode interactive; claude-code 2.1.327 / codex-cli 0.167.1; default settings; fresh session; mode-comparison pilot
+c-claude-h-002,claude-code,claude-opus-5-5,persona-c1,c-linux,local,"mode headless; claude-code 2.1.327; allowedTools WebFetch, disallowedTools Bash; fresh session; mode-comparison pilot"
+c-user-curl-001,user-curl,none,persona-c1,c-linux,local,user's own curl typed by hand in a terminal; curl 8.23.0; Track 3 linking check against agent curl runs on site1
+c-claude-wf-site1-001,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch only (Bash disallowed); fresh session
+c-claude-wf-site1-002,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch only (Bash disallowed); fresh session
+c-claude-wf-site1-003,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch only (Bash disallowed); fresh session
+c-claude-sh-site1-001,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch and Bash allowed; fresh session
+c-claude-sh-site1-002,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch and Bash allowed; fresh session
+c-claude-sh-site1-003,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch and Bash allowed; fresh session
+c-claude-wf-site2-001,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch only (Bash disallowed); fresh session
+c-claude-wf-site2-002,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch only (Bash disallowed); fresh session
+c-claude-wf-site2-003,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch only (Bash disallowed); fresh session
+c-claude-sh-site2-001,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch and Bash allowed; fresh session
+c-claude-sh-site2-002,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch and Bash allowed; fresh session
+c-claude-sh-site2-003,claude-code,claude-opus-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.327; WebFetch and Bash allowed; fresh session
