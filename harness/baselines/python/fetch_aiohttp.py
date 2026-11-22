@@ -4,7 +4,7 @@ import asyncio
 import sys
 
 import aiohttp
-from common import parse_args, report, urls
+from common import parse_args, report, think_seconds, urls
 
 
 async def main(base_url: str, text: str) -> int:
@@ -12,9 +12,12 @@ async def main(base_url: str, text: str) -> int:
     results = []
     async with aiohttp.ClientSession() as session:
         for step, url in (("GET index.html", index), ("GET input.html", page), ("GET submit", get_submit)):
+            if results:
+                await asyncio.sleep(think_seconds())
             async with session.get(url) as response:
                 await response.read()
                 results.append((step, response.status))
+        await asyncio.sleep(think_seconds())
         async with session.post(post_submit, data={"text": text}) as response:
             await response.read()
             results.append(("POST submit", response.status))

@@ -1,1 +1,673 @@
 run_id,label_agent,label_model,label_user,machine,network,notes
+a-codex-win-i01,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; 0 run-tagged HTTP requests; one untagged TLS failure in overlapping i01/i02 windows; source unknown
+a-0001,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0002,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0003,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0004,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0005,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0006,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0007,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0008,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0009,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0010,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0011,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0012,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0013,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-codex-win-h01,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
+a-0014,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0015,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0016,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-codex-win-h02,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
+a-0017,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0018,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0019,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-codex-win-h03,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
+a-0020,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0021,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-codex-win-h04,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
+a-0022,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0023,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0024,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-codex-win-h05,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site1; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
+a-0025,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0026,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0027,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0028,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-codex-win-h06,codex-cli,,persona-a1,a-windows,local,headless; Codex CLI 0.158.0; site2; full access; default Sol unavailable (model_not_found); 0 run-tagged HTTP requests; no model ran
+a-0029,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0030,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0031,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0032,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0033,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0034,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0035,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0036,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0037,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0038,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0039,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0040,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0041,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0042,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0043,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0044,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0045,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0046,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0047,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0048,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0049,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0050,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0051,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0052,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0053,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0054,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0055,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0056,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0057,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0058,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0059,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0060,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0061,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0062,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0063,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0064,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0065,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0066,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0067,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0068,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0069,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0070,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0071,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0072,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0073,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0074,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0075,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-codex-win-i02,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; 0 run-tagged HTTP requests; one untagged TLS failure in overlapping i01/i02 windows; source unknown
+a-0076,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0077,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0078,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0079,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0080,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0081,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0082,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0083,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0084,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0085,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0086,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0087,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0088,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0089,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0090,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0091,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0092,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0093,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0094,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0095,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0096,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0097,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0098,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0099,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0100,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0101,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0102,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0103,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0104,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0105,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0106,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0107,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0108,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0109,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0110,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0111,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0112,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0113,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0114,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0115,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0116,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0117,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0118,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0119,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0120,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0121,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0122,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0123,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0124,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-codex-win-i03,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; 0 run-tagged HTTP requests
+a-0125,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0126,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0127,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0128,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0129,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0130,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0131,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0132,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0133,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0134,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0135,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0136,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0137,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0138,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0139,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0140,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0141,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0142,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0143,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0144,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0145,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-codex-win-i04,codex-cli,gpt-6.1-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; 0 run-tagged HTTP requests
+a-0146,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0147,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0148,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0149,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0150,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0151,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0152,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0153,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0154,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0155,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0156,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0157,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0158,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0159,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0160,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0161,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0162,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0163,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0164,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0165,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0166,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0167,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0168,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0169,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0170,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0171,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0172,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0173,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0174,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0175,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0176,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0177,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0178,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0179,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0180,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0181,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0182,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0183,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0184,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0185,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0186,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0187,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0188,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0189,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0190,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0191,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0192,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0193,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0194,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0195,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0196,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0197,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0198,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0199,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0200,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0201,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0202,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0203,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0204,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0205,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0206,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0207,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0208,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0209,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0210,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0211,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0212,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0213,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0214,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0215,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0216,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0217,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0218,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0219,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0220,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0221,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0222,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0223,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0224,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0225,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0226,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0227,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0228,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0229,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0230,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0231,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0232,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0233,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0234,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0235,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0236,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0237,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0238,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0239,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0240,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0241,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0242,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0243,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0244,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0245,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0246,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0247,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0248,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0249,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0250,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0251,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0252,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0253,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0254,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0255,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0256,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0257,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0258,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0259,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0260,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0261,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0262,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0263,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0264,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0265,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0266,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0267,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0268,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0269,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0270,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0271,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0272,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0273,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0274,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0275,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0276,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0277,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0278,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0279,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0280,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0281,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0282,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0283,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0284,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0285,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0286,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0287,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0288,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0289,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0290,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0291,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0292,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0293,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0294,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0295,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0296,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0297,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0298,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0299,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0300,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0301,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0302,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0303,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0304,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0305,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0306,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0307,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0308,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0309,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0310,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0311,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0312,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0313,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0314,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0315,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0316,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0317,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0318,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0319,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0320,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0321,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0322,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0323,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0324,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0325,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0326,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0327,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0328,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0329,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0330,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0331,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0332,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0333,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0334,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0335,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0336,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0337,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0338,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0339,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0340,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0341,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0342,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0343,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0344,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0345,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0346,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0347,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0348,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0349,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0350,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0351,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0352,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0353,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0354,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0355,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0356,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0357,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0358,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0359,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0360,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0361,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0362,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0363,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0364,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0365,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0366,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0367,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0368,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0369,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0370,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0371,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0372,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0373,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0374,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0375,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0376,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0377,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0378,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0379,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0380,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0381,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0382,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0383,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0384,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 3/30; seed 1787928600; exit 0
+a-0385,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0386,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0387,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0388,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0389,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0390,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0391,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0392,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0393,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0394,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0395,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0396,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0397,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0398,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0399,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0400,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0401,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0402,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0403,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0404,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0405,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0406,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0407,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0408,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0409,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0410,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0411,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0412,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0413,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0414,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0415,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0416,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0417,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0418,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0419,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0420,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0421,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0422,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0423,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0424,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0425,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0426,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0427,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0428,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0429,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0430,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0431,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0432,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0433,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0434,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0435,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0436,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0437,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0438,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0439,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0440,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0441,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0442,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0443,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0444,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0445,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0446,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0447,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0448,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0449,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0450,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0451,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0452,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0453,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0454,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0455,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0456,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0457,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0458,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0459,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 18/30; seed 1787928600; exit 0
+a-0460,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0461,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0462,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0463,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0464,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0465,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0466,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0467,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 30/30; seed 1787928600; exit 0
+a-0468,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0469,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0470,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0471,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0472,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0473,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0474,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0475,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0476,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0477,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0478,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0479,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0480,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0481,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0482,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0483,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0484,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0485,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0486,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0487,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0488,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0489,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0490,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0491,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0492,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0493,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 15/30; seed 1787928600; exit 0
+a-0494,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 20/30; seed 1787928600; exit 0
+a-0495,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0496,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0497,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0498,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0499,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0500,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0501,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0502,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 13/30; seed 1787928600; exit 0
+a-0503,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0504,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0505,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0506,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0507,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0508,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 25/30; seed 1787928600; exit 0
+a-0509,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0510,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 18/30; seed 1787928600; exit 0
+a-0511,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0512,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0513,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0514,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0515,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0516,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 28/30; seed 1787928600; exit 0
+a-0517,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0518,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0519,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 2/30; seed 1787928600; exit 0
+a-0520,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0521,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0522,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0523,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0524,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0525,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0526,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0527,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0528,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0529,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0530,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0531,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0532,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0533,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 4/30; seed 1787928600; exit 0
+a-0534,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0535,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0536,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0537,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0538,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0539,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0540,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0541,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0542,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0543,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0544,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0545,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0546,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0547,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0548,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 17/30; seed 1787928600; exit 0
+a-0549,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0550,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0551,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0552,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0553,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 14/30; seed 1787928600; exit 0
+a-0554,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0555,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0556,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0557,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0558,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0559,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0560,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0561,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0562,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0563,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 1/30; seed 1787928600; exit 0
+a-0564,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0565,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0566,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 21/30; seed 1787928600; exit 0
+a-0567,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0568,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 24/30; seed 1787928600; exit 0
+a-0569,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 8/30; seed 1787928600; exit 0
+a-0570,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 6/30; seed 1787928600; exit 0
+a-0571,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0572,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0573,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0574,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0575,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0576,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0577,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0578,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0579,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0580,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0581,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 8/30; seed 1787928600; exit 0
+a-0582,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 26/30; seed 1787928600; exit 0
+a-0583,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0584,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0585,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0586,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0587,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0588,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0589,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0590,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0591,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 23/30; seed 1787928600; exit 0
+a-0592,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0593,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0594,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0595,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0596,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0597,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 19/30; seed 1787928600; exit 0
+a-0598,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0599,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0600,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 4/30; seed 1787928600; exit 0
+a-0601,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 26/30; seed 1787928600; exit 0
+a-0602,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 17/30; seed 1787928600; exit 0
+a-0603,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 23/30; seed 1787928600; exit 0
+a-0604,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 5/30; seed 1787928600; exit 0
+a-0605,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0606,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0607,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 9/30; seed 1787928600; exit 0
+a-0608,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 12/30; seed 1787928600; exit 0
+a-0609,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 22/30; seed 1787928600; exit 0
+a-0610,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 1/30; seed 1787928600; exit 0
+a-0611,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0612,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0613,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 27/30; seed 1787928600; exit 0
+a-0614,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 3/30; seed 1787928600; exit 0
+a-0615,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0616,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 5/30; seed 1787928600; exit 0
+a-0617,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0618,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 9/30; seed 1787928600; exit 0
+a-0619,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 10/30; seed 1787928600; exit 0
+a-0620,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0621,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0622,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0623,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0624,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0625,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0626,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0627,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 7/30; seed 1787928600; exit 0
+a-0628,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0629,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0630,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 10/30; seed 1787928600; exit 0
+a-0631,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 19/30; seed 1787928600; exit 0
+a-0632,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0633,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0634,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0635,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 29/30; seed 1787928600; exit 0
+a-0636,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-0637,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 29/30; seed 1787928600; exit 0
+a-0638,script_httpx,,baseline,a-windows,local,httpx 0.28.1; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0639,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 11/30; seed 1787928600; exit 0
+a-0640,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0641,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0642,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site1; trial 7/30; seed 1787928600; exit 0
+a-0643,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 24/30; seed 1787928600; exit 0
+a-0644,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0645,script_requests,,baseline,a-windows,local,requests 2.34.2; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 28/30; seed 1787928600; exit 0
+a-0646,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 22/30; seed 1787928600; exit 0
+a-0647,script_colly,,baseline,a-windows,local,colly v2.3.0; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 6/30; seed 1787928600; exit 0
+a-0648,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 27/30; seed 1787928600; exit 0
+a-0649,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 15/30; seed 1787928600; exit 0
+a-0650,script_axios,,baseline,a-windows,local,axios 1.21.1; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 12/30; seed 1787928600; exit 0
+a-0651,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site1; trial 14/30; seed 1787928600; exit 0
+a-0652,script_node-fetch,,baseline,a-windows,local,undici 7.29.0; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 25/30; seed 1787928600; exit 0
+a-0653,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 16/30; seed 1787928600; exit 0
+a-0654,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 20/30; seed 1787928600; exit 0
+a-0655,script_got,,baseline,a-windows,local,got 16.2.0; node 24.20.0; os Windows 11 (10.0.26200); site site1; trial 16/30; seed 1787928600; exit 0
+a-0656,script_urllib,,baseline,a-windows,local,urllib; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 11/30; seed 1787928600; exit 0
+a-0657,script_go-nethttp,,baseline,a-windows,local,net/http; go1.27.4; os Windows 11 (10.0.26200); site site2; trial 13/30; seed 1787928600; exit 0
+a-0658,script_axios-1.8.4,,baseline,a-windows,local,axios 1.8.4; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 21/30; seed 1787928600; exit 0
+a-0659,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; os Windows 11 (10.0.26200); site site2; trial 2/30; seed 1787928600; exit 0
+a-0660,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
+a-codex-win-i05,codex-cli,gpt-5.6-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; stopped at 180 s; 0 run-tagged HTTP requests
+a-codex-win-i06,codex-cli,gpt-5.6-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; stopped at 180 s; 0 run-tagged HTTP requests

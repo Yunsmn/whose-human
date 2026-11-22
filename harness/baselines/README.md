@@ -65,7 +65,8 @@ python -m harness.baselines.run_baselines                     # real run: 30 tri
 - **Only our servers:** the runner refuses any host outside `site1.test`, `site2.test`, `localhost` and `127.0.0.1`. Add the shared VM's hostnames with `WH_ALLOWED_HOSTS=host1,host2` and `--url-template`.
 - **Failures:** a failed trial still gets its manifest row, with its exit code in `notes`, so any records it left stay labelled. Check the output before handing data to C.
 - **Another member running them:** `--member c` (or `a`) numbers runs `c-0001`, ... and writes them to `runs/c.csv`, with machine label `c-<os>`, so ids never clash with B's.
-- Options: `--stacks`, `--sites`, `--trials`, `--machine` (a short label, never a hostname), `--network`, `--seed`.
+- **Pauses inside a visit:** by default the four requests go back to back, which makes plain timing separate any agent from these scripts by construction. `--think-time 3` (or a random range, `--think-time 2-6`, at most 30 s) makes every stack wait that long before each request after the first. The runner passes it as `WH_THINK_TIME` and writes `think <value>s` into the run's `notes`. Runs without it record nothing and are unchanged. The pause does not change how a client builds a handshake, but it can change how connections are reused. Checked on Windows (one dev run per stack, with and without `--think-time 1-2`): every stack kept the same JA4, header order and connection count, except node fetch (undici). Without pauses, undici opens a second connection for the back-to-back requests, and that handshake resumes the first session (adds `pre_shared_key`, extension 41: JA4 `t13d5213h1` instead of `t13d5212h1`). With pauses, it reuses one connection.
+- Options: `--stacks`, `--sites`, `--trials`, `--machine` (a short label, never a hostname), `--network`, `--seed`, `--think-time`.
 
 ## Known issue: curl on Windows
 
