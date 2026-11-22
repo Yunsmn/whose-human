@@ -110,3 +110,83 @@ def test_split_by_question_holds_out_whole_questions():
     test_q = {rows[i]["prompt_idx"] for i in test}
     assert test_q == {6, 7} and not train_q & test_q
     assert len(test) == 4  # both models answer the held-out questions
+
+
+def test_prose_paragraphs_keep_only_plain_paragraphs_of_the_right_length():
+    from model.sun_classifier.summary_answers import prose_paragraphs
+
+    words = " ".join(["word"] * 40)
+    text = "\n\n".join(
+        [
+            f"{words}.",  # kept
+            f"- {words}.",  # list item
+            f"## {words}.",  # heading
+            f"Some **bold** {words}.",  # markdown
+            "Too short.",
+            f"{words} without an end",  # no final punctuation
+        ]
+    )
+    assert prose_paragraphs(text) == [f"{words}."]
+
+
+def test_page_prompt_matches_the_2b_instruction():
+    from model.cli_corpus import DIRECT_INSTRUCTION
+    from model.sun_classifier.summary_answers import page_prompt
+
+    assert page_prompt("A page.") == f"A page.\n\n{DIRECT_INSTRUCTION}"
+
+
+def test_done_keys_skip_failed_and_half_written_rows(tmp_path):
+    from model.sun_classifier.summary_answers import done_keys
+
+    path = tmp_path / "m.jsonl"
+    rows = [
+        {"prompt_idx": 0, "condition": "default", "text": "ok"},
+        {"prompt_idx": 0, "condition": "minimal", "text": None, "error": "boom"},
+    ]
+    path.write_text("\n".join(json.dumps(r) for r in rows) + '\n{"prompt_idx": 1', encoding="utf-8")
+    assert done_keys(path) == {(0, "default")}
+
+
+def test_cache_keys_separate_conditions_and_corpora():
+    from model.sun_classifier.train_head import cache_key
+
+    row = {"model": "m", "prompt_idx": 3, "condition": "default"}
+    assert cache_key("summaries", row) != cache_key("summaries", row | {"condition": "minimal"})
+    assert cache_key("summaries", row) != cache_key("short", row)
+    assert cache_key("2b", {"id": "m:site1:default:0", "model": "m"}) == "2b|m:site1:default:0"
+
+
+def test_provider_head_columns_are_kept_not_summed(tmp_path):
+    def score_with_provider_head(texts):
+        frame = fake_score(texts)
+        frame["provider_anthropic"] = 0.2  # the provider head disagrees with the model head
+        frame["provider_openai"] = 0.8
+        return frame
+
+    path = tmp_path / "agent.csv"
+    write_agent_csv(path)
+    texts_path, ids_path = predict_file(path, tmp_path / "out", (score_with_provider_head, PROVIDERS))
+    texts = pd.read_csv(texts_path)
+    assert texts["provider_openai"].tolist() == [0.8, 0.8, 0.8]
+    assert texts["top_provider"].tolist() == ["openai"] * 3
+    assert texts["top_model"].tolist() == ["opus", "haiku", "astra"]  # unchanged
+    runs = pd.read_csv(ids_path).set_index("id")
+    assert runs.loc["a-1", "provider_openai"] == pytest.approx(0.8)
+
+
+def test_two_class_head_weights_give_sklearns_probabilities():
+    import numpy as np
+    from sklearn.linear_model import LogisticRegression
+
+    from model.sun_classifier.train_head import softmax_weights
+
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=(40, 5))
+    y = np.where(x[:, 0] > 0, "openai", "anthropic")
+    model = LogisticRegression().fit(x, y)
+    weight, bias = softmax_weights(model)
+    assert weight.shape == (2, 5)
+    logits = x @ weight.T + bias
+    probs = np.exp(logits) / np.exp(logits).sum(axis=1, keepdims=True)
+    assert np.allclose(probs, model.predict_proba(x), atol=1e-5)

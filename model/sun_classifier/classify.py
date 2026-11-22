@@ -64,7 +64,13 @@ class SunChatClassifier:
             to_gpu = lambda name: torch.from_numpy(arrays[name]).to(self.device, torch.float32)  # noqa: E731
             self.head_weight, self.head_bias = to_gpu("weight"), to_gpu("bias")
             self.feature_mean, self.feature_scale = to_gpu("mean"), to_gpu("scale")
+            # Optional two-way provider head, on the same standardized vector.
+            self.provider_labels = arrays["provider_labels"].tolist() if "provider_labels" in arrays else []
+            if self.provider_labels:
+                self.provider_weight = to_gpu("provider_weight")
+                self.provider_bias = to_gpu("provider_bias")
         else:
+            self.provider_labels = []
             self.labels = list(LABELS)
             self.providers = [PROVIDERS[label] for label in LABELS]
             sun = load_file(str(model_dir / "head.safetensors"))
@@ -86,18 +92,34 @@ class SunChatClassifier:
 
     def logits(self, text: str):
         """One score per label: Sun et al.'s head in bf16 as in training, or the trained short head."""
-        vector = self.embed(text).to(self.head_weight.dtype)
-        if self.short_head:
-            vector = (vector - self.feature_mean) / self.feature_scale
-        return vector @ self.head_weight.T + self.head_bias
+        return self._scores(self.embed(text))[0]
+
+    def _scores(self, vector):
+        """Model logits, and provider logits when the head has a provider head (else None)."""
+        vector = vector.to(self.head_weight.dtype)
+        if not self.short_head:
+            return vector @ self.head_weight.T + self.head_bias, None
+        vector = (vector - self.feature_mean) / self.feature_scale
+        provider = vector @ self.provider_weight.T + self.provider_bias if self.provider_labels else None
+        return vector @ self.head_weight.T + self.head_bias, provider
 
     def predict_proba(self, texts: list[str]):
+        """One row per text: p_<label> per model and, with a provider head, provider_<name>."""
         import pandas as pd
 
+        softmax = lambda scores: self.torch.softmax(scores.float(), dim=-1).cpu().tolist()  # noqa: E731
         rows = []
         for text in texts:
-            probs = self.torch.softmax(self.logits(text).float(), dim=-1).cpu().tolist()
-            rows.append({f"p_{label.lower()}": p for label, p in zip(self.labels, probs, strict=True)})
+            model_scores, provider_scores = self._scores(self.embed(text))
+            row = {
+                f"p_{label.lower()}": p for label, p in zip(self.labels, softmax(model_scores), strict=True)
+            }
+            if provider_scores is not None:
+                row |= {
+                    f"provider_{name}": p
+                    for name, p in zip(self.provider_labels, softmax(provider_scores), strict=True)
+                }
+            rows.append(row)
         return pd.DataFrame(rows)
 
     def is_bidirectional(self) -> bool:
