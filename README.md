@@ -22,7 +22,7 @@ Given requests that cooperating websites collect passively from agent sessions, 
 - Tracking happens **only on our own instrumented test sites**. No third party sites are probed or scraped.
 - **No hidden text or prompt injection.** Pages ask for input in plain visible text.
 - Participants are consenting team members or volunteers using fictitious personas.
-- Raw logs (which contain IP addresses) are **never committed** here; they live in the gitignored `data/` folder, a clone of the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs).
+- Raw logs (which contain IP addresses) are **never committed** here (this repo is public); they live in the gitignored `data/` folder, a clone of the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs).
 
 ## Repository layout
 

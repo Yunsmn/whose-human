@@ -34,7 +34,7 @@ Locality, first checked on 2026-11-18 on one Linux machine (`harness/hypotheses.
 - No hidden text, no injected instructions, no prompt injection of any kind. Pages ask for input in plain visible text (for example "summarize this page in two sentences and submit it in this field").
 - This visible request deliberately models what a malicious site could achieve with hidden prompt injection, in a safe and lawful way. Do not "improve" it into a hidden or coercive version.
 - Participants are team members or volunteers who consent. They use fictitious personas and no real personal data.
-- Never commit raw logs or IP addresses to this repo. Raw data lives in the gitignored `data/` folder, which is a clone of the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs).
+- Never commit raw logs or IP addresses to this repo; it is public, so everything in it, including `runs/*.csv` and the docs, is world-readable. Raw data lives in the gitignored `data/` folder, which is a clone of the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs).
 
 ## Key findings from the literature
 
