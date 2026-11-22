@@ -144,11 +144,11 @@ Training: 1,200 two-sentence summaries, 200 per model (100 practice pages, two c
 | Test | n | Provider (provider head) | Provider (sum of model head) | Exact model |
 |---|---|---|---|---|
 | Held-out practice pages (last 25 pages) | 300 | 80.0% | 78.3% | 34.7% |
-| **2b, our site pages** | 100 | **93.0%** | 77.0% | 34.0% |
-| 2b, `default` system prompt | 50 | 88.0% | 70.0% | 30.0% |
-| 2b, `minimal` system prompt | 50 | 98.0% | 84.0% | 38.0% |
+| **2b, our site pages** | 120 | **89.2%** | 72.5% | 35.8% |
+| 2b, `default` system prompt | 60 | 85.0% | 66.7% | 33.3% |
+| 2b, `minimal` system prompt | 60 | 93.3% | 78.3% | 38.3% |
 
-On 2b's corpus, per model (true model in rows; 2b has no gpt-6.1-sol yet):
+On 2b's corpus, per model (true model in rows; 20 summaries each):
 
 | True model | Provider right (provider head) | Exact model right | Most often called |
 |---|---|---|---|
@@ -157,13 +157,14 @@ On 2b's corpus, per model (true model in rows; 2b has no gpt-6.1-sol yet):
 | claude-haiku-5-5 | 17/20 | 17/20 | |
 | gpt-6-astra | 18/20 | 0/20 | gpt-6.1-sol (10), claude-haiku-5-5 (10) |
 | gpt-6-luna | 20/20 | 15/20 | |
+| gpt-6.1-sol | 14/20 | 9/20 | claude-haiku-5-5 (10) |
 
-- The provider is named 93% of the time on our real site pages, from two sentences. The six-way head alone gets 77%: its errors are mostly Astra called Haiku.
-- Tiers are weak. Only the small models stand out (Haiku 17/20, Luna 15/20). Opus and Sonnet are mostly called Haiku, and on held-out pages Astra and Sol are mostly confused with each other.
+- The provider is named 89% of the time on our real site pages, from two sentences. The six-way head alone gets 72.5%: its errors are mostly Astra and Sol called Haiku. Sol is the provider head's weakest model (14/20).
+- Tiers are weak. Haiku (17/20), Luna (15/20) and, partly, Sol (9/20) stand out. Opus and Sonnet are mostly called Haiku, and Astra is called Sol or Haiku.
 - The regularization strength hardly matters for the six-way head (held-out provider 76–79% for C from 0.001 to 1). The provider head's C = 0.001 was chosen on the held-out pages, not on 2b.
 - Earlier heads, for comparison on the same 2b corpus:
-  - Sun et al.'s head can't name our models; the head trained on generic UltraChat questions (92.8% provider on its own held-out questions) got only 43% provider and 27% exact model on 2b. The task, not the models, made the difference.
+  - Sun et al.'s head can't name our models; the head trained on generic UltraChat questions (92.8% provider on its own held-out questions) got only 43% provider and 27% exact model on 2b's first 100 summaries (before Sol was added). The task, not the models, made the difference.
 - Caveats:
-  - 2b's corpus is small (100 summaries, 5 models), so one model's 20 texts move a row by 5 points each.
+  - 2b's corpus is small (120 summaries, 20 per model, 2 site pages), so one text moves a model's row by 5 points.
   - Harness and provider are confounded (see above).
-  - Held-out practice pages score lower than our site pages. The practice pages are paragraphs from chat answers on any topic, and the held-out set includes gpt-6.1-sol, the hardest model, which 2b lacks.
+  - Held-out practice pages score lower than our site pages (80% against 89%). The practice pages are paragraphs from chat answers on any topic, while our two site pages are short and similar.
