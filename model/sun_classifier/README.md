@@ -85,7 +85,7 @@ python -m model.sun_classifier.train_head
 - **Pages:** `summary_answers.py pages` writes `data/corpus/summaries/pages.json`: 100 prose paragraphs of 30–80 words from the non-test part of Sun et al.'s data, drawn evenly across their five models (seed 7). They are never our site pages, which stay the test.
 - **Collection:** the task is 2b's: the page followed by 2b's instruction ("Summarize this page in two sentences. Reply with only your summary."). Each page is one CLI call, built with 2b's own command builders and parsers in `model/cli_corpus.py`, in both conditions (`default` and `minimal` system prompt). Summaries go to the gitignored `data/corpus/summaries/<model>.jsonl`. Re-running retries failed calls and skips the rest.
 - **Training:** `train_head.py` turns every summary into a vector with the frozen backbone (cached in `data/models/sun_chat/short-embeddings.npz`), and holds out whole pages (the last 25%) for testing. It records the held-out score, refits both heads on every summary, scores them on 2b's corpus of our site pages (`data/corpus/cli`), and writes `heads/head-short.npz` and `data/results/short_head_eval.json`.
-- The earlier generic-question collector (`agent_answers.py`, 20 UltraChat questions per call as JSON) is kept for comparison; `train_head.py --corpus-dir data/corpus/short` trains on its answers.
+- The earlier generic-question collector (`agent_answers.py`, 20 UltraChat questions per call as JSON) is kept for comparison. The committed `heads/head-short.npz` is now the summary head, so the first H1 result is reproduced by retraining on those answers: `python -m model.sun_classifier.train_head --corpus-dir data/corpus/short` (this overwrites the committed head; restore it with `git checkout`).
 
 ## Predicting (2c output)
 
@@ -139,16 +139,16 @@ Checked on 1,000 of Sun et al.'s held-out test answers (200 per model, `evaluate
 
 ### Short head
 
-Training: 1,200 two-sentence summaries, 200 per model (100 practice pages, two conditions). Chance is 16.7% for the model and 50% for the provider.
+Training: 1,200 two-sentence summaries, 200 per model (100 practice pages, two conditions). The practice pages are paragraphs written by models (Sun et al.'s chat answers), while our site pages are written by us, so the test also has a style shift. Chance is 16.7% for the model and 50% for the provider.
 
 | Test | n | Provider (provider head) | Provider (sum of model head) | Exact model |
 |---|---|---|---|---|
-| Held-out practice pages (last 25 pages) | 300 | 80.0% | 78.3% | 34.7% |
+| Held-out practice pages (last 25 pages; the provider head's C was picked on them, so its 80.0% is optimistic) | 300 | 80.0% | 78.3% | 34.7% |
 | **2b, our site pages** | 120 | **89.2%** | 72.5% | 35.8% |
 | 2b, `default` system prompt | 60 | 85.0% | 66.7% | 33.3% |
 | 2b, `minimal` system prompt | 60 | 93.3% | 78.3% | 38.3% |
 
-On 2b's corpus, per model (true model in rows; 20 summaries each):
+On 2b's corpus, per model (true model in rows; 20 summaries each, which are 4 groups: 2 pages × 2 conditions, 5 near-paraphrase samples per group):
 
 | True model | Provider right (provider head) | Exact model right | Most often called |
 |---|---|---|---|
@@ -159,12 +159,14 @@ On 2b's corpus, per model (true model in rows; 20 summaries each):
 | gpt-6-luna | 20/20 | 15/20 | |
 | gpt-6.1-sol | 14/20 | 9/20 | claude-haiku-5-5 (10) |
 
-- The provider is named 89% of the time on our real site pages, from two sentences. The six-way head alone gets 72.5%: its errors are mostly Astra and Sol called Haiku. Sol is the provider head's weakest model (14/20).
+- On our two site pages, the provider (through its agent harness) is named 89% of the time from two sentences. The six-way head alone gets 72.5%: its errors are mostly Astra and Sol called Haiku. Sol is the provider head's weakest model (14/20).
 - Tiers are weak. Haiku (17/20), Luna (15/20) and, partly, Sol (9/20) stand out. Opus and Sonnet are mostly called Haiku, and Astra is called Sol or Haiku.
-- The regularization strength hardly matters for the six-way head (held-out provider 76–79% for C from 0.001 to 1). The provider head's C = 0.001 was chosen on the held-out pages, not on 2b.
+- Choice of C:
+  - Six-way head: C = 0.01 was chosen earlier for the generic-question head, by 5-fold cross-validation over its training questions. On the summaries it hardly matters (held-out provider 76–79% for C from 0.001 to 1).
+  - Provider head: C = 0.001 scored best on the held-out practice pages (77.7–80.0% for C from 0.001 to 0.1), so its held-out score is a selection score. C was not chosen on 2b.
 - Earlier heads, for comparison on the same 2b corpus:
   - Sun et al.'s head can't name our models; the head trained on generic UltraChat questions (92.8% provider on its own held-out questions) got only 43% provider and 27% exact model on 2b's first 100 summaries (before Sol was added). The task, not the models, made the difference.
 - Caveats:
-  - 2b's corpus is small (120 summaries, 20 per model, 2 site pages), so one text moves a model's row by 5 points.
-  - Harness and provider are confounded (see above).
-  - Held-out practice pages score lower than our site pages (80% against 89%). The practice pages are paragraphs from chat answers on any topic, while our two site pages are short and similar.
+  - 2b's corpus covers only two pages. Its 120 summaries fall into 24 groups (6 models × 2 pages × 2 conditions), and the 5 samples in a group are near-paraphrases, so they are far from 120 independent tests. The 95% interval for 89.2% is 82–94% if the texts were independent, and 81–96% when the 24 groups are resampled (bootstrap). Per-model counts are 4 groups each.
+  - Harness and provider are confounded (see above): every text, in training and test, comes through Anthropic's coding agent CLI or the Codex CLI, so the head names the provider through its harness. That matches our threat model, since 2a's agent text goes through the same harnesses.
+  - Held-out practice pages score lower than our site pages (80% against 89%). The practice pages are model-written paragraphs on any topic, while our two site pages are short, similar and written by us.

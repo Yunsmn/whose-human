@@ -199,7 +199,8 @@ def main(argv: list[str] | None = None) -> None:
         "--provider-c",
         type=float,
         default=0.001,
-        help="the same for the provider head (0.001 scored best on held-out pages)",
+        help="the same for the provider head (0.001 scored best on the held-out pages, so its held-out "
+        "score is a selection score; 2b is not used to choose it)",
     )
     args = parser.parse_args(argv)
 
