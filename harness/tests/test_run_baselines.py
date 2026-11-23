@@ -226,8 +226,9 @@ def test_python_stacks_read_the_same_think_time_format():
 
 
 def test_curl_binary_reaches_the_script_and_stray_values_are_removed(monkeypatch):
-    monkeypatch.setattr(rb.shutil, "which", lambda name: r"C:\Program Files\Git\mingw64\bin\curl.EXE")
+    found = os.path.join("Program Files", "Git", "mingw64", "bin", "curl.EXE")  # this OS's separators
+    monkeypatch.setattr(rb.shutil, "which", lambda name: found)
     env = rb.child_environment(None, {"PATH": "x", "WH_CURL": "/stray/curl"})
-    assert env["WH_CURL"] == "C:/Program Files/Git/mingw64/bin/curl.EXE"
+    assert env["WH_CURL"] == "Program Files/Git/mingw64/bin/curl.EXE"  # forward slashes, for bash
     monkeypatch.setattr(rb.shutil, "which", lambda name: None)
     assert "WH_CURL" not in rb.child_environment(None, {"PATH": "x", "WH_CURL": "/stray/curl"})
