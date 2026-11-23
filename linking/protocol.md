@@ -20,7 +20,7 @@ The two partner sites on the VM, with the same pages as `infra/sites/`. Every vi
 
 ## Session plan
 
-The basic unit is one run: one agent, one site, one fresh session, the fixed task. "Agents" means every agent the member listed in the PR comments, plus Claude Code in both tool settings (WebFetch only; WebFetch and Bash).
+The basic unit is one run: one agent, one site, one fresh session, the fixed task. "Agents" means every agent the member listed in the PR comments. Not everyone has the same agents: Claude Code runs on B's Windows machine and C's Linux machine, in both tool settings (WebFetch only; WebFetch and Bash), and A runs Codex. Agents shared by two members are what make the "different users, same agent" comparison possible.
 
 | Setting | What changes | Runs per member |
 |---|---|---|
@@ -28,7 +28,7 @@ The basic unit is one run: one agent, one site, one fresh session, the fixed tas
 | 2. Same agent, different sites | the site | covered by 1 (both sites) |
 | 3. Agent and own browser | agent vs browser | in the same sitting as 1: open both sites in your normal browser, 3 visits per site, and click the submit form once per site |
 | 4. IP change | the network | repeat 1 and 3 with 2 runs per agent and site, on a second network (mobile hotspot, or a VPN); note which |
-| 5. Shared IP, different users | the user, same network | one sitting with all three of us on campus Wi-Fi at the same time: Claude Code (WebFetch and Bash) × 2 sites × 2 runs, plus 2 browser visits per site |
+| 5. Shared IP, different users | the user, same network | one sitting with all three of us on campus Wi-Fi at the same time: your main agent × 2 sites × 2 runs, plus 2 browser visits per site |
 
 Settings 1, 3 and 4 can be done alone, at any time once the VM is up. Setting 5 needs one meeting.
 
