@@ -55,7 +55,7 @@ Next:
 - Repeat on Windows, where curl uses Schannel.
 
 ## H2: Header order, header set and request timing separate them anyway.
-Status: open (first result below, one Linux machine)
+Status: supported against scripts that do not pause, on three machines (Linux and Windows); rejected against a script that pauses like an agent (step 2)
 
 Date: 2026-11-18
 Run ids: c-0001..c-0722 (1b scripts) and the 15 Claude Code ids from H1 step 2. The directed curl session in c-claude-i-001 is dropped (its 2 curl requests); its natural WebFetch session is kept. Codex is left out (1 run with traffic).
@@ -76,3 +76,26 @@ Conclusion: supported on this machine, through timing rather than headers. Heade
 Next:
 - Repeat on A's and B's machines and on the VM, with more agent runs.
 - Add human-typed runs as a class, to test agent vs human timing.
+
+### H2 step 2: across machines, and against scripts that pause
+Date: 2026-11-23
+Run ids:
+- Scripts: C's c-0001..c-0722 (Linux), A's 660 Windows script runs (`runs/a.csv`, 11 stacks, no curl), and c-0723..c-0770, 48 new Linux script runs made with `--think-time 2-6` (#26; 12 stacks × 2 sites × 2 trials, seed 11), so each script sleeps 2 to 6 s before each request after the first.
+- Agents: the 15 Claude Code runs above, and B's 12 Windows Claude Code runs (b-claude-{wf,sh}-site{1,2}-00{1,2,3}, #29).
+Setup: the same features and Extra Trees as step 1; agent vs script (binary) and the 13 classes. Three tests: train on C's Linux machine only and test on Windows; leave one machine out; pooled grouped 5-fold cross-validation by run_id. A's machine has only scripts and B's only agents, so Windows agents are always compared with another person's Windows scripts.
+Result:
+- Without the think-time scripts:
+  - Per run, slowest gap: scripts 0.008 to 0.105 s on Linux (722) and 0.019 to 0.245 s on Windows (660). Claude Code with curl: 3.1 to 3.6 s on Linux and 2.9 to 3.4 s on Windows. With WebFetch: 7.9 s and up on Linux, 12.1 to 16.7 s on Windows.
+  - A 1 s threshold flags 27 of 27 Claude Code runs and 0 of 1,382 script runs. Any threshold from 0.5 to 2 s gives the same.
+  - Trained on Linux only: run-level timing alone labels all 24 of B's Windows requests as agent and none of A's 2,640 script requests. TLS + HTTP without the User-Agent catches B's WebFetch requests (the same client as on Linux) but none of B's curl requests. Git Bash's Schannel curl is a fingerprint the Linux model never saw, so it goes to a script class.
+- With the think-time scripts:
+  - Their slowest gap is 3.7 to 6.0 s (median 5.4 s). Their wait before the submit is 2.1 to 6.0 s. Both overlap Claude Code's.
+  - A 1 s or 2 s threshold flags 48 of 48 of them as agents. A model trained without them labels all 192 of their requests as agent with run-level timing alone. TLS + HTTP mislabels 16, the curl stack, whose TLS is the agent's.
+  - Pooled cross-validation with them in training: agent vs script macro F1 0.977 (TLS + HTTP + run-level timing) and 0.972 (run-level timing alone); 4 of 192 think-time requests labelled agent; agent recall 0.98 and 0.96. Run counts are not features, so this boundary is timing: it fits our 2 to 6 s draw (most of their slowest gaps are above Claude's curl range), not a property an adversary has to keep.
+Conclusion:
+- Timing separates an LLM in the loop from a script that doesn't pause, and that holds across machines and operating systems where TLS doesn't: a Linux-trained model keeps all of B's Windows runs only through timing.
+- Rejected against a script that pauses: a script that sleeps like an agent defeats the threshold, and the learned boundary only works because our pauses are drawn differently from the agent's. A script copying the agent's pause distribution would not be caught by these features.
+- What still separates them is the client, not the behavior. WebFetch has its own JA4 and `Claude-User` User-Agent on both OSes (a self-identifying client). Agents that shell out to curl remain indistinguishable from the same curl run by a script that pauses.
+Next:
+- 3b/3c: timing transfers across machines but is the user's model latency, not the user. Treat it as an agent feature, not a linking feature.
+- B's Windows script baselines (with Schannel curl) give a same-machine Windows comparison.
