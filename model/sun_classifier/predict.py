@@ -18,7 +18,9 @@ Output, in the gitignored data/predictions/2c/ (CSV), named `<input>-<head>-text
 `<input>-<head>-ids.csv`:
 
 - texts: one row per text: `id`, `p_<model>` for every model the head knows (summing to 1),
-  `provider_<name>` (the sum over that provider's models), `top_model`, `top_provider`.
+  `provider_<name>` (from the short head's own two-way provider head, summing to 1; for a head
+  without one, the sum over that provider's models), `top_model`, `top_provider`. The two heads
+  are separate, so `top_provider` can differ from the provider of `top_model`.
 - ids, only when there is a key: one row per key (per run in our tests), the mean of its texts'
   vectors, `n_texts`, `top_model` and `top_provider`.
 """
@@ -73,7 +75,7 @@ def score_texts(texts: pd.DataFrame, score: ScoreFn, providers: dict[str, str]) 
 def per_id(scored: pd.DataFrame, providers: dict[str, str]) -> pd.DataFrame:
     """Average the vectors of all texts that share an id (several submissions in one run)."""
     grouped = scored.groupby("id", sort=True)
-    out = grouped[_model_columns(scored)].mean().reset_index()
+    out = grouped[_model_columns(scored) + _provider_columns(scored)].mean().reset_index()
     out.insert(1, "n_texts", grouped.size().values)
     return _add_providers(out, providers)
 
@@ -82,14 +84,19 @@ def _model_columns(frame: pd.DataFrame) -> list[str]:
     return [column for column in frame.columns if column.startswith("p_")]
 
 
+def _provider_columns(frame: pd.DataFrame) -> list[str]:
+    return [column for column in frame.columns if column.startswith("provider_")]
+
+
 def _add_providers(frame: pd.DataFrame, providers: dict[str, str]) -> pd.DataFrame:
+    """Provider columns the scorer already gave (a provider head) are kept; missing ones are sums."""
     models = _model_columns(frame)
     for provider in sorted(set(providers.values())):
-        mine = [f"p_{model}" for model, owner in providers.items() if owner == provider]
-        frame[f"provider_{provider}"] = frame[mine].sum(axis=1)
-    provider_columns = [column for column in frame.columns if column.startswith("provider_")]
+        if f"provider_{provider}" not in frame:
+            mine = [f"p_{model}" for model, owner in providers.items() if owner == provider]
+            frame[f"provider_{provider}"] = frame[mine].sum(axis=1)
     frame["top_model"] = frame[models].idxmax(axis=1).str.removeprefix("p_")
-    frame["top_provider"] = frame[provider_columns].idxmax(axis=1).str.removeprefix("provider_")
+    frame["top_provider"] = frame[_provider_columns(frame)].idxmax(axis=1).str.removeprefix("provider_")
     return frame
 
 
