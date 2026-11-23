@@ -1,1 +1,13 @@
 run_id,label_agent,label_model,label_user,machine,network,notes
+b-claude-wf-site1-001,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch only (Bash disallowed); fresh session
+b-claude-wf-site1-002,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch only (Bash disallowed); fresh session
+b-claude-wf-site1-003,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch only (Bash disallowed); fresh session
+b-claude-wf-site2-001,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch only (Bash disallowed); fresh session
+b-claude-wf-site2-002,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch only (Bash disallowed); fresh session
+b-claude-wf-site2-003,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch only (Bash disallowed); fresh session
+b-claude-sh-site1-001,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch and Bash allowed; fresh session
+b-claude-sh-site1-002,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch and Bash allowed; fresh session
+b-claude-sh-site1-003,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch and Bash allowed; fresh session
+b-claude-sh-site2-001,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch and Bash allowed; fresh session
+b-claude-sh-site2-002,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch and Bash allowed; fresh session
+b-claude-sh-site2-003,claude-code,claude-opus-5-5,persona-b1,b-windows,local,mode headless; claude-code 2.1.319; WebFetch and Bash allowed; fresh session
