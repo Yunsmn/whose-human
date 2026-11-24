@@ -3,7 +3,7 @@
 Record each finished experiment here before starting the next one (template in AGENTS.md).
 
 ## H1: Agents sharing an HTTP library are indistinguishable from plain scripts using that library at the TLS layer alone.
-Status: open (scripts-only step below; the agent comparison waits for agent runs on the same machine)
+Status: supported for agents that shell out to curl, on Linux (step 2) and Windows (step 3); rejected for Claude Code's WebFetch, a client of its own
 
 Date: 2026-11-18
 Run ids: c-0001..c-0722 (runs/c.csv)
@@ -54,6 +54,17 @@ Next:
 - A (Codex is A's main agent): Codex interactive and headless runs on A's machine; the web tool needs the shared VM with a real domain to be observed at all.
 - Repeat on Windows, where curl uses Schannel.
 
+### H1, step 3: Claude Code and scripts on the same Windows machine
+Date: 2026-11-24
+Run ids: B's b-0001..b-0720 (1b, 12 stacks × 2 sites × 30 trials, #31) and b-claude-{wf,sh}-site{1,2}-00{1,2,3} (#29), all on B's Windows 11 machine on 2026-11-23.
+Setup: as in step 2. Claude Code 2.1.319 headless, 3 runs per tool condition per site. Its Bash runs Git Bash's curl 8.21.0 (Schannel) with `-sk`. The script counterpart is `script_curl-norevoke` (the same curl with `--ssl-no-revoke`; both flags drop the same ClientHello extension, see `harness/baselines/README.md`). Plain Schannel curl fails against our local CA and is not a baseline.
+Result:
+- Agent curl vs `script_curl-norevoke`, on the raw requests: the same JA4 (`t13d2012h1_2b729b4bf6f3_36bf25f296df`), HTTP/1.1, User-Agent `curl/8.21.0` and header order, on the GET (Host, User-Agent, Accept) and on the POST (plus Content-Length, Content-Type). Unlike on Linux, all 6 submits used the urlencoded form.
+- 1c on B's machine only (13 classes, grouped CV, TLS + HTTP without the User-Agent): 10 of Claude Code's 12 curl requests are labelled `script_curl-norevoke`; agent curl vs `script_curl-norevoke` alone gets macro F1 0.499 (chance).
+- WebFetch's JA4 (`t13d181000_...`, identical to Linux) matches none of B's scripts, the Node stacks included.
+Conclusion: supported on Windows for agents that shell out. Claude Code's curl is the same as a script running the same curl, at the TLS and header layers, as on Linux. Rejected for WebFetch, which is its own client on both OSes.
+Next: H2 step 2 (timing) covers B's machine.
+
 ## H2: Header order, header set and request timing separate them anyway.
 Status: supported against scripts that do not pause, on three machines (Linux and Windows); rejected against a script that pauses like an agent (step 2)
 
@@ -78,24 +89,37 @@ Next:
 - Add human-typed runs as a class, to test agent vs human timing.
 
 ### H2 step 2: across machines, and against scripts that pause
-Date: 2026-11-23
+Date: 2026-11-23, updated 2026-11-24 with B's script baselines
 Run ids:
-- Scripts: C's c-0001..c-0722 (Linux), A's 660 Windows script runs (`runs/a.csv`, 11 stacks, no curl), and c-0723..c-0770, 48 new Linux script runs made with `--think-time 2-6` (#26; 12 stacks × 2 sites × 2 trials, seed 11), so each script sleeps 2 to 6 s before each request after the first.
+- Scripts:
+  - C, Linux: c-0001..c-0722, plus c-0723..c-0770. The second set is 48 runs made with `--think-time 2-6` (#26; 12 stacks × 2 sites × 2 trials, seed 11), so each script sleeps 2 to 6 s before each request after the first.
+  - A, Windows: 660 runs (`runs/a.csv`, 11 stacks, no curl).
+  - B, Windows: b-0001..b-0720 (12 stacks, with `curl-norevoke`, #31).
 - Agents: the 15 Claude Code runs above, and B's 12 Windows Claude Code runs (b-claude-{wf,sh}-site{1,2}-00{1,2,3}, #29).
-Setup: the same features and Extra Trees as step 1; agent vs script (binary) and the 13 classes. Three tests: train on C's Linux machine only and test on Windows; leave one machine out; pooled grouped 5-fold cross-validation by run_id. A's machine has only scripts and B's only agents, so Windows agents are always compared with another person's Windows scripts.
+Setup: the same features and Extra Trees as step 1; agent vs script (binary) and the 13 classes. Four tests:
+- same machine (B's Windows machine alone, grouped CV by run_id);
+- train on one machine with agents and scripts (C or B) and test on the other;
+- leave one machine out;
+- pooled grouped 5-fold cross-validation by run_id.
 Result:
 - Without the think-time scripts:
-  - Per run, slowest gap: scripts 0.008 to 0.105 s on Linux (722) and 0.019 to 0.245 s on Windows (660). Claude Code with curl: 3.1 to 3.6 s on Linux and 2.9 to 3.4 s on Windows. With WebFetch: 7.9 s and up on Linux, 12.1 to 16.7 s on Windows.
-  - A 1 s threshold flags 27 of 27 Claude Code runs and 0 of 1,382 script runs. Any threshold from 0.5 to 2 s gives the same.
-  - Trained on Linux only: run-level timing alone labels all 24 of B's Windows requests as agent and none of A's 2,640 script requests. TLS + HTTP without the User-Agent catches B's WebFetch requests (the same client as on Linux) but none of B's curl requests. Git Bash's Schannel curl is a fingerprint the Linux model never saw, so it goes to a script class.
+  - Per run, slowest gap. Scripts: 0.008 to 0.105 s on C's Linux machine (722), 0.019 to 0.245 s on A's Windows machine (660), 0.029 to 0.399 s on B's (720). Claude Code with curl: 3.1 to 3.6 s on Linux, 2.9 to 3.4 s on Windows. With WebFetch: 7.9 s and up on Linux, 12.1 to 16.7 s on Windows.
+  - A 1 s threshold flags 27 of 27 Claude Code runs and 0 of 2,102 script runs. Any threshold from 0.5 to 2 s gives the same.
+  - Same machine (B): agent vs script macro F1 1.000 with run-level timing, alone or added to TLS + HTTP without the User-Agent. Without timing, all 240 `script_curl-norevoke` requests are labelled agent (macro F1 0.562). Agent curl vs `script_curl-norevoke` alone: 0.499 without timing, 1.000 with it.
+  - Across machines, in both directions (train on C, test on B, and the reverse): run-level timing alone labels every agent request as agent and none of the 2,880 / 2,888 script requests. TLS + HTTP, with or without timing, catches WebFetch (the same client on both OSes) but none of the other OS's agent curl requests. Linux curl (OpenSSL, HTTP/2) and Git Bash's Schannel curl are different fingerprints, and the trees split on TLS before timing.
 - With the think-time scripts:
   - Their slowest gap is 3.7 to 6.0 s (median 5.4 s). Their wait before the submit is 2.1 to 6.0 s. Both overlap Claude Code's.
   - A 1 s or 2 s threshold flags 48 of 48 of them as agents. A model trained without them labels all 192 of their requests as agent with run-level timing alone. TLS + HTTP mislabels 16, the curl stack, whose TLS is the agent's.
-  - Pooled cross-validation with them in training: agent vs script macro F1 0.977 (TLS + HTTP + run-level timing) and 0.972 (run-level timing alone); 4 of 192 think-time requests labelled agent; agent recall 0.98 and 0.96. Run counts are not features, so this boundary is timing: it fits our 2 to 6 s draw (most of their slowest gaps are above Claude's curl range), not a property an adversary has to keep.
+  - Pooled cross-validation over all three machines with them in training:
+    - agent vs script macro F1 0.968 (TLS + HTTP + run-level timing) and 0.973 (run-level timing alone);
+    - 4 of 192 think-time requests labelled agent;
+    - agent recall 0.94 and 0.96.
+
+    Run counts are not features, so this boundary is timing. It fits our 2 to 6 s draw (most of their slowest gaps are above Claude's curl range), and an adversary doesn't have to keep that.
 Conclusion:
-- Timing separates an LLM in the loop from a script that doesn't pause, and that holds across machines and operating systems where TLS doesn't: a Linux-trained model keeps all of B's Windows runs only through timing.
+- Timing separates an LLM in the loop from a script that doesn't pause, on the same machine (Linux and Windows) and across machines and operating systems, where TLS doesn't transfer.
 - Rejected against a script that pauses: a script that sleeps like an agent defeats the threshold, and the learned boundary only works because our pauses are drawn differently from the agent's. A script copying the agent's pause distribution would not be caught by these features.
 - What still separates them is the client, not the behavior. WebFetch has its own JA4 and `Claude-User` User-Agent on both OSes (a self-identifying client). Agents that shell out to curl remain indistinguishable from the same curl run by a script that pauses.
 Next:
-- 3b/3c: timing transfers across machines but is the user's model latency, not the user. Treat it as an agent feature, not a linking feature.
-- B's Windows script baselines (with Schannel curl) give a same-machine Windows comparison.
+- 3b/3c: timing transfers across machines, but it measures the model's latency, not the user. Treat it as an agent feature, not a linking feature. TLS is the machine's (Linux curl ≠ Git Bash curl), which is what 3b needs.
+- Think-time baselines on Windows, and a script that replays Claude Code's measured pauses, to bound the timing feature properly.
