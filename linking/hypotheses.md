@@ -14,3 +14,10 @@ Next: 3c combines this signature with IP and timing; test whether it survives an
 
 ## H2: Linking still works when the IP changes, using environment and timing alone.
 Status: open
+
+## Observation: the agent passes the visit's identifier on to the user
+Status: observation, not a test yet (2026-11-24)
+Run ids: the 27 headless Claude Code runs with saved outputs: c-claude-h-00{1,2}, c-claude-{wf,sh}-site{1,2}-00{1,2,3} (Linux) and b-claude-{wf,sh}-site{1,2}-00{1,2,3} (Windows).
+Result: 5 of the 27 final answers shown to the user contain the visit's path with its run id, 4 of them as a full link. All 5 are runs that used WebFetch: 4 of B's 6 and 1 of C's 8. No run that used curl did. The task never asks for sources.
+Meaning: a per-visit identifier in the URL reaches the user's screen through the agent's answer. If the user clicks the link, their own browser visit carries the identifier. That links the agent's visit to the person's browsing with no cookie, no IP and no fingerprint. It is UID smuggling (Randall et al., IMC 2022) through the agent.
+Next: in the Track 3 campaign, count how often answers cite our links, and how often we follow them ourselves in setting 3, with tasks that ask research-style questions (agents cite sources there). Report it per agent and per tool.
