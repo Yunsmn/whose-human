@@ -1,0 +1,74 @@
+% Related work (owner: B). Every claim below is taken from the cited paper's abstract or from our
+% notes in AGENTS.md; entries marked TODO in references.bib still need their full metadata checked.
+
+\section{Related Work}
+\label{sec:related}
+
+Our work sits between three lines of research: fingerprinting web agents from their traffic,
+identifying a language model from its text, and tracking or linking users. Prior work studies each
+on its own and mostly for browser agents. We combine them for coding agents, which fetch pages from
+the user's own machine, and we target the user behind the agent rather than the tool.
+
+\subsection{Fingerprinting AI agents from their traffic}
+
+Borysenko~\cite{borysenko2026agents} measured nine coding agents visiting documentation portals and
+found stable signatures in their User-Agent, headers and pre-fetch behaviour, with one to four
+requests per prompt. Most agents use generic HTTP runtimes (Node's axios or got, curl, Go's net/http
+or Colly), and only two name themselves. That study logged client IP addresses but did not analyse
+them, and it did not include Codex CLI.
+
+Kang et al.~\cite{kang2026whose} fingerprint six autonomous web agents across the TLS ClientHello
+(JA3 and JA4), the HTTP/2 fingerprint, headers and browser events, and reach 97\% accuracy with an
+Extra Trees classifier when the layers are combined; no single layer suffices. They explicitly
+exclude coding agents, deliberately avoid logging participant IP addresses, and their goal is content
+protection, so linking requests to a user is left open. Our logging server follows their layered
+approach, and our harness classifier uses the same model family.
+
+Wang et al.~\cite{wang2026fpagent} compare seven browsing agents with humans and show that local
+agents expose the host machine's attributes while cloud agents expose a fixed remote environment.
+They also observe that agents produce mouse events only at click time and paste rather than type, so
+human behavioural biometrics do not transfer. Lugoloobi et al.~\cite{lugoloobi2026actions} identify
+which of 14 models drives a browser agent from its UI traces, but this needs rich interaction that
+coding agents do not produce. Fayolle et al.~\cite{fayolle2026browser} also study browser agents.
+Unlike all of these, we study coding and command-line agents, which make only a handful of plain HTTP
+requests and run no JavaScript.
+
+\paragraph{Active detection.} A site can also probe the visitor. The LLM agent honeypot of
+Palisade~\cite{reworr2024honeypot} combines prompt injection with timing to detect LLM-driven
+attackers, and \emph{Say Shibboleth}~\cite{shibboleth2026} uses traps. We instead measure what a site
+learns \emph{passively}, from traffic it receives anyway; our input page asks for a summary only in
+plain visible text, never through hidden instructions.
+
+\subsection{Identifying the model from its text}
+
+LLMmap~\cite{pasquini2025llmmap} identifies the model behind an application from its responses,
+across 42 model versions. Sun et al.~\cite{sun2025idiosyncrasies} show that a classifier on top of
+an LLM2Vec text encoder~\cite{behnamghader2024llm2vec} tells apart the outputs of five chatbots with
+high accuracy. Our model track reuses their published classifier as a frozen backbone and trains new
+output heads on our current models, applied to the short text an agent submits on our page. We
+further show that, for one agent, the sequence of tools it uses already reveals the model tier
+without any text.
+
+\subsection{Tracking and linking users}
+
+Cross-device tracking links a user's devices from IP addresses and browsing history
+(Zimmeck et al.~\cite{zimmeck2017crossdevice}, F1 0.91), and browsing histories alone re-identify a
+large share of users (Bird et al.~\cite{bird2020replication}). Crichton et al.~\cite{crichton2025rethinking}
+show, over 150,000 users and two years, that behavioural fingerprints are highly unique and stable,
+and that combining them with browser fingerprints works best. These are our baselines for linking.
+
+UID smuggling (Randall et al.~\cite{randall2022uid}) passes an identifier between sites through
+navigation URLs. We observe an agent variant of it: the agent relays the visited URL, including our
+per-visit identifier, to the user, whose own browser may then carry it. Older linking signals do not
+help in our setting: TCP timestamp clock skew~\cite{kohno2005clock} is randomised per connection on
+current Linux and absent by default on Windows, and TLS session tickets~\cite{sy2018tls} require
+resumption, which none of our agent connections used.
+
+Zhang et al.~\cite{zhang2025traffic} infer agent behaviour and some user attributes from encrypted
+traffic, but as an on-path network observer rather than the visited website. Ukani
+et al.~\cite{ukani2025privacy} show that several browser agents keep state across sessions and leak
+details from earlier chats to websites, without studying fingerprinting or linking.
+
+\paragraph{Our position.} To our knowledge, no prior work links the requests of tool-using coding
+agents to the person who runs them, across agents, partner sites and the person's own browser, from
+traffic a site receives passively.
