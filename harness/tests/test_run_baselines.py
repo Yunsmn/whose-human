@@ -93,7 +93,7 @@ def test_every_stack_builds_a_command_ending_in_the_run_url(name):
 
 def test_curl_runs_its_shell_script_with_bash():
     [(argv, cwd)] = rb.commands(rb.STACKS["curl"], "https://site1.test:8443/r/b-0001/")
-    assert argv[:2] == ["bash", "fetch_curl.sh"]
+    assert argv[:2] == [rb.bash_binary(), "fetch_curl.sh"]
     assert cwd == rb.HERE / "curl"
 
 
@@ -114,6 +114,18 @@ def test_schannel_curl_is_skipped_by_default_but_other_curls_are_not():
     assert rb.skipped_by_default(curl, "curl 8.21.0; tls Schannel")
     assert rb.skipped_by_default(curl, "curl 8.5.0; tls OpenSSL/3.0.13") is None
     assert rb.skipped_by_default(rb.STACKS["got"], "got 16.2.0; node 22.23.2") is None
+
+
+def test_curl_norevoke_runs_only_for_schannel_and_passes_its_flag():
+    norevoke = rb.STACKS["curl-norevoke"]
+    assert rb.skipped_by_default(norevoke, "curl 8.21.0; tls Schannel") is None
+    assert rb.skipped_by_default(norevoke, "curl 8.5.0; tls OpenSSL/3.0.13")
+    assert rb.skipped_by_default(norevoke, None)
+    assert norevoke.label == "script_curl-norevoke"
+    [(argv, _)] = rb.commands(norevoke, "https://site1.test:8443/r/b-0001/", "hi")
+    assert argv[-1] == "--ssl-no-revoke" and argv[:2] == [rb.bash_binary(), "fetch_curl.sh"]
+    [(argv, _)] = rb.commands(rb.STACKS["curl"], "https://site1.test:8443/r/b-0001/", "hi")
+    assert argv[-1] == "hi"  # plain curl gets no extra flag
 
 
 def test_script_files_exist_for_every_stack():
@@ -211,3 +223,12 @@ def test_python_stacks_read_the_same_think_time_format():
     assert common.think_range("2-6") == (2.0, 6.0)
     with pytest.raises(SystemExit):
         common.think_range("6-2")
+
+
+def test_curl_binary_reaches_the_script_and_stray_values_are_removed(monkeypatch):
+    found = os.path.join("Program Files", "Git", "mingw64", "bin", "curl.EXE")  # this OS's separators
+    monkeypatch.setattr(rb.shutil, "which", lambda name: found)
+    env = rb.child_environment(None, {"PATH": "x", "WH_CURL": "/stray/curl"})
+    assert env["WH_CURL"] == "Program Files/Git/mingw64/bin/curl.EXE"  # forward slashes, for bash
+    monkeypatch.setattr(rb.shutil, "which", lambda name: None)
+    assert "WH_CURL" not in rb.child_environment(None, {"PATH": "x", "WH_CURL": "/stray/curl"})
