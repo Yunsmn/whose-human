@@ -10,6 +10,17 @@ All Track 3 sessions go to **the shared VM**, never to our local Docker servers.
 - Port 443, no CDN or proxy in front: TLS has to end at our server.
 - Its logs hold real IP addresses. They go to the private data repo (`logs/vm-YYYYMMDD.jsonl`), never to this repo.
 
+### Extra signals the VM should capture
+
+Track 3 links a person through signals that come from their machine and network, not from the agent's HTTP client. Browser, curl and WebFetch share those, while their TLS fingerprints differ. Two are worth building into the VM from the start:
+
+- **IPv6 (dual stack).** Give both hostnames an AAAA record and let the server listen on IPv6 too. A home or campus network keeps one /64 prefix while each device rotates its address, so the prefix can link a person's agents and browser when the full address differs. It also tests whether each client prefers IPv6 (Happy Eyeballs), which differs between runtimes.
+- **Our own DNS for one zone (optional, the bigger job).** Run an authoritative name server for a subdomain zone and log every query. If a visit's links point to a unique hostname under that zone, the query reveals the resolver behind the visitor's machine. curl and Node use the system resolver, while browsers often use encrypted DNS (DoH) to a public resolver, so a match links agents to each other, and a mismatch is itself a signal (Klein and Pinkas, NDSS 2019, track users through DNS). Unique hostnames need a wildcard certificate, which Let's Encrypt issues only through the DNS-01 challenge.
+
+Tested on C's machine and dropped, so the VM doesn't need them:
+- **TCP timestamps** (Kohno et al. 2005, clock skew). On Linux 7.2 each connection gets its own random timestamp offset: six connections from curl, Python, Node and a second port gave six unrelated values. Clock skew needs long connections, and agent connections last well under a second. Windows sends no timestamps by default.
+- **TLS session tickets** (Sy et al. 2018). No agent connection in our logs resumed a session: WebFetch opens one fresh connection per run, and every curl call is a new process. Only some Node scripts resumed, on their own second connection.
+
 ## Personas
 
 Fictitious only, one per member unless a member adds a second: `persona-a1`, `persona-b1`, `persona-c1` (the ones Tracks 1 and 2 already use). The persona is the ground truth `label_user`: everything a member does on their own machines and browser is the same user.
