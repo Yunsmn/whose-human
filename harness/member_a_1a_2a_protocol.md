@@ -60,7 +60,7 @@ python -m model.agent_text data/logs `
 ```
 
 The terminal output contains only aggregate outcome counts. The private CSV contains submitted text and labels
-for Track 2c, so it must remain in `data/` or approved private storage. Outcomes distinguish POST submission, GET
+for Track 2c, so it must remain in `data/` (the private `whose-human-runs` repo). Outcomes distinguish POST submission, GET
 fallback submission, literal `YOUR_SUMMARY` placeholder submission, fetched-but-not-submitted, other observed
 traffic, and no observed request. Placeholder submissions are excluded from the exported corpus.
 
