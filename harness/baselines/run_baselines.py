@@ -43,6 +43,7 @@ DEFAULT_ALLOWED_HOSTS = ("site1.test", "site2.test", "localhost", "127.0.0.1")
 SUBMISSION_TEXT = "baseline script submission"
 TIMEOUT_SECONDS = 180
 THINK_ENV = "WH_THINK_TIME"
+CURL_ENV = "WH_CURL"  # the curl binary fetch_curl.sh runs; the same one probe() reports
 MAX_THINK_SECONDS = 30  # 3 pauses per visit must stay well inside TIMEOUT_SECONDS
 
 
@@ -52,9 +53,9 @@ class Stack:
 
     name: str
     kind: str  # node, python, curl or go
-    target: str  # script path relative to its folder, or the Go package; unused for curl
+    target: str  # script path relative to its folder, or the Go package
     package: str | None = None  # npm package (node), distribution name (python), module (go)
-    extra_args: tuple[str, ...] = field(default=())
+    extra_args: tuple[str, ...] = field(default=())  # node: script arguments; curl: curl flags
 
     @property
     def label(self) -> str:
@@ -70,6 +71,9 @@ STACKS: dict[str, Stack] = {
         Stack("node-fetch", "node", "fetch_native.mjs"),
         Stack("node-https", "node", "fetch_https.mjs"),
         Stack("curl", "curl", "fetch_curl.sh"),
+        # Schannel only: skips the revocation check our local CA can't pass. That drops one
+        # ClientHello extension (status_request), exactly as `curl -k` does; see README.
+        Stack("curl-norevoke", "curl", "fetch_curl.sh", extra_args=("--ssl-no-revoke",)),
         Stack("requests", "python", "fetch_requests.py", "requests"),
         Stack("httpx", "python", "fetch_httpx.py", "httpx"),
         Stack("urllib", "python", "fetch_urllib.py"),
@@ -177,7 +181,7 @@ def commands(stack: Stack, url: str, text: str = SUBMISSION_TEXT) -> list[tuple[
     if stack.kind == "go":
         return [(["go", "run", stack.target, url, text], HERE / "go")]
     if stack.kind == "curl":
-        return [(["bash", stack.target, url, text], HERE / "curl")]
+        return [([bash_binary(), stack.target, url, text, *stack.extra_args], HERE / "curl")]
     raise ValueError(f"unknown stack kind {stack.kind!r}")
 
 
@@ -186,10 +190,14 @@ def skipped_by_default(stack: Stack, version: str | None) -> str | None:
 
     Schannel curl (Windows) can't check revocation for our local CA and fails every request,
     while flags that skip the check change its ClientHello. It still runs when named
-    explicitly, for example against the shared VM's publicly trusted certificate.
+    explicitly, for example against the shared VM's publicly trusted certificate. Its
+    ``curl-norevoke`` variant is the opposite: it exists only for Schannel curl.
     """
-    if stack.kind == "curl" and version and "Schannel" in version:
+    schannel = stack.kind == "curl" and bool(version) and "Schannel" in version
+    if stack.name == "curl" and schannel:
         return "Schannel curl fails the revocation check against the local CA (see README)"
+    if stack.name == "curl-norevoke" and not schannel:
+        return "--ssl-no-revoke only applies to Schannel curl (see README)"
     return None
 
 
@@ -216,6 +224,23 @@ def parse_think_time(value: str | None) -> str:
     return f"{lo:g}" if lo == hi else f"{lo:g}-{hi:g}"
 
 
+def bash_binary() -> str:
+    """The bash on PATH. Windows starts a bare "bash" from System32 first, which is WSL's: a
+    Linux bash with Linux's curl, which also doesn't receive our environment variables."""
+    return shutil.which("bash") or "bash"
+
+
+def curl_binary() -> str | None:
+    """The curl on PATH, as a path bash can run.
+
+    On Windows several curls can differ: Windows itself looks in System32 first, and PATH may
+    name Git's mingw64 curl (Schannel), which agents that run Git Bash use. The runner resolves
+    PATH once and gives fetch_curl.sh that exact binary, so the version in the notes is the one
+    that ran."""
+    found = shutil.which("curl")
+    return Path(found).as_posix() if found else None
+
+
 def child_environment(
     ca: Path | None, environ: dict[str, str] | None = None, think_time: str = ""
 ) -> dict[str, str]:
@@ -232,6 +257,9 @@ def child_environment(
     env.pop(THINK_ENV, None)
     if think_time:
         env[THINK_ENV] = think_time
+    env.pop(CURL_ENV, None)
+    if curl := curl_binary():
+        env[CURL_ENV] = curl
     return env
 
 
@@ -283,9 +311,10 @@ def probe(stack: Stack) -> str | None:
             return None if version is None else f"{stack.package} {version}; python {python}"
         return f"urllib; python {python}"
     if stack.kind == "curl":
-        if shutil.which("curl") is None:
+        curl = curl_binary()
+        if curl is None:
             return None
-        first = (_output(["curl", "--version"]) or "").splitlines()[:1]
+        first = (_output([curl, "--version"]) or "").splitlines()[:1]
         if not first:
             return None
         words = first[0].split()
