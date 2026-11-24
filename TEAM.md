@@ -5,8 +5,8 @@
 
 | Member | Track 1: Harness | Track 2: Model | Infra | Track 3 lead (joint) |
 |---|---|---|---|---|
-| **A** | 1a. Agent runs (medium) | 2a. Input page and agent text (medium) | Partner site content (`infra/sites/`) | 3b. Environment signatures |
-| **B** | 1b. Plain script baselines (light) | 2c. Text classifier (heavy) | Logging server (`infra/server/`) and, later, the shared VM | 3d. IP change and collisions |
+| **A** | 1a. Agent runs (medium) | 2a. Input page and agent text (medium) | Partner site content (`infra/sites/`) and the shared VM | 3b. Environment signatures |
+| **B** | 1b. Plain script baselines (light) | 2c. Text classifier (heavy) | Logging server (`infra/server/`) | 3d. IP change and collisions |
 | **C** | 1c. Harness classifier (heavy) | 2b. API reference corpus (light) | `infra/loader.py`, `infra/schema.md` and `runs/` | 3c. Linking across agents, sites and browser |
 
 Owning a piece means you write its code, record its results in the track's `hypotheses.md`, and draft its methods and results in the paper. Everyone reviews and helps on everything.
