@@ -175,7 +175,10 @@ Result:
   | Sonnet | WebFetch (5/6), curl (1/6) | curl (6/6): GET 5, POST 1 | 10.0 to 14.4 s; 2.49 s in the curl-only run |
   | Opus | curl (6/6) | curl, POST (6/6) | 4.1 to 5.7 s |
 
-  So the server sees three different patterns: WebFetch twice (Haiku), WebFetch then curl (Sonnet), curl twice (Opus). On Linux (step 1) Sonnet used curl for both steps in 5 of 6 runs, so the mixed pattern is new here. Across both machines it is not unique to Sonnet: Opus did the same once on Linux (c-claude-sh-site1-001). Curl for both steps has been seen with Sonnet and Opus, WebFetch for both only with Haiku and with one Linux Sonnet run.
+  So the server sees three different patterns: WebFetch twice (Haiku), WebFetch then curl (Sonnet), curl twice (Opus). On Linux (step 1) Sonnet used curl for both steps in 5 of 6 runs, and its one WebFetch run (c-claude-sh-sonnet-site2-001) was this same mixed pattern. Across both machines:
+  - WebFetch for both steps: Haiku only (12 of 12 Haiku runs).
+  - WebFetch, then curl: Sonnet 6 of 12, Opus 1 of 19 (c-claude-sh-site1-001, Linux).
+  - curl for both steps: Sonnet 6 of 12, Opus 18 of 19.
 - The pause drifts between days. B's interleaved Opus runs paused 4.1 to 5.7 s; the same machine, CLI and task gave 2.9 to 3.4 s the day before (#29), and C's Linux Opus runs 3.1 to 3.6 s. The 2.8 s threshold from step 1 still splits the one curl-only Sonnet run (2.49 s) from every Opus run, but one run doesn't test it.
 Conclusion: supported for the tool sequence, which reads from the fingerprint alone and held on both machines. For timing, a fixed threshold is rejected: the pause measures provider-side latency, which moved by over 1 s between two days. Timing can still rank models within one sitting (relative, not absolute), which is what a site sees when several agents visit at about the same time.
 Next:
