@@ -6,16 +6,17 @@ Status: draft for the team to agree on in the pull request that adds it. Persona
 
 All Track 3 sessions go to **the shared VM**, never to our local Docker servers. Locally, Docker's port forwarding replaces every client address with its gateway (`172.18.0.1` in all our local logs), so the IP, the main linking signal, is lost there. The VM runs `infra/server` with host networking (see "Shared VM" in `infra/README.md`):
 
-- Two hostnames, one per partner site, with publicly trusted certificates (Let's Encrypt). Agents then need no `NODE_EXTRA_CA_CERTS`, no `--cacert` and no CA in the trust store.
+- A free VM (Azure for Students) run by A, with a public IPv4 and IPv6 address.
+- Two free DuckDNS subdomains, one per partner site (each is its own site: `duckdns.org` is on the public suffix list), with A and AAAA records and publicly trusted certificates from Let's Encrypt (the DNS-01 challenge through DuckDNS's TXT API, e.g. acme.sh's `dns_duckdns`, needs no port 80). Agents then need no `NODE_EXTRA_CA_CERTS`, no `--cacert` and no CA in the trust store.
 - Port 443, no CDN or proxy in front: TLS has to end at our server.
 - Its logs hold real IP addresses. They go to the private data repo (`logs/vm-YYYYMMDD.jsonl`), never to this repo.
 
 ### Extra signals the VM should capture
 
-Track 3 links a person through signals that come from their machine and network, not from the agent's HTTP client. Browser, curl and WebFetch share those, while their TLS fingerprints differ. Two are worth building into the VM from the start:
+Track 3 links a person through signals that come from their machine and network, not from the agent's HTTP client. Browser, curl and WebFetch share those, while their TLS fingerprints differ. One is worth building into the VM from the start:
 
-- **IPv6 (dual stack).** Give both hostnames an AAAA record and let the server listen on IPv6 too. A home or campus network keeps one /64 prefix while each device rotates its address, so the prefix can link a person's agents and browser when the full address differs. It also tests whether each client prefers IPv6 (Happy Eyeballs), which differs between runtimes.
-- **Our own DNS for one zone (optional, the bigger job).** Run an authoritative name server for a subdomain zone and log every query. If a visit's links point to a unique hostname under that zone, the query reveals the resolver behind the visitor's machine. curl and Node use the system resolver, while browsers often use encrypted DNS (DoH) to a public resolver, so a match links agents to each other, and a mismatch is itself a signal (Klein and Pinkas, NDSS 2019, track users through DNS). Unique hostnames need a wildcard certificate, which Let's Encrypt issues only through the DNS-01 challenge.
+- **IPv6 (dual stack).** Give both hostnames an AAAA record and let the server listen on IPv6 too (needs a small `infra/server` change: today it listens on IPv4 only). The /64 prefix is **network evidence, not a machine identifier**: a home network keeps one /64 for all its devices while each device rotates its address, so on a home network it can link a person's agents and browser when the full address differs; on campus Wi-Fi one /64 can hold many people. Report it like the IP: how often it links the same person, and how often it collides between different people (setting 5). It also shows whether each client prefers IPv6 (Happy Eyeballs), which differs between runtimes.
+- **Dropped: our own DNS zone.** The sites use free DuckDNS subdomains, so we don't control a zone. It would also only have shown the visitor's recursive resolver, not the machine (resolver evidence, shared by everyone on the same resolver).
 
 Tested on C's machine and dropped, so the VM doesn't need them:
 - **TCP timestamps** (Kohno et al. 2005, clock skew). On Linux 7.2 each connection gets its own random timestamp offset: six connections from curl, Python, Node and a second port gave six unrelated values. Clock skew needs long connections, and agent connections last well under a second. Windows sends no timestamps by default.
@@ -55,7 +56,7 @@ Browser: open the page, read it, write two sentences in the form yourself, submi
 
 - Run ids: `<letter>-t3-<agent>-<site>-<setting>-<nnn>`, for example `c-t3-claude-sh-site1-s1-001`, `c-t3-browser-site2-s4-002`.
 - One row per run in `runs/<letter>.csv`, with `label_agent` (`browser` for browser visits), `label_model`, `label_user` (your persona), `machine`, `network` (`home`, `campus`, `mobile`, `vpn`) and notes.
-- The browser visits use the same `/r/<run_id>/` path, so they get a manifest row too.
+- The browser visits use the same `/r/<run_id>/` path, so they get a manifest row too. Prepare them with `--agent browser --model none`.
 
 ## Checklist per run
 
