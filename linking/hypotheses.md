@@ -21,3 +21,20 @@ Run ids: the 27 headless Claude Code runs with saved outputs: c-claude-h-00{1,2}
 Result: 5 of the 27 final answers shown to the user contain the visit's path with its run id, 4 of them as a full link. All 5 are runs that used WebFetch: 4 of B's 6 and 1 of C's 8. No run that used curl did. The task never asks for sources.
 Meaning: a per-visit identifier in the URL reaches the user's screen through the agent's answer. If the user clicks the link, their own browser visit carries the identifier. That links the agent's visit to the person's browsing with no cookie, no IP and no fingerprint. It is UID smuggling (Randall et al., IMC 2022) through the agent.
 Next: in the Track 3 campaign, count how often answers cite our links, and how often we follow them ourselves in setting 3, with tasks that ask research-style questions (agents cite sources there). Report it per agent and per tool.
+
+## 3c dry run: linking the local agent runs without the IP
+Date: 2026-11-24
+Run ids: every non-baseline run of persona-b1 (B, Windows: 30 Claude Code runs) and persona-c1 (C, Linux: 27 Claude Code runs, 1 Codex, 1 user curl), from the local logs. Not a Track 3 campaign: a test of the `linking/` pipeline on the data we have.
+Setup: `python -m linking.link`, one session per run (no browser sessions yet), 59 sessions, 1,711 pairs (841 same user). Local runs all show the Docker gateway as the client IP, so the IP carries nothing here and every result is effectively "without IP".
+Result:
+- Whether two sessions' JA4s match, by the tool each session used:
+
+  | Sessions compared | Same user | Different users |
+  |---|---|---|
+  | curl and curl | match in 156 of 156 pairs | match in 0 of 169 |
+  | WebFetch and WebFetch | 87 of 87 | 84 of 84 |
+  | curl and WebFetch | 0 of 247 | 0 of 247 |
+
+- Logistic regression on the network-trace features (no IP, no run token, no schedule), 5-fold by session: AUC 0.84, precision 0.75, recall 0.72 at 0.5 (319 scored pairs).
+Conclusion: when the agent shells out, the system curl carries the machine's TLS stack and links its sessions; WebFetch carries the same fingerprint on every machine, so it links nothing without the IP; and nothing in the trace links a user's curl sessions to their WebFetch sessions. With two users on different operating systems this is the easy case: two users with the same OS and curl build would collide (3d).
+Next: the Track 3 campaign on the VM, with real IPs, browser visits and three users; more than one user per OS.
