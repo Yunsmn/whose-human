@@ -787,3 +787,15 @@ c-0767,script_colly,,baseline,c-linux,local,"colly v2.3.0; go1.27.4-X:nodwarf5; 
 c-0768,script_httpx,,baseline,c-linux,local,"httpx 0.28.1; python 3.14.10; os Linux 7.2.15-arch1-1 (#1 SMP PREEMPT_DYNAMIC Tue, 03 Nov 2026 12:37:21 +0000); site site1; trial 2/2; seed 11; think 2-6s; exit 0"
 c-0769,script_urllib,,baseline,c-linux,local,"urllib; python 3.14.10; os Linux 7.2.15-arch1-1 (#1 SMP PREEMPT_DYNAMIC Tue, 03 Nov 2026 12:37:21 +0000); site site2; trial 2/2; seed 11; think 2-6s; exit 0"
 c-0770,script_httpx,,baseline,c-linux,local,"httpx 0.28.1; python 3.14.10; os Linux 7.2.15-arch1-1 (#1 SMP PREEMPT_DYNAMIC Tue, 03 Nov 2026 12:37:21 +0000); site site1; trial 1/2; seed 11; think 2-6s; exit 0"
+c-claude-sh-haiku-site1-001,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-sonnet-site1-003,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-sonnet-site2-003,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-sonnet-site2-001,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-haiku-site2-003,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-haiku-site1-002,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-haiku-site1-003,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-haiku-site2-002,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-sonnet-site1-002,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-sonnet-site1-001,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-sonnet-site2-002,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
+c-claude-sh-haiku-site2-001,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test

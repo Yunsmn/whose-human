@@ -123,3 +123,42 @@ Conclusion:
 Next:
 - 3b/3c: timing transfers across machines, but it measures the model's latency, not the user. Treat it as an agent feature, not a linking feature. TLS is the machine's (Linux curl ≠ Git Bash curl), which is what 3b needs.
 - Think-time baselines on Windows, and a script that replays Claude Code's measured pauses, to bound the timing feature properly.
+- Base rates. The timing threshold's error rates bound what a site gets from it, depending on how many of its curl-like visitors are agents. Against scripts that don't pause, a 1 s threshold gave 27/27 and 0/2,102. By the rule of three, the 95% bounds are a recall of at least 0.89 and a false-positive rate of at most 0.14%. The resulting precision depends on the share of agents among such visitors:
+
+  | Share of agents | Precision at least |
+  |---|---|
+  | 0.1% | 0.38 |
+  | 1% | 0.86 |
+  | 10% | 0.99 |
+
+  Against scripts that pause like an agent, the false-positive rate is 1, so the precision falls to the share of agents itself. The number a site gets depends on whether its ordinary scripts pause, which we can't measure from our own baselines.
+
+## H3: The network trace alone reveals which model tier drives Claude Code.
+Status: supported on one machine, small sample (first result below). This is not one of the starting hypotheses: it came out of the timing results. It is a Track 2 signal that needs no text.
+Date: 2026-11-24
+Run ids: c-claude-sh-{haiku,sonnet}-site{1,2}-00{1,2,3} (new), compared with the Opus runs that had Bash allowed: c-claude-h-001 and c-claude-sh-site{1,2}-00{1,2,3} (Linux, 2026-11-18), and b-claude-sh-site{1,2}-00{1,2,3} (B's Windows machine, #29).
+Setup: Claude Code 2.1.331, headless, `--model haiku` or `--model sonnet`, `--allowedTools WebFetch Bash`, the fixed task, 3 runs per site, shuffled. These are the same condition and task as the Opus runs. The two server-side measures are the tool, read from the fingerprint (WebFetch's JA4 and User-Agent, or curl's), and the time from the page fetch to the submit.
+Result:
+- Tool choice depends on the model:
+
+  | Model | WebFetch | curl |
+  |---|---|---|
+  | Haiku | 6 of 6 | 0 |
+  | Sonnet | 1 of 6 | 5 |
+  | Opus (Linux) | 1 of 7 | 6 |
+  | Opus (Windows) | 0 of 6 | 6 |
+
+  In this condition, a curl fingerprint rules out Haiku. A WebFetch fingerprint makes Haiku likely, but not certain.
+- Among the curl runs, the time from the page to the submit separates Sonnet from Opus:
+  - Sonnet: 2.02 to 2.79 s (median 2.19 s, 5 runs, Linux).
+  - Opus: 3.12 to 3.63 s (median 3.21 s, 6 runs, Linux) and 2.86 to 3.44 s (median 3.19 s, 6 runs, Windows).
+  - There is no overlap: a 2.8 s threshold splits all 17 runs. The submitted summaries have similar lengths (Sonnet median 320 characters, Opus 306 to 459), so the difference is the model's speed, not the length of its output.
+- With WebFetch, the wait includes Claude Code's own Haiku pass over the page. Haiku took 9.0 to 10.0 s (one 19.1 s outlier, a 7-turn run), against 8.7 s for the one Sonnet run and 7.9 to 12.9 s for Opus earlier. This doesn't separate the models.
+Conclusion: supported for these three tiers on one machine, with a few runs each. The tool reveals Haiku, and the pause before submitting separates Sonnet from Opus when the agent uses curl. This is the case where TLS and headers say nothing. Caveats:
+- The Opus and Sonnet runs were made on different days, and API latency changes with load and network. The pause measures provider-side speed, so it can drift over time.
+- One version of Claude Code, one task.
+Next:
+- Interleave the models in one session of runs, to remove the day and load confound, with more runs per model.
+- Repeat on the shared VM, where the network path is real.
+- Report it to 2c as a model feature that needs no text.
+
