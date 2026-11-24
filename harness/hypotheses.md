@@ -3,7 +3,7 @@
 Record each finished experiment here before starting the next one (template in AGENTS.md).
 
 ## H1: Agents sharing an HTTP library are indistinguishable from plain scripts using that library at the TLS layer alone.
-Status: open (scripts-only step below; the agent comparison waits for agent runs on the same machine)
+Status: supported for agents that shell out to curl, on Linux (step 2) and Windows (step 3); rejected for Claude Code's WebFetch, a client of its own
 
 Date: 2026-11-18
 Run ids: c-0001..c-0722 (runs/c.csv)
@@ -54,8 +54,19 @@ Next:
 - A (Codex is A's main agent): Codex interactive and headless runs on A's machine; the web tool needs the shared VM with a real domain to be observed at all.
 - Repeat on Windows, where curl uses Schannel.
 
+### H1, step 3: Claude Code and scripts on the same Windows machine
+Date: 2026-11-24
+Run ids: B's b-0001..b-0720 (1b, 12 stacks × 2 sites × 30 trials, #31) and b-claude-{wf,sh}-site{1,2}-00{1,2,3} (#29), all on B's Windows 11 machine on 2026-11-23.
+Setup: as in step 2. Claude Code 2.1.319 headless, 3 runs per tool condition per site. Its Bash runs Git Bash's curl 8.21.0 (Schannel) with `-sk`. The script counterpart is `script_curl-norevoke` (the same curl with `--ssl-no-revoke`; both flags drop the same ClientHello extension, see `harness/baselines/README.md`). Plain Schannel curl fails against our local CA and is not a baseline.
+Result:
+- Agent curl vs `script_curl-norevoke`, on the raw requests: the same JA4 (`t13d2012h1_2b729b4bf6f3_36bf25f296df`), HTTP/1.1, User-Agent `curl/8.21.0` and header order, on the GET (Host, User-Agent, Accept) and on the POST (plus Content-Length, Content-Type). Unlike on Linux, all 6 submits used the urlencoded form.
+- 1c on B's machine only (13 classes, grouped CV, TLS + HTTP without the User-Agent): 10 of Claude Code's 12 curl requests are labelled `script_curl-norevoke`; agent curl vs `script_curl-norevoke` alone gets macro F1 0.499 (chance).
+- WebFetch's JA4 (`t13d181000_...`, identical to Linux) matches none of B's scripts, the Node stacks included.
+Conclusion: supported on Windows for agents that shell out. Claude Code's curl is the same as a script running the same curl, at the TLS and header layers, as on Linux. Rejected for WebFetch, which is its own client on both OSes.
+Next: H2 step 2 (timing) covers B's machine.
+
 ## H2: Header order, header set and request timing separate them anyway.
-Status: open (first result below, one Linux machine)
+Status: supported against scripts that do not pause, on three machines (Linux and Windows); rejected against a script that pauses like an agent (step 2)
 
 Date: 2026-11-18
 Run ids: c-0001..c-0722 (1b scripts) and the 15 Claude Code ids from H1 step 2. The directed curl session in c-claude-i-001 is dropped (its 2 curl requests); its natural WebFetch session is kept. Codex is left out (1 run with traffic).
@@ -76,3 +87,101 @@ Conclusion: supported on this machine, through timing rather than headers. Heade
 Next:
 - Repeat on A's and B's machines and on the VM, with more agent runs.
 - Add human-typed runs as a class, to test agent vs human timing.
+
+### H2 step 2: across machines, and against scripts that pause
+Date: 2026-11-23, updated 2026-11-24 with B's script baselines
+Run ids:
+- Scripts:
+  - C, Linux: c-0001..c-0722, plus c-0723..c-0770. The second set is 48 runs made with `--think-time 2-6` (#26; 12 stacks × 2 sites × 2 trials, seed 11), so each script sleeps 2 to 6 s before each request after the first.
+  - A, Windows: 660 runs (`runs/a.csv`, 11 stacks, no curl).
+  - B, Windows: b-0001..b-0720 (12 stacks, with `curl-norevoke`, #31).
+- Agents: the 15 Claude Code runs above, and B's 12 Windows Claude Code runs (b-claude-{wf,sh}-site{1,2}-00{1,2,3}, #29).
+Setup: the same features and Extra Trees as step 1; agent vs script (binary) and the 13 classes. Four tests:
+- same machine (B's Windows machine alone, grouped CV by run_id);
+- train on one machine with agents and scripts (C or B) and test on the other;
+- leave one machine out;
+- pooled grouped 5-fold cross-validation by run_id.
+Result:
+- Without the think-time scripts:
+  - Per run, slowest gap. Scripts: 0.008 to 0.105 s on C's Linux machine (722), 0.019 to 0.245 s on A's Windows machine (660), 0.029 to 0.399 s on B's (720). Claude Code with curl: 3.1 to 3.6 s on Linux, 2.9 to 3.4 s on Windows. With WebFetch: 7.9 s and up on Linux, 12.1 to 16.7 s on Windows.
+  - A 1 s threshold flags 27 of 27 Claude Code runs and 0 of 2,102 script runs. Any threshold from 0.5 to 2 s gives the same.
+  - Same machine (B): agent vs script macro F1 1.000 with run-level timing, alone or added to TLS + HTTP without the User-Agent. Without timing, all 240 `script_curl-norevoke` requests are labelled agent (macro F1 0.562). Agent curl vs `script_curl-norevoke` alone: 0.499 without timing, 1.000 with it.
+  - Across machines, in both directions (train on C, test on B, and the reverse): run-level timing alone labels every agent request as agent and none of the 2,880 / 2,888 script requests. TLS + HTTP, with or without timing, catches WebFetch (the same client on both OSes) but none of the other OS's agent curl requests. Linux curl (OpenSSL, HTTP/2) and Git Bash's Schannel curl are different fingerprints, and the trees split on TLS before timing.
+- With the think-time scripts:
+  - Their slowest gap is 3.7 to 6.0 s (median 5.4 s). Their wait before the submit is 2.1 to 6.0 s. Both overlap Claude Code's.
+  - A 1 s or 2 s threshold flags 48 of 48 of them as agents. A model trained without them labels all 192 of their requests as agent with run-level timing alone. TLS + HTTP mislabels 16, the curl stack, whose TLS is the agent's.
+  - Pooled cross-validation over all three machines with them in training:
+    - agent vs script macro F1 0.968 (TLS + HTTP + run-level timing) and 0.973 (run-level timing alone);
+    - 4 of 192 think-time requests labelled agent;
+    - agent recall 0.94 and 0.96.
+
+    Run counts are not features, so this boundary is timing. It fits our 2 to 6 s draw (most of their slowest gaps are above Claude's curl range), and an adversary doesn't have to keep that.
+Conclusion:
+- Timing separates an LLM in the loop from a script that doesn't pause, on the same machine (Linux and Windows) and across machines and operating systems, where TLS doesn't transfer.
+- Rejected against a script that pauses: a script that sleeps like an agent defeats the threshold, and the learned boundary only works because our pauses are drawn differently from the agent's. A script copying the agent's pause distribution would not be caught by these features.
+- What still separates them is the client, not the behavior. WebFetch has its own JA4 and `Claude-User` User-Agent on both OSes (a self-identifying client). Agents that shell out to curl remain indistinguishable from the same curl run by a script that pauses.
+Next:
+- 3b/3c: timing transfers across machines, but it measures the model's latency, not the user. Treat it as an agent feature, not a linking feature. TLS is the machine's (Linux curl ≠ Git Bash curl), which is what 3b needs.
+- Think-time baselines on Windows, and a script that replays Claude Code's measured pauses, to bound the timing feature properly.
+- Base rates. The timing threshold's error rates bound what a site gets from it, depending on how many of its curl-like visitors are agents. Against scripts that don't pause, a 1 s threshold gave 27/27 and 0/2,102. By the rule of three, the 95% bounds are a recall of at least 0.89 and a false-positive rate of at most 0.14%. The resulting precision depends on the share of agents among such visitors:
+
+  | Share of agents | Precision at least |
+  |---|---|
+  | 0.1% | 0.38 |
+  | 1% | 0.86 |
+  | 10% | 0.99 |
+
+  Against scripts that pause like an agent, the false-positive rate is 1, so the precision falls to the share of agents itself. The number a site gets depends on whether its ordinary scripts pause, which we can't measure from our own baselines.
+
+## H3: The network trace alone reveals which model tier drives Claude Code.
+Status: supported for the tool sequence on two machines (Linux, Windows); the submit pause drifts between days, so it works only against runs from the same sitting (step 2). This is not one of the starting hypotheses: it came out of the timing results. It is a Track 2 signal that needs no text.
+Date: 2026-11-24
+Run ids: c-claude-sh-{haiku,sonnet}-site{1,2}-00{1,2,3} (new), compared with the Opus runs that had Bash allowed: c-claude-h-001 and c-claude-sh-site{1,2}-00{1,2,3} (Linux, 2026-11-18), and b-claude-sh-site{1,2}-00{1,2,3} (B's Windows machine, #29).
+Setup: Claude Code 2.1.331, headless, `--model haiku` or `--model sonnet`, `--allowedTools WebFetch Bash`, the fixed task, 3 runs per site, shuffled. These are the same condition and task as the Opus runs. The two server-side measures are the tool, read from the fingerprint (WebFetch's JA4 and User-Agent, or curl's), and the time from the page fetch to the submit.
+Result:
+- Tool choice depends on the model:
+
+  | Model | WebFetch | curl |
+  |---|---|---|
+  | Haiku | 6 of 6 | 0 |
+  | Sonnet | 1 of 6 | 5 |
+  | Opus (Linux) | 1 of 7 | 6 |
+  | Opus (Windows) | 0 of 6 | 6 |
+
+  In this condition, a curl fingerprint rules out Haiku. A WebFetch fingerprint makes Haiku likely, but not certain.
+- Among the curl runs, the time from the page to the submit separates Sonnet from Opus:
+  - Sonnet: 2.02 to 2.79 s (median 2.19 s, 5 runs, Linux).
+  - Opus: 3.12 to 3.63 s (median 3.21 s, 6 runs, Linux) and 2.86 to 3.44 s (median 3.19 s, 6 runs, Windows).
+  - There is no overlap: a 2.8 s threshold splits all 17 runs. The submitted summaries have similar lengths (Sonnet median 320 characters, Opus 306 to 459), so the difference is the model's speed, not the length of its output.
+- With WebFetch, the wait includes Claude Code's own Haiku pass over the page. Haiku took 9.0 to 10.0 s (one 19.1 s outlier, a 7-turn run), against 8.7 s for the one Sonnet run and 7.9 to 12.9 s for Opus earlier. This doesn't separate the models.
+Conclusion: supported for these three tiers on one machine, with a few runs each. The tool reveals Haiku, and the pause before submitting separates Sonnet from Opus when the agent uses curl. This is the case where TLS and headers say nothing. Caveats:
+- The Opus and Sonnet runs were made on different days, and API latency changes with load and network. The pause measures provider-side speed, so it can drift over time.
+- One version of Claude Code, one task.
+Next:
+- Interleave the models in one session of runs, to remove the day and load confound, with more runs per model.
+- Repeat on the shared VM, where the network path is real.
+- Report it to 2c as a model feature that needs no text.
+
+### H3, step 2: the three models interleaved, on Windows (B)
+Date: 2026-11-24
+Run ids: b-claude-sh-{haiku,sonnet,opus}-site{1,2}-00{1,2,3} (runs/b.csv, #33), compared with B's Opus runs from the day before (b-claude-sh-site{1,2}-00{1,2,3}, #29).
+Setup: B's Windows machine, Claude Code 2.1.319, headless, `--allowedTools WebFetch Bash`, the fixed task, 6 runs per model (2 sites × 3), all 18 interleaved in one sitting in a fixed shuffled order. Recomputed from the raw log (data repo #3): 2 requests per run, all 18 submitted.
+Result:
+- The sequence of tools separates all three models, with no overlap:
+
+  | Model | Reads the page with | Submits with | Pause before submitting |
+  |---|---|---|---|
+  | Haiku | WebFetch (6/6) | WebFetch, GET fallback (6/6) | 13.0 to 20.5 s |
+  | Sonnet | WebFetch (5/6), curl (1/6) | curl (6/6): GET 5, POST 1 | 10.0 to 14.4 s; 2.49 s in the curl-only run |
+  | Opus | curl (6/6) | curl, POST (6/6) | 4.1 to 5.7 s |
+
+  So the server sees three different patterns: WebFetch twice (Haiku), WebFetch then curl (Sonnet), curl twice (Opus). On Linux (step 1) Sonnet used curl for both steps in 5 of 6 runs, and its one WebFetch run (c-claude-sh-sonnet-site2-001) was this same mixed pattern. Across both machines:
+  - WebFetch for both steps: Haiku only (12 of 12 Haiku runs).
+  - WebFetch, then curl: Sonnet 6 of 12, Opus 1 of 19 (c-claude-sh-site1-001, Linux).
+  - curl for both steps: Sonnet 6 of 12, Opus 18 of 19.
+- The pause drifts between days. B's interleaved Opus runs paused 4.1 to 5.7 s; the same machine, CLI and task gave 2.9 to 3.4 s the day before (#29), and C's Linux Opus runs 3.1 to 3.6 s. The 2.8 s threshold from step 1 still splits the one curl-only Sonnet run (2.49 s) from every Opus run, but one run doesn't test it.
+Conclusion: supported for the tool sequence, which reads from the fingerprint alone and held on both machines. For timing, a fixed threshold is rejected: the pause measures provider-side latency, which moved by over 1 s between two days. Timing can still rank models within one sitting (relative, not absolute), which is what a site sees when several agents visit at about the same time.
+Next:
+- Compare runs only within one sitting, or normalise each pause against a reference run made at the same time.
+- More curl-only Sonnet runs, to test Sonnet vs Opus on timing within one sitting.
+- 2c: use the tool sequence as a text-free model feature.
