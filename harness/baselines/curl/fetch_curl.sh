@@ -2,8 +2,12 @@
 # curl with its defaults: one curl process per request, as agents that shell out to curl do
 # (Borysenko 2026 saw curl/8.4.0 from Cline and Junie). Same four requests as every other stack.
 #
-# Usage: bash fetch_curl.sh <base_url> <text>
+# Usage: bash fetch_curl.sh <base_url> <text> [curl flag ...]
 #   base_url  e.g. https://site1.test:8443/r/b-0001/
+#   flags     added to every request; the runner's curl-norevoke stack passes --ssl-no-revoke
+#
+# WH_CURL (set by the runner) is the curl binary to run, the one whose version the runner
+# records. Without it, the first curl on bash's PATH runs.
 #
 # -sS, -o and -w only change what curl prints, not what it sends. Trust for our local CA comes
 # from the CURL_CA_BUNDLE environment variable, which the runner sets; it doesn't change the
@@ -14,12 +18,15 @@
 # first: "3" waits 3 seconds, "2-6" a random time between 2 and 6 seconds. Unset: no pause.
 set -u
 
-if [ "$#" -ne 2 ]; then
-  echo "usage: bash fetch_curl.sh <base_url> <text>" >&2
+if [ "$#" -lt 2 ]; then
+  echo "usage: bash fetch_curl.sh <base_url> <text> [curl flag ...]" >&2
   exit 2
 fi
 base="$1"
 text="$2"
+shift 2
+flags=("$@")
+curl_bin="${WH_CURL:-curl}"
 case "$base" in */) ;; *) base="$base/" ;; esac
 
 think="${WH_THINK_TIME:-}"
@@ -49,7 +56,7 @@ step() {
   [ "$requests" -eq 0 ] || pause
   requests=$((requests + 1))
   local code
-  code="$(curl -sS -o /dev/null -w '%{http_code}' "$@")" || code="${code:-000}"
+  code="$("$curl_bin" -sS -o /dev/null -w '%{http_code}' "${flags[@]}" "$@")" || code="${code:-000}"
   echo "$name $code"
   [ "$code" = "200" ] || failed=1
 }
