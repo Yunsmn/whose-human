@@ -230,6 +230,26 @@ def bash_binary() -> str:
     return shutil.which("bash") or "bash"
 
 
+def on_windows() -> bool:
+    return sys.platform == "win32" or os.name == "nt"
+
+
+def check_bash(path: str) -> str | None:
+    """Return why this bash can't run the curl stacks, or None if it can.
+
+    On Windows, a bash under System32 is WSL's and one under WindowsApps is an alias for it: the
+    curl stacks would silently measure Linux's curl. Other systems are never refused."""
+    if not on_windows():
+        return None
+    folders = {part.lower() for part in re.split(r"[\\/]", path)[:-1]}
+    if folders & {"system32", "windowsapps"}:
+        return (
+            f"refusing to run the curl stacks with {path}: that is WSL's bash, which runs Linux's curl. "
+            r"Put Git's usr\bin (e.g. C:\Program Files\Git\usr\bin) before System32 in PATH."
+        )
+    return None
+
+
 def curl_binary() -> str | None:
     """The curl on PATH, as a path bash can run.
 
@@ -468,6 +488,9 @@ def main(argv: list[str] | None = None) -> int:
     stacks = [stack for stack in selected if not skips[stack.name]]
     if not stacks:
         print("no stack can run on this machine", file=sys.stderr)
+        return 1
+    if any(stack.kind == "curl" for stack in stacks) and (problem := check_bash(bash_binary())):
+        print(problem, file=sys.stderr)
         return 1
 
     hosts = allowed_hosts()

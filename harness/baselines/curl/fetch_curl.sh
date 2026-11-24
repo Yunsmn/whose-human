@@ -56,7 +56,7 @@ step() {
   [ "$requests" -eq 0 ] || pause
   requests=$((requests + 1))
   local code
-  code="$("$curl_bin" -sS -o /dev/null -w '%{http_code}' "${flags[@]}" "$@")" || code="${code:-000}"
+  code="$("$curl_bin" -sS -o /dev/null -w '%{http_code}' ${flags[@]+"${flags[@]}"} "$@")" || code="${code:-000}"
   echo "$name $code"
   [ "$code" = "200" ] || failed=1
 }

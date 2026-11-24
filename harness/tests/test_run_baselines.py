@@ -232,3 +232,45 @@ def test_curl_binary_reaches_the_script_and_stray_values_are_removed(monkeypatch
     assert env["WH_CURL"] == "Program Files/Git/mingw64/bin/curl.EXE"  # forward slashes, for bash
     monkeypatch.setattr(rb.shutil, "which", lambda name: None)
     assert "WH_CURL" not in rb.child_environment(None, {"PATH": "x", "WH_CURL": "/stray/curl"})
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        r"C:\Windows\System32\bash.exe",
+        r"c:\windows\system32\BASH.EXE",
+        "C:/Windows/System32/bash.exe",
+        r"C:\Users\someone\AppData\Local\Microsoft\WindowsApps\bash.exe",
+    ],
+)
+def test_wsl_and_windowsapps_bash_are_refused_on_windows(monkeypatch, path):
+    monkeypatch.setattr(rb, "on_windows", lambda: True)
+    message = rb.check_bash(path)
+    assert message is not None and path in message
+    assert "usr\\bin" in message and "System32" in message
+
+
+@pytest.mark.parametrize(
+    "path", [r"C:\Program Files\Git\usr\bin\bash.exe", r"C:\Program Files\Git\bin\bash.exe"]
+)
+def test_git_bash_is_accepted_on_windows(monkeypatch, path):
+    monkeypatch.setattr(rb, "on_windows", lambda: True)
+    assert rb.check_bash(path) is None
+
+
+def test_no_bash_is_refused_off_windows(monkeypatch):
+    monkeypatch.setattr(rb, "on_windows", lambda: False)
+    for path in ("/usr/bin/bash", "/bin/bash", r"C:\Windows\System32\bash.exe"):
+        assert rb.check_bash(path) is None
+
+
+def test_runner_stops_before_curl_stacks_with_wsl_bash(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(rb, "on_windows", lambda: True)
+    monkeypatch.setattr(rb, "bash_binary", lambda: r"C:\Windows\System32\bash.exe")
+    monkeypatch.setattr(rb, "probe", lambda stack: "curl 8.0.0; tls OpenSSL/3.0.0")
+    manifest = tmp_path / "b.csv"
+    rest = ["--trials", "1", "--sites", "site1", "--dry-run", "--manifest", str(manifest)]
+    assert rb.main(["--stacks", "curl", *rest]) == 1
+    captured = capsys.readouterr()
+    assert "WSL" in captured.err and "trial" not in captured.out
+    assert rb.main(["--stacks", "urllib", *rest]) == 0  # stacks that don't use bash still run
