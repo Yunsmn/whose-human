@@ -80,7 +80,7 @@ Records append to `data/logs/<source>-<YYYYMMDD>.jsonl`; `infra/schema.md` descr
 - **A certificate rejection still leaves a record.** An agent that rejects our certificate leaves a `no_request` or `tls_failure` record with its TLS fingerprint, which is useful for the 1a local-or-server check.
 - **The client IP is Docker's gateway locally.** It shows up as an address like `172.18.0.1` rather than `127.0.0.1`, because of Docker's port forwarding. Local IPs carry no signal anyway; TLS and HTTP fingerprints are unaffected, which was checked against a run without Docker.
 
-Share logs only through the team's private Drive/OneDrive folder. Load them in analysis code with:
+Share logs only through the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs): clone it as `data/` (setup in its README), so the server's log folder is already the shared one, and commit each day's file there once it is finished. Load them in analysis code with:
 
 ```python
 from infra.loader import load_logs

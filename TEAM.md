@@ -80,4 +80,4 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md). In short: work on your own branch, ope
 | Tracks 1 and 2, and building 3b/3c code | Each member's laptop, same `infra/server` setup | Free; TLS fingerprints and agent text don't depend on which server is hit |
 | Track 3 campaign, and confirming 1a and TLS results | One shared VM running the same `infra/server` | Real client IPs, linking across machines and sites, IP change runs |
 
-Local logs are shared through a private Drive/OneDrive folder, never git. `run_id`s start with your member prefix (`a-`, `b-`, `c-`), and `dev-` marks test traffic, which the loader drops by default.
+Raw logs and corpora are shared through the private data repo [`malekawlaqi/whose-human-runs`](https://github.com/malekawlaqi/whose-human-runs), cloned as `data/` (setup in its README), never through this repo. `run_id`s start with your member prefix (`a-`, `b-`, `c-`), and `dev-` marks test traffic, which the loader drops by default.

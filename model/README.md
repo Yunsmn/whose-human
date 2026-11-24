@@ -19,7 +19,7 @@ docker compose run --rm --entrypoint python checks -m model.agent_text data/logs
 The terminal output contains only aggregate counts for POST submitted, GET submitted, placeholder submitted,
 fetched but not submitted, other observed traffic, and no observed request. A literal `YOUR_SUMMARY` submission is
 reported as `placeholder_submitted` and excluded from the CSV. The CSV contains only usable submitted text and
-ground-truth labels for 2c; keep it in the gitignored `data/` directory or approved private storage. See
+ground-truth labels for 2c; keep it in the gitignored `data/` directory (the private `whose-human-runs` repo). See
 [`harness/member_a_1a_2a_protocol.md`](../harness/member_a_1a_2a_protocol.md) for the complete collection protocol.
 
 ## 2b: API reference corpus (`api_corpus.py`)
@@ -45,7 +45,7 @@ Which models a CLI can run depends on the login. A ChatGPT login without them re
 python3 -m model.cli_corpus --models gpt-6-astra,gpt-6.1-sol
 ```
 
-and shares the resulting `data/corpus/cli/corpus-<YYYYMMDD>.jsonl` with whoever trains 2c (it is gitignored, so not through the repo). Rows from several machines can sit in the same folder; resume skips rows that are already done, and failed rows are retried.
+and commits the resulting `data/corpus/cli/corpus-<YYYYMMDD>.jsonl` to the private `whose-human-runs` repo as `corpus/cli/corpus-<YYYYMMDD>-<letter>.jsonl` (the letter keeps members' files apart). Rows from several machines can sit in the same folder; resume skips rows that are already done, and failed rows are retried.
 
 2c can read these rows with `load_corpus("data/corpus/cli")` (`label_model` is the row's `name`), or use `predict.py` with `--id-column id`.
 
