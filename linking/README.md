@@ -21,10 +21,14 @@ python -m linking.link <logs_dir> [--runs runs] [--include-baselines] [--thresho
 The model is scored on three feature sets: `all`, `no_ip` (H2: does linking survive an IP change?) and
 `network_only` (no IP, no relay token, no schedule).
 
-Known limits of the scaffold:
+Evaluation details:
+- Cross-validation splits sessions into folds; the pairs between folds k and m are scored by a model trained only
+  on pairs touching neither fold, so every pair gets a score from a model that saw neither of its sessions
+  (needs at least 3 folds).
+- Clusters use average linkage on 1 − score (`--threshold` is the mean score needed to merge two groups). The
+  connected-components result is printed next to it: single linkage merges two users on one false link.
+- `log_dt_start` measures our campaign schedule as much as the user; `network_only` leaves it out.
 - `SIGNATURE_COLUMNS` is a placeholder; 3b (A) owns the environment signature and will replace it.
-- The cross-validation scores only pairs whose two sessions fall in the same fold, so the cluster metrics see a
-  fraction of the pairs and are not meaningful yet.
 
 ## Track 3d: hard cases (`hard_cases.py`, B)
 
@@ -45,4 +49,4 @@ with 3c's model without the IP (`no_ip`) and on the network trace alone (`networ
 - **Anonymity:** for each session, how many other users have a session with its exact signature. The table gives
   the share of sessions with a signature unique to their user.
 
-Rates count only the pairs that a cross-validation fold scored (`n_scored_*`, the same limit as 3c).
+Every pair is scored out of sample (3c's cross-validation, at least 3 folds); `n_scored_*` gives the counts.
