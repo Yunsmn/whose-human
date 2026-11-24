@@ -152,3 +152,60 @@ def test_curl_tls_request_when_available(running_server):
     record = read_records(logs)[0]
     assert record["ja4"]
     assert record["run_id"] == "dev-curl"
+
+
+def test_plain_ip_unwraps_ipv4_mapped_addresses():
+    from infra.server.__main__ import plain_ip
+
+    assert plain_ip("::ffff:192.0.2.7") == "192.0.2.7"
+    assert plain_ip("192.0.2.7") == "192.0.2.7"
+    assert plain_ip("2001:db8::1") == "2001:db8::1"
+    assert plain_ip("::1") == "::1"
+    assert plain_ip("not-an-ip") == "not-an-ip"
+
+
+def _ipv6_loopback_works() -> bool:
+    if not socket.has_ipv6:
+        return False
+    try:
+        with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as probe:
+            probe.bind(("::1", 0))
+        return True
+    except OSError:
+        return False
+
+
+@pytest.mark.skipif(not _ipv6_loopback_works(), reason="no IPv6 loopback on this machine")
+def test_dual_stack_server_logs_ipv4_and_ipv6_clients(tmp_path):
+    writer = LogWriter(tmp_path / "logs", "dev-test")
+    options = {"tls": False, "writer": writer, "source": "dev-test", "sites_dir": ROOT / "infra" / "sites"}
+    server = Server(("::", 0), Handler, options=options)
+    assert server.address_family == socket.AF_INET6
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        port = server.server_address[1]
+        for host, run_id in (("127.0.0.1", "dev-v4"), ("::1", "dev-v6")):
+            conn = http.client.HTTPConnection(host, port, timeout=5)
+            conn.request("GET", f"/r/{run_id}/index.html", headers={"Host": "site1.test"})
+            assert conn.getresponse().status == 200
+            conn.close()
+        deadline = time.time() + 5
+        while time.time() < deadline and len(read_records(tmp_path / "logs")) < 2:
+            time.sleep(0.05)
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+    ips = {r["run_id"]: r["client_ip"] for r in read_records(tmp_path / "logs") if r.get("kind") == "request"}
+    assert ips == {"dev-v4": "127.0.0.1", "dev-v6": "::1"}
+
+
+def test_ipv4_host_keeps_an_ipv4_socket(tmp_path):
+    writer = LogWriter(tmp_path / "logs", "dev-test")
+    options = {"tls": False, "writer": writer, "source": "dev-test", "sites_dir": ROOT / "infra" / "sites"}
+    server = Server(("127.0.0.1", 0), Handler, options=options)
+    try:
+        assert server.address_family == socket.AF_INET
+    finally:
+        server.server_close()

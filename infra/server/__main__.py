@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import secrets
 import socket
 import socketserver
@@ -21,20 +22,42 @@ from .tls_parse import parse_client_hello, peek_client_hello
 IDLE_TIMEOUT = 60.0
 
 
+def plain_ip(address: str) -> str:
+    """The peer address as logged: an IPv4 client on a dual-stack socket arrives as
+    ``::ffff:a.b.c.d`` and is logged as plain ``a.b.c.d``, so IPv4 and IPv6 clients keep their
+    own prefixes (/24 and /64) in linking/. Anything that isn't an address is returned unchanged."""
+    try:
+        parsed = ipaddress.ip_address(address)
+    except ValueError:
+        return address
+    mapped = getattr(parsed, "ipv4_mapped", None)
+    return str(mapped) if mapped else address
+
+
 class Server(socketserver.ThreadingTCPServer):
+    """A host with a ":" (for example ``::``) opens one IPv6 socket that also accepts IPv4
+    (dual stack); any other host is IPv4 only, as before."""
+
     allow_reuse_address = True
     daemon_threads = True
 
     def __init__(self, address, handler, options):
         self.options = options
+        if ":" in address[0]:
+            self.address_family = socket.AF_INET6
         super().__init__(address, handler)
+
+    def server_bind(self):
+        if self.address_family == socket.AF_INET6:
+            self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        super().server_bind()
 
 
 class Handler(socketserver.BaseRequestHandler):
     def setup(self):
         self.conn_ts = time.time()
         self.conn_id = secrets.token_hex(12)
-        self.client_ip, self.client_port = self.client_address[:2]
+        self.client_ip, self.client_port = plain_ip(self.client_address[0]), self.client_address[1]
         self.requests_logged = 0
 
     def _warn(self, what: str, exc: BaseException) -> None:
@@ -179,7 +202,7 @@ def build_servers(args) -> list[Server]:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--host", default="127.0.0.1", help="'::' listens on IPv6 and IPv4 (dual stack)")
     parser.add_argument("--port", type=int, default=8443)
     parser.add_argument("--plain-port", type=int)
     parser.add_argument("--cert", default="data/certs/server.pem")

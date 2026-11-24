@@ -24,7 +24,7 @@ The server (`infra/server`) appends one JSON object per line to `data/logs/<sour
 | `source` | Server label passed with `--source`, e.g. `local-c` or `vm` |
 | `conn_id` | Random id of the TCP connection; shared by all requests on it |
 | `conn_ts` | TCP accept time (float seconds) |
-| `client_ip`, `client_port` | Peer address (private data). `ip` is an alias of `client_ip` |
+| `client_ip`, `client_port` | Peer address (private data). `ip` is an alias of `client_ip`. IPv4 or IPv6; an IPv4 client on a dual-stack socket is logged as plain IPv4, never as `::ffff:a.b.c.d` |
 
 **TLS** (absent on the plain-HTTP debug port)
 
