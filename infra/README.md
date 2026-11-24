@@ -104,8 +104,10 @@ Use the same image, but run it with host networking. Docker's port forwarding re
 ```sh
 docker run -d --name whose-human --network host --restart unless-stopped \
   -v "$PWD/data:/app/data" -v "$PWD/infra/sites:/app/infra/sites:ro" \
-  whose-human-server --host 0.0.0.0 --port 443 --source vm \
+  whose-human-server --host :: --port 443 --source vm \
   --cert data/certs/fullchain.pem --key data/certs/privkey.pem
 ```
+
+`--host ::` opens one dual-stack socket, so the server takes both IPv4 and IPv6 clients (the VM needs a public IPv6 address and AAAA records for that). IPv4 clients are logged as plain IPv4, not as `::ffff:a.b.c.d`. `--host 0.0.0.0` still listens on IPv4 only.
 
 This VM setup is a sketch and hasn't been tested yet. The container runs as a non-root user, so binding port 443 still needs solving (for example by lowering `net.ipv4.ip_unprivileged_port_start` on the VM). We'll finalise it once the VM exists.
