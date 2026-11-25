@@ -106,8 +106,11 @@ docker run -d --name whose-human --network host --restart unless-stopped \
   -v "$PWD/data:/app/data" -v "$PWD/infra/sites:/app/infra/sites:ro" \
   whose-human-server --host :: --port 443 --source vm \
   --cert data/certs/fullchain.pem --key data/certs/privkey.pem \
+  --site-hosts <site1-domain>=site1,<site2-domain>=site2 \
   --visit-variants infra/sites/visit-variants.json
 ```
+
+`--site-hosts` tells the server which domain is which site. Without it, the server knows only `site1.test`, `site2.test`, `localhost` and `127.0.0.1`, and any other host gets site1 (and is logged as `site1`). Host names are matched without case or port, and the server won't start if a site named there has no folder in `--sites-dir`.
 
 `--host ::` opens one dual-stack socket, so the server takes both IPv4 and IPv6 clients (the VM needs a public IPv6 address and AAAA records for that). IPv4 clients are logged as plain IPv4, not as `::ffff:a.b.c.d`. `--host 0.0.0.0` still listens on IPv4 only.
 

@@ -12,12 +12,13 @@ import ssl
 import sys
 import threading
 import time
+from pathlib import Path
 from urllib.parse import urlsplit
 
 from . import app, variants
 from .http1 import read_request, send_response
 from .logwriter import LogWriter
-from .sites import site_for_host
+from .sites import parse_site_hosts, site_for_host
 from .tls_parse import parse_client_hello, peek_client_hello
 
 IDLE_TIMEOUT = 60.0
@@ -161,7 +162,9 @@ class Handler(socketserver.BaseRequestHandler):
         """Route one request, write its log record, and return the response to send."""
         headers = request["headers"]
         host = next((v for k, v in reversed(headers) if k.lower() == host_header), "")
-        site, root = site_for_host(host, self.server.options["sites_dir"])
+        site, root = site_for_host(
+            host, self.server.options["sites_dir"], self.server.options.get("site_hosts")
+        )
         run_id, path = app.split_run_id(request["path"])
         response = app.route({**request, "path": path}, root, run_id)
         visit_variant = None
@@ -202,10 +205,15 @@ def build_servers(args) -> list[Server]:
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(args.cert, args.key)
     context.set_alpn_protocols(args.alpn.split(","))
+    site_hosts = parse_site_hosts(args.site_hosts)
+    missing = sorted({site for site in site_hosts.values() if not (Path(args.sites_dir) / site).is_dir()})
+    if missing:
+        raise ValueError(f"--site-hosts: no folder in {args.sites_dir} for {', '.join(missing)}")
     common = {
         "writer": writer,
         "source": args.source,
         "sites_dir": args.sites_dir,
+        "site_hosts": site_hosts,
         "visit_variants": variants.load_pool(args.visit_variants) if args.visit_variants else None,
         "rng": random.SystemRandom(),
     }
@@ -227,6 +235,11 @@ def main(argv=None):
     parser.add_argument("--sites-dir", default="infra/sites")
     parser.add_argument("--alpn", default="h2,http/1.1")
     parser.add_argument(
+        "--site-hosts",
+        metavar="HOST=SITE,...",
+        help="extra host names per site, e.g. the VM's domains; site1.test and site2.test always work",
+    )
+    parser.add_argument(
         "--visit-variants",
         metavar="POOL",
         help="JSON pool of per-visit sentences (VM only; see infra/server/variants.py); off by default",
@@ -234,7 +247,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if not args.source:
         parser.error("--source is required (with Docker: set WH_SOURCE in .env, e.g. WH_SOURCE=local-c)")
-    servers = build_servers(args)
+    try:
+        servers = build_servers(args)
+    except ValueError as exc:  # a malformed --site-hosts or --visit-variants pool
+        parser.error(str(exc))
     for server in servers:
         threading.Thread(target=server.serve_forever, daemon=True).start()
         scheme = "https" if server.options["tls"] else "http"
