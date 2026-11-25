@@ -30,6 +30,16 @@ Fictitious only, one per member unless a member adds a second: `persona-a1`, `pe
 
 The two partner sites on the VM, with the same pages as `infra/sites/`. Every visit goes to `https://<site>/r/<run_id>/`, agents and browser alike.
 
+### Site changes on the VM (team decisions, 2026-11-24)
+
+Both apply **only on the VM**; the local servers keep serving `infra/sites/` unchanged, so Track 1 and 2 data stay comparable.
+
+- **A. One per-visit sentence (decided: yes, VM only).** Each page view gets one ordinary visible sentence on the page's topic, drawn at random from a fixed pool, as a normal paragraph in the text. No hidden text, no instruction: it reads like any other sentence of the page. The server logs which sentence it served (`visit_variant`, a new schema field). If a submitted summary reflects that visit's sentence, an LLM read that exact visit, even when its curl is byte for byte a script's and it pauses like an agent, the case timing can't catch. A random code would rarely make it into a two-sentence summary, which is why it is a sentence on the topic.
+  - Pool: about 20 short, neutral, clearly different sentences per site, each with one distinctive keyword, so a summary can be matched to its variant by keyword. A (site content) writes them.
+  - Serving: the server inserts the drawn sentence into HTML pages only when started with a flag (e.g. `--visit-variants <pool file>`), and logs `visit_variant`; without the flag pages are unchanged. B (`infra/server`, schema) adds it.
+  - 2c: summaries from the VM may mention the variant sentence; drop or mask it before using them as model-classifier text.
+- **B. `llms.txt` and Markdown versions (decided: yes).** Each site gets `/llms.txt` and a `.md` copy of each page, linked from the HTML with `<link rel="alternate" type="text/markdown">`. Requests for them are logged like any other, so we see which clients look for them. A writes the files; B makes the server send `.md` as `text/markdown` and `.txt` as `text/plain` (today every non-HTML file goes out as `application/octet-stream`).
+
 ## Session plan
 
 The basic unit is one run: one agent, one site, one fresh session, the fixed task. "Agents" means every agent the member listed in the PR comments. Not everyone has the same agents: Claude Code runs on B's Windows machine and C's Linux machine, in both tool settings (WebFetch only; WebFetch and Bash), and A runs Codex. Agents shared by two members are what make the "different users, same agent" comparison possible.
