@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ipaddress
+import random
 import secrets
 import socket
 import socketserver
@@ -13,7 +14,7 @@ import threading
 import time
 from urllib.parse import urlsplit
 
-from . import app
+from . import app, variants
 from .http1 import read_request, send_response
 from .logwriter import LogWriter
 from .sites import site_for_host
@@ -163,6 +164,13 @@ class Handler(socketserver.BaseRequestHandler):
         site, root = site_for_host(host, self.server.options["sites_dir"])
         run_id, path = app.split_run_id(request["path"])
         response = app.route({**request, "path": path}, root, run_id)
+        visit_variant = None
+        if path != "/submit" and response["status"] == 200 and response["content_type"] == app.HTML:
+            options = self.server.options
+            body, visit_variant = variants.apply(
+                response["body"], options.get("visit_variants"), site, options.get("rng", random)
+            )
+            response = {**response, "body": body}
         session, new_cookie = app.session_for(headers, response["content_type"].startswith("text/html"))
         record = {
             **self._connection_record(),
@@ -181,6 +189,7 @@ class Handler(socketserver.BaseRequestHandler):
             **app.body_fields(request["body_bytes"]),
             "submitted_text": response["submitted_text"],
             "status": response["status"],
+            "visit_variant": visit_variant,
             **(extra or {}),
         }
         self.server.options["writer"].write(record)
@@ -193,7 +202,13 @@ def build_servers(args) -> list[Server]:
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(args.cert, args.key)
     context.set_alpn_protocols(args.alpn.split(","))
-    common = {"writer": writer, "source": args.source, "sites_dir": args.sites_dir}
+    common = {
+        "writer": writer,
+        "source": args.source,
+        "sites_dir": args.sites_dir,
+        "visit_variants": variants.load_pool(args.visit_variants) if args.visit_variants else None,
+        "rng": random.SystemRandom(),
+    }
     servers = [Server((args.host, args.port), Handler, {**common, "tls": True, "context": context})]
     if args.plain_port:
         servers.append(Server((args.host, args.plain_port), Handler, {**common, "tls": False}))
@@ -211,6 +226,11 @@ def main(argv=None):
     parser.add_argument("--source", default="", help="label for this server's logs, e.g. local-c or vm")
     parser.add_argument("--sites-dir", default="infra/sites")
     parser.add_argument("--alpn", default="h2,http/1.1")
+    parser.add_argument(
+        "--visit-variants",
+        metavar="POOL",
+        help="JSON pool of per-visit sentences (VM only; see infra/server/variants.py); off by default",
+    )
     args = parser.parse_args(argv)
     if not args.source:
         parser.error("--source is required (with Docker: set WH_SOURCE in .env, e.g. WH_SOURCE=local-c)")
