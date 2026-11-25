@@ -25,3 +25,24 @@ Known limits of the scaffold:
 - `SIGNATURE_COLUMNS` is a placeholder; 3b (A) owns the environment signature and will replace it.
 - The cross-validation scores only pairs whose two sessions fall in the same fold, so the cluster metrics see a
   fraction of the pairs and are not meaningful yet.
+
+## Track 3d: hard cases (`hard_cases.py`, B)
+
+```sh
+python -m linking.hard_cases <logs_dir> [--runs runs] [--threshold 0.5]
+```
+
+It reuses 3c's sessions, pairs and cross-validated scores, and reports four tables. Each one compares the IP rule
+with 3c's model without the IP (`no_ip`) and on the network trace alone (`network_only`):
+
+- **IP change** (H2, setting 4): pairs of one user's sessions whose IPs differ, by the two networks' labels
+  (`home / vpn`, `home / mobile`, ...). For each: recall, and how often the /24 or /64 prefix still matched.
+- **Shared IP** (setting 5): pairs of different users behind one IP, by tool pair, with the false-link rate. The IP
+  rule links all of them by construction.
+- **Identical setups:** pairs of different users whose sessions have the same values on every signature column.
+  Two empty columns count as equal here (WebFetch sends no HTTP/2 and no UA version), unlike 3c's `same_<column>`
+  features, which need a shared value.
+- **Anonymity:** for each session, how many other users have a session with its exact signature. The table gives
+  the share of sessions with a signature unique to their user.
+
+Rates count only the pairs that a cross-validation fold scored (`n_scored_*`, the same limit as 3c).
