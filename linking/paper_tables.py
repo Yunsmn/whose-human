@@ -34,13 +34,15 @@ def latex(table: pd.DataFrame, caption: str, label: str) -> str:
         "\\centering\\small",
         f"\\caption{{{caption}}}",
         f"\\label{{{label}}}",
+        # shrink to the column only when wider than it (needs graphicx)
+        "\\resizebox{\\ifdim\\width>\\columnwidth\\columnwidth\\else\\width\\fi}{!}{%",
         "\\begin{tabular}{l" + "r" * (len(columns) - 1) + "}",
         "\\toprule",
         " & ".join(_tex(c) for c in columns) + " \\\\",
         "\\midrule",
         *(" & ".join(_tex(v) for v in row) + " \\\\" for row in table.itertuples(index=False)),
         "\\bottomrule",
-        "\\end{tabular}",
+        "\\end{tabular}}",
         "\\end{table}",
     ]
     return "\n".join(lines) + "\n"
