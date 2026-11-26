@@ -57,15 +57,16 @@ is right at least 38\% of the time when 0.1\% of a site's curl visitors are agen
 99\% at 10\%.
 
 \paragraph{The model tier in the trace (H3).} The model also decides which tool fetches the page, and
-the tool decides the fingerprint. With WebFetch and a shell both allowed, Haiku read and submitted with
-WebFetch in all 12 of its runs; Sonnet read with WebFetch and submitted with curl in 6 of 12 runs and
-used curl for both in the other 6; Opus used curl for both in 18 of 19 runs. The sequence of client
-fingerprints therefore points to the tier without any text: WebFetch twice is Haiku, WebFetch then curl
-is most likely Sonnet. The pause before submitting adds less than it first appeared. On one machine
-and day Sonnet's curl submits (2.0 to 2.8\,s) and Opus's (2.9 to 3.6\,s) did not overlap, but Opus
-paused 4.1 to 5.7\,s on the same Windows machine a day later, in runs interleaved with the other
-models. The pause measures provider-side latency, which drifts, so it can rank models seen in the same
-period but not identify one from a fixed threshold.
+the tool decides the fingerprint. With WebFetch and a shell both allowed, Opus used curl for both steps
+in 23 of 25 runs, Sonnet in 12 of 18, and Haiku in 1 of 18. Haiku is the most likely to read with
+WebFetch, but how it submits changed between two days and two Claude Code patch versions: WebFetch in
+all 12 earlier runs, curl in 5 of 6 later ones. The sequence of client fingerprints therefore carries
+information about the tier, without any text, but it is not a stable signature. The pause behaves
+similarly. Within one sitting, interleaving the models, Sonnet's curl runs paused 2.1 to 2.4\,s and
+Opus's 4.6 to 5.3\,s on Linux, and the two did not overlap on Windows either; but Opus's pause moved
+from 2.9--3.6\,s to 4.1--5.7\,s between days on the same machine. The pause measures provider-side
+latency, which drifts, so it can rank models seen in the same period but not identify one from a fixed
+threshold.
 
 % TODO (C): add the Codex-on-Windows observation from #39 here or in Section linking: Codex fell back
 % from PowerShell and curl to the first Python on PATH, a plain-script fingerprint whose library versions
