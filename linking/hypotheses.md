@@ -38,3 +38,15 @@ Result:
 - Logistic regression on the network-trace features (no IP, no run token, no schedule), 5-fold by session: AUC 0.84, precision 0.75, recall 0.72 at 0.5 (319 scored pairs).
 Conclusion: when the agent shells out, the system curl carries the machine's TLS stack and links its sessions; WebFetch carries the same fingerprint on every machine, so it links nothing without the IP; and nothing in the trace links a user's curl sessions to their WebFetch sessions. With two users on different operating systems this is the easy case: two users with the same OS and curl build would collide (3d).
 Next: the Track 3 campaign on the VM, with real IPs, browser visits and three users; more than one user per OS.
+
+## 3d dry run: hard cases on the local runs
+Date: 2026-11-25
+Run ids: the same sessions as the 3c dry run (59 sessions, persona-b1 and persona-c1, local logs). Not a Track 3 campaign: a test of `linking.hard_cases` on the data we have.
+Setup: `python -m linking.hard_cases data/logs`. Every local request shows the Docker gateway as its client IP, so every pair "shares an IP", and no pair shows an IP change.
+Result:
+- IP change: no pairs (no second network in local runs).
+- Identical setups: 84 of 870 pairs of different users (9.7%) match on every signature column. All 84 are WebFetch against WebFetch: 84 of 84 of those pairs, and 0 for every other tool pair (curl against curl, 0 of 169).
+- Anonymity: 40 of 59 sessions (68%) have a signature that no other user shares: every curl and every WebFetch-then-curl session. None of the 19 WebFetch-only sessions does.
+- Shared IP (here: every pair of different users): the `network_only` model falsely links 20.1% of the 174 scored pairs, and the `no_ip` model 13.8%. The false links come from mixed tool pairs (curl / WebFetch 42.6%, WebFetch / WebFetch-then-curl 34.6%), not from curl against curl (0 of 32) or WebFetch against WebFetch (0 of 15).
+Conclusion: the pipeline runs. With two users on two OSes, the identical-setup case is exactly WebFetch, as 3c found: its sessions collide between users, while a user's system curl keeps them apart. The false links under a shared IP are the model's mistakes on mixed tool pairs, not collisions of environment.
+Next: the campaign's settings 4 (IP change) and 5 (three users on one campus IP). Then the identical-setup question needs two users with the same OS and curl build.
