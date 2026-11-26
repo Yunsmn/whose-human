@@ -105,9 +105,15 @@ Use the same image, but run it with host networking. Docker's port forwarding re
 docker run -d --name whose-human --network host --restart unless-stopped \
   -v "$PWD/data:/app/data" -v "$PWD/infra/sites:/app/infra/sites:ro" \
   whose-human-server --host :: --port 443 --source vm \
-  --cert data/certs/fullchain.pem --key data/certs/privkey.pem
+  --cert data/certs/fullchain.pem --key data/certs/privkey.pem \
+  --site-hosts <site1-domain>=site1,<site2-domain>=site2 \
+  --visit-variants infra/sites/visit-variants.json
 ```
 
+`--site-hosts` tells the server which domain is which site. Without it, the server knows only `site1.test`, `site2.test`, `localhost` and `127.0.0.1`, and any other host gets site1 (and is logged as `site1`). Host names are matched without case or port, and the server won't start if a site named there has no folder in `--sites-dir`.
+
 `--host ::` opens one dual-stack socket, so the server takes both IPv4 and IPv6 clients (the VM needs a public IPv6 address and AAAA records for that). IPv4 clients are logged as plain IPv4, not as `::ffff:a.b.c.d`. `--host 0.0.0.0` still listens on IPv4 only.
+
+`--visit-variants` is for the VM only (`linking/protocol.md`, "Site changes on the VM"). Every HTML page view gets one sentence drawn at random from its site's pool. The sentence goes in as a paragraph at the end of the page's `<article>`, or after its first paragraph when the page has none, and the request record logs its id as `visit_variant`. The pool is a JSON file of `{"site1": [{"id": ..., "text": ...}], "site2": [...]}`, with ids unique within a site (format in `infra/server/variants.py`). The server won't start if the file is malformed. Keep it in `infra/sites/` but outside `site1/` and `site2/`, so it's never served. Without the flag, pages go out byte for byte as they are in `infra/sites/`. `.md` files are served as `text/markdown` and `.txt` files (such as `llms.txt`) as `text/plain`, and neither is ever changed.
 
 This VM setup is a sketch and hasn't been tested yet. The container runs as a non-root user, so binding port 443 still needs solving (for example by lowering `net.ipv4.ip_unprivileged_port_start` on the VM). We'll finalise it once the VM exists.
