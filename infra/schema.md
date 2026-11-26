@@ -56,6 +56,7 @@ The server (`infra/server`) appends one JSON object per line to `data/logs/<sour
 | `body_len`, `body_truncated` | Full body length in bytes; whether `body` was cut |
 | `submitted_text` | For `/submit` only: the text field from a form POST, the raw POST body otherwise, or `?text=` on GET |
 | `status` | Response status code |
+| `visit_variant` | Id of the per-visit sentence inserted into this HTML page (`--visit-variants`, VM only). Null without the flag, and for non-HTML files, HEAD requests and `/submit` |
 
 **HTTP/2** (`request` records with `http_version` `HTTP/2`)
 

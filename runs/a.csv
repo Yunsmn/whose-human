@@ -671,3 +671,9 @@ a-0659,script_aiohttp,,baseline,a-windows,local,aiohttp 3.14.5; python 3.12.10; 
 a-0660,script_node-https,,baseline,a-windows,local,node https; node 24.20.0; os Windows 11 (10.0.26200); site site2; trial 30/30; seed 1787928600; exit 0
 a-codex-win-i05,codex-cli,gpt-5.6-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site1; default settings; stopped at 180 s; 0 run-tagged HTTP requests
 a-codex-win-i06,codex-cli,gpt-5.6-sol,persona-a1,a-windows,local,interactive; Codex CLI 0.158.0; site2; default settings; stopped at 180 s; 0 run-tagged HTTP requests
+a-t3-codex-site1-s1-001,codex-cli,gpt-5.6-sol,persona-a1,a-windows,home,Track 3 setting 1; default model; headless; Codex CLI 0.171.0
+a-t3-codex-site1-s1-002,codex-cli,gpt-5.6-sol,persona-a1,a-windows,home,Track 3 setting 1; default model; headless; Codex CLI 0.171.0
+a-t3-codex-site1-s1-003,codex-cli,gpt-5.6-sol,persona-a1,a-windows,home,Track 3 setting 1; default model; headless; Codex CLI 0.171.0
+a-t3-codex-site2-s1-001,codex-cli,gpt-5.6-sol,persona-a1,a-windows,home,Track 3 setting 1; default model; headless; Codex CLI 0.171.0
+a-t3-codex-site2-s1-002,codex-cli,gpt-5.6-sol,persona-a1,a-windows,home,Track 3 setting 1; default model; headless; Codex CLI 0.171.0
+a-t3-codex-site2-s1-003,codex-cli,gpt-5.6-sol,persona-a1,a-windows,home,Track 3 setting 1; default model; headless; Codex CLI 0.171.0
