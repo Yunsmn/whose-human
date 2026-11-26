@@ -1,4 +1,45 @@
-% Threat model and ethics (owner: A). Stub so main.tex builds.
+% Threat model and ethics (owner: A).
 \section{Threat Model and Ethics}
 \label{sec:threat}
-% TODO (A)
+
+\paragraph{Adversary and goal.} We model two or more cooperating first-party websites that share a
+tracker.  The tracker controls the pages and HTTPS endpoints that an agent visits and observes only
+traffic delivered to those endpoints: the client address, TLS handshake, HTTP protocol and ordered
+headers, request timing and paths, cookies, and text deliberately submitted to the page.  Its goal is
+to classify the visiting harness and model and to decide whether two visits probably came from the
+same experimental persona and machine.  It does not learn a civil identity.  In particular, our
+``user'' label denotes the controlled operator--machine pair in the experiment; the method cannot
+distinguish two people sharing one machine and should not be interpreted as doing so.
+
+The tracker is not an on-path observer and has no access to the endpoint, agent process, model
+provider, operating-system telemetry, or traffic to unrelated sites.  It cannot read CPU, GPU, memory,
+or local model state through an ordinary HTTP fetch.  It also does not require JavaScript execution,
+which command-line fetches generally omit.  We permit cross-site comparison of server observations
+and a site-specific cookie, but treat cookies as a browser-only signal because the agent fetches in
+our measurements usually start with an empty cookie jar.  Run identifiers provide experimental
+ground truth and are not environment features.  When an agent repeats a run-bearing URL to the user,
+we report that explicit relay channel separately from fingerprint-based linking, following the UID
+smuggling threat~\cite{randall2022uid}.
+
+\paragraph{Scope.} The study measures probabilistic linkage, not a globally unique machine
+fingerprint.  An IP address or IPv6 prefix can be shared by a household, campus, VPN, or proxy; a TLS
+signature can be shared by every installation of the same runtime; and provider-hosted fetch tools
+describe the provider rather than the user's machine.  We therefore evaluate both same-person
+stability and different-person collisions, and report results with and without address features.  A
+link is supported only to the extent that independent observations remain stable under the tested
+network and software changes.
+
+\paragraph{Ethics and data handling.} The three authors are the only study participants and operate
+their own accounts, machines, browsers, and fictitious personas.  The task and submission request are
+visible on the page.  We use no hidden text, deceptive prompt injection, exploit, CAPTCHA bypass, or
+attempt to make an agent reveal local files or secrets.  The VM's per-visit variation is an ordinary,
+non-instructional sentence on the page's topic; it tests whether a submitted summary reflects the
+served page, not whether an agent follows a concealed command.
+
+Network logs necessarily contain IP addresses and fine-grained fingerprints.  Raw logs, agent
+outputs, and corpora are therefore kept in a restricted project repository; the public repository
+contains code, run identifiers, coarse machine labels, and aggregate results only.  Certificates,
+private keys, credentials, and real IP addresses are excluded from public commits by repository
+guards and manual review.  Development requests carry a \texttt{dev-} prefix and are removed by the
+default loader.  These controls reduce disclosure risk while preserving the evidence needed to audit
+our measurements.
