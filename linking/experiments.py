@@ -21,11 +21,15 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier
+from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
 from infra.loader import load_logs
 from linking.link import cluster, cluster_metrics
@@ -58,6 +62,21 @@ MODELS = {
         n_estimators=300, min_samples_leaf=3, class_weight="balanced", random_state=0
     ),
 }
+MODELS.update(
+    {
+        "randomforest": lambda: RandomForestClassifier(
+            n_estimators=300, min_samples_leaf=3, class_weight="balanced", random_state=0
+        ),
+        "svm-rbf": lambda: SVC(
+            kernel="rbf", C=1.0, class_weight="balanced", probability=True, random_state=0
+        ),
+        "knn": lambda: KNeighborsClassifier(n_neighbors=25, weights="distance"),
+        "mlp": lambda: MLPClassifier(
+            hidden_layer_sizes=(32, 16), alpha=1e-3, early_stopping=True, max_iter=2000, random_state=0
+        ),
+    }
+)
+ROUND1 = ("logreg", "gboost", "extratrees", "randomforest", "svm-rbf", "knn", "mlp")
 # Second round: extra trees settings, on the strongest feature sets only.
 for _leaf in (1, 3, 10):
     for _maxf in ("sqrt", 0.5, None):
@@ -114,7 +133,8 @@ def add_org(sessions: pd.DataFrame, pairs: pd.DataFrame) -> pd.DataFrame:
 
 # ---- scorers --------------------------------------------------------------------------------------
 def fit_model(name: str, train: pd.DataFrame, features: list[str]):
-    model = Pipeline([("impute", SimpleImputer(strategy="constant", fill_value=0)), ("clf", MODELS[name]())])
+    steps = [("impute", SimpleImputer(strategy="constant", fill_value=0)), ("scale", StandardScaler())]
+    model = Pipeline([*steps, ("clf", MODELS[name]())])
     model.fit(train[features].astype(float), train["same_user"].astype(bool))
     return model
 
@@ -210,10 +230,11 @@ def run(sessions, pairs, extra_pairs, seeds) -> pd.DataFrame:
         pairs = pairs.assign(**rarity_columns(pairs, sessions, shares))
         masks = pair_masks(pairs, part)
         train = pairs.loc[masks["train"]]
-        round1 = ("logreg", "gboost", "extratrees")
+        round1 = ROUND1
         configs = [("ip rule", "-", None)] + [(f, m, None) for f in FEATURE_SETS for m in round1]
         configs += [(f, m, None) for f in ROUND2 for m in MODELS if m.startswith("extratrees-")]
         configs += [("fellegi-sunter", "fs", None), ("fellegi-sunter+org+ip", "fs", None)]
+        configs += [(f, "ensemble", None) for f in ROUND2]  # mean of extra trees, random forest, k-NN
         if extra_pairs is not None:
             configs += [(f, m, "local") for f in ("trace", "trace+rarity") for m in round1]
         for features_name, model_name, extra in configs:
@@ -225,6 +246,10 @@ def run(sessions, pairs, extra_pairs, seeds) -> pd.DataFrame:
                 fs_sessions["ip_prefix"] = sessions["ip_prefix"].map(lambda x: (x,) if pd.notna(x) else ())
                 scorer = FellegiSunter(fs_sessions, columns).fit(part.index[part.eq("train")], train)
                 scores = scorer.predict(pairs)
+            elif model_name == "ensemble":
+                features = FEATURE_SETS[features_name]
+                members = ("extratrees-leaf3-mf0.5", "randomforest", "knn")
+                scores = sum(predict(fit_model(m, train, features), pairs, features) for m in members) / 3
             else:
                 features = FEATURE_SETS[features_name]
                 fit_on = train if extra is None else pd.concat([train, extra_pairs], ignore_index=True)
