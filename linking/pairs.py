@@ -17,6 +17,8 @@ SCHEDULE_FEATURES = ["log_dt_start"]
 NETWORK_FEATURES = [
     *[f"same_{column}" for column in SIGNATURE_COLUMNS],
     "n_signature_matches",
+    "signature_rarity",
+    "rarest_match",
     "same_tools",
     "submit_wait_diff_s",
     "max_gap_ratio",
@@ -50,8 +52,37 @@ def _ratio(left, right) -> float:
     return min(left, right) / max(left, right)
 
 
-def _pair(a: pd.Series, b: pd.Series) -> dict:
+EMPTY = "\u2205"  # stands for "no value" (e.g. no HTTP/2), which is itself part of a fingerprint
+
+
+def _values(cell) -> set:
+    return set(cell or ()) or {EMPTY}
+
+
+def value_shares(sessions: pd.DataFrame) -> dict[str, dict[str, float]]:
+    """Per signature column: the share of sessions that showed each value (no labels used).
+
+    A value everyone shows (WebFetch's fingerprint) has a share near 1 and says little; a rare curl build
+    has a small share and says a lot."""
+    shares = {}
+    for column in SIGNATURE_COLUMNS:
+        counts: dict[str, int] = {}
+        for cell in sessions[column] if column in sessions else []:
+            for value in _values(cell):
+                counts[value] = counts.get(value, 0) + 1
+        shares[column] = {value: count / max(len(sessions), 1) for value, count in counts.items()}
+    return shares
+
+
+def _rarity(a_cell, b_cell, shares: dict[str, float]) -> float:
+    """-log(share) of the rarest value two sessions share on a column; 0 when they share none."""
+    common = _values(a_cell) & _values(b_cell)
+    return max((-math.log(shares.get(value, 1.0)) for value in common), default=0.0)
+
+
+def _pair(a: pd.Series, b: pd.Series, shares: dict[str, dict[str, float]] | None = None) -> dict:
     signature = {f"same_{column}": _overlap(a[column], b[column]) for column in SIGNATURE_COLUMNS}
+    rarity = [_rarity(a[column], b[column], (shares or {}).get(column, {})) for column in SIGNATURE_COLUMNS]
     dt = _abs_diff(a.t_start, b.t_start)
     same_user = a.label_user == b.label_user
     same_ip = _same(a.ip, b.ip)
@@ -65,6 +96,8 @@ def _pair(a: pd.Series, b: pd.Series) -> dict:
         "log_dt_start": math.log1p(dt) if pd.notna(dt) else float("nan"),
         **signature,
         "n_signature_matches": sum(signature.values()),
+        "signature_rarity": sum(rarity),
+        "rarest_match": max(rarity, default=0.0),
         "same_tools": _same(a.tools, b.tools),
         "submit_wait_diff_s": _abs_diff(a.submit_wait_s, b.submit_wait_s),
         "max_gap_ratio": _ratio(a.max_gap_s, b.max_gap_s),
@@ -76,12 +109,30 @@ def _pair(a: pd.Series, b: pd.Series) -> dict:
     }
 
 
+RARITY_FEATURES = ["signature_rarity", "rarest_match"]
+
+
+def rarity_columns(pairs: pd.DataFrame, sessions: pd.DataFrame, shares: dict) -> pd.DataFrame:
+    """The rarity features of `pairs`, recomputed from `shares` (e.g. from training sessions only)."""
+    by_key = sessions.set_index("session_key")
+    rows = []
+    for a, b in zip(pairs["a"], pairs["b"], strict=True):
+        left, right = by_key.loc[a], by_key.loc[b]
+        weights = [_rarity(left[c], right[c], shares.get(c, {})) for c in SIGNATURE_COLUMNS]
+        rows.append((sum(weights), max(weights, default=0.0)))
+    return pd.DataFrame(rows, columns=RARITY_FEATURES, index=pairs.index)
+
+
 def build_pairs(sessions: pd.DataFrame) -> pd.DataFrame:
-    """All unordered session pairs, with the same-user label; O(n^2), so capped at MAX_SESSIONS."""
+    """All unordered session pairs, with the same-user label; O(n^2), so capped at MAX_SESSIONS.
+
+    The rarity features here use every session's values (no labels). `cross_val_scores` recomputes them
+    from each fold's training sessions, so held-out sessions never shape their own features."""
     if len(sessions) > MAX_SESSIONS:
         raise ValueError(f"pair generation is limited to {MAX_SESSIONS} sessions")
+    shares = value_shares(sessions)
     rows = [
-        _pair(sessions.iloc[i], sessions.iloc[j])
+        _pair(sessions.iloc[i], sessions.iloc[j], shares)
         for i in range(len(sessions))
         for j in range(i + 1, len(sessions))
     ]
