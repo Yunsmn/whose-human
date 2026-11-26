@@ -26,6 +26,15 @@ Known limits of the scaffold:
 - The cross-validation scores only pairs whose two sessions fall in the same fold, so the cluster metrics see a
   fraction of the pairs and are not meaningful yet.
 
+## Campaign report (`campaign.py`)
+
+Run first, as soon as a VM log lands in the data repo: `python -m linking.campaign <logs_dir> [--runs runs]`.
+It checks every Track 3 run in the manifests against the log (missing, fetched only, submitted; agent runs that
+didn't submit are listed), counts distinct addresses and /24 or /64 prefixes per user, setting and network,
+the IPv6 share and whether browser visits shared the agents' address (counts only, never an address), lists
+each agent's tool sequences, and checks decision A: whether a submitted summary names the keyword of the
+per-visit sentence its page carried (`visit_variant`).
+
 ## Track 3d: hard cases (`hard_cases.py`, B)
 
 ```sh
