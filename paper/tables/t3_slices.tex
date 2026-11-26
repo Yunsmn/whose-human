@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering\small
+\caption{Recall on same-person pairs, by kind of pair.}
+\label{tab:t3-slices}
+\resizebox{\ifdim\width>\columnwidth\columnwidth\else\width\fi}{!}{%
+\begin{tabular}{lrrr}
+\toprule
+Scorer & Across agents & Across sites & Agent and browser \\
+\midrule
+Same IP (rule) & 0.64 & 0.66 & 0.67 \\
+Model: all & 0.80 & 0.82 & 0.79 \\
+Model: no\_ip & 0.74 & 0.76 & 0.72 \\
+Model: network\_only & 0.77 & 0.75 & 0.70 \\
+\bottomrule
+\end{tabular}}
+\end{table}
