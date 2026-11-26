@@ -35,8 +35,16 @@ Result:
   | WebFetch and WebFetch | 87 of 87 | 84 of 84 |
   | curl and WebFetch | 0 of 247 | 0 of 247 |
 
-- Logistic regression on the network-trace features (no IP, no run token, no schedule), 5-fold by session: AUC 0.84, precision 0.75, recall 0.72 at 0.5 (319 scored pairs).
-Conclusion: when the agent shells out, the system curl carries the machine's TLS stack and links its sessions; WebFetch carries the same fingerprint on every machine, so it links nothing without the IP; and nothing in the trace links a user's curl sessions to their WebFetch sessions. With two users on different operating systems this is the easy case: two users with the same OS and curl build would collide (3d).
+- Logistic regression, 5-fold by session, every pair scored by a model trained on neither of its sessions (1,711 pairs), threshold 0.5:
+
+  | Features | Pair AUC | Precision | Recall | Clusters: ARI | B-cubed F1 |
+  |---|---|---|---|---|---|
+  | without IP (`no_ip`: network trace, schedule, run token) | 0.89 | 0.82 | 0.75 | 0.80 | 0.89 |
+  | network trace only (`network_only`) | 0.84 | 0.71 | 0.69 | 0.38 | 0.67 |
+
+  Clusters use average linkage. Connected components (single linkage) merge everyone into one cluster with either feature set (ARI 0.00), because WebFetch sessions of different users look the same and one false link is enough.
+- What the clusters hold: without IP, one cluster per user's curl and mixed sessions; B's WebFetch sessions join B's cluster and C's form a cluster of their own. They are kept apart by the time between sessions, not by the network: B and C ran their agents on different days. With the network trace alone, WebFetch sessions of both users end up in one cluster with B's curl sessions.
+Conclusion: the gain from `network_only` to `no_ip` is our schedule, not a property of the user, so `network_only` is the honest number for linking without IP. When the agent shells out, the system curl carries the machine's TLS stack and links its sessions; WebFetch carries the same fingerprint on every machine, so it links nothing without the IP; and nothing in the trace links a user's curl sessions to their WebFetch sessions. With two users on different operating systems this is the easy case: two users with the same OS and curl build would collide (3d).
 Next: the Track 3 campaign on the VM, with real IPs, browser visits and three users; more than one user per OS.
 
 ## 3d dry run: hard cases on the local runs
