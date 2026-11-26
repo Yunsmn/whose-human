@@ -27,8 +27,9 @@ to the one visit an LLM read, even when the request is indistinguishable from a 
 \paragraph{Signals that did not work.} Several classic linking signals failed for coding agents. We
 did not find TCP timestamps usable: current Linux randomises their offset per connection and Windows
 does not send them by default. No agent connection resumed a TLS session, so session tickets link
-nothing~\cite{sy2018tls}. No agent requested \texttt{robots.txt}, \texttt{llms.txt} or a favicon, and
-the cookie our server sets came back in none of 56 Claude Code requests, because each fetch or curl call
+nothing~\cite{sy2018tls}. In our local runs no agent requested \texttt{robots.txt}, \texttt{llms.txt} or a favicon
+(the VM pages also link an \texttt{llms.txt} and Markdown copies; the campaign log tells whether any
+agent follows them), and the cookie our server sets came back in none of 56 Claude Code requests, because each fetch or curl call
 starts with an empty cookie jar. Cookies therefore link a person's browser visits but never an agent to
 that browser, which is why linking has to rest on the network and the environment.
 

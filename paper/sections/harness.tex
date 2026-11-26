@@ -44,7 +44,7 @@ agents with their own client.
 \paragraph{Timing (H2).} What separates an agent's curl from a script's curl is the model in the loop (Figure~\ref{fig:timing}).
 A script moves from the page to the submit in milliseconds: on Linux the median gap is 0.005\,s and
 the slowest gap in any of 722 runs is 0.105\,s, and no script run on any of the three machines has a
-gap above 1\,s. Claude Code with curl waits 3.1 to 3.6\,s, with WebFetch 7.9 to
+gap above 1\,s. On Linux, Claude Code with curl waits 3.1 to 3.6\,s, with WebFetch 7.9 to
 12.9\,s, and Codex 5.2\,s; a person typing curl took 136\,s. A threshold of 1\,s on the slowest gap
 flags all 27 agent runs and none of the 2,102 script runs; on Windows the timing features alone
 separate the agent from its script twin with macro F1 1.00, and a timing model trained on one machine
@@ -64,7 +64,7 @@ all 12 earlier runs, curl in 5 of 6 later ones. The sequence of client fingerpri
 information about the tier, without any text, but it is not a stable signature. The pause behaves
 similarly. Within one sitting, interleaving the models, Sonnet's curl runs paused 2.1 to 2.4\,s and
 Opus's 4.6 to 5.3\,s on Linux, and the two did not overlap on Windows either; but Opus's pause moved
-from 2.9--3.6\,s to 4.1--5.7\,s between days on the same machine. The pause measures provider-side
+from 2.9--3.4\,s to 4.1--5.7\,s between two days on the same Windows machine. The pause measures provider-side
 latency, which drifts, so it can rank models seen in the same period but not identify one from a fixed
 threshold.
 
