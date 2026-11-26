@@ -109,8 +109,25 @@ def _pair(a: pd.Series, b: pd.Series, shares: dict[str, dict[str, float]] | None
     }
 
 
+RARITY_FEATURES = ["signature_rarity", "rarest_match"]
+
+
+def rarity_columns(pairs: pd.DataFrame, sessions: pd.DataFrame, shares: dict) -> pd.DataFrame:
+    """The rarity features of `pairs`, recomputed from `shares` (e.g. from training sessions only)."""
+    by_key = sessions.set_index("session_key")
+    rows = []
+    for a, b in zip(pairs["a"], pairs["b"], strict=True):
+        left, right = by_key.loc[a], by_key.loc[b]
+        weights = [_rarity(left[c], right[c], shares.get(c, {})) for c in SIGNATURE_COLUMNS]
+        rows.append((sum(weights), max(weights, default=0.0)))
+    return pd.DataFrame(rows, columns=RARITY_FEATURES, index=pairs.index)
+
+
 def build_pairs(sessions: pd.DataFrame) -> pd.DataFrame:
-    """All unordered session pairs, with the same-user label; O(n^2), so capped at MAX_SESSIONS."""
+    """All unordered session pairs, with the same-user label; O(n^2), so capped at MAX_SESSIONS.
+
+    The rarity features here use every session's values (no labels). `cross_val_scores` recomputes them
+    from each fold's training sessions, so held-out sessions never shape their own features."""
     if len(sessions) > MAX_SESSIONS:
         raise ValueError(f"pair generation is limited to {MAX_SESSIONS} sessions")
     shares = value_shares(sessions)
