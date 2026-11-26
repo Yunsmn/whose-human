@@ -799,3 +799,21 @@ c-claude-sh-sonnet-site1-002,claude-code,claude-sonnet-5-5,persona-c1,c-linux,lo
 c-claude-sh-sonnet-site1-001,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
 c-claude-sh-sonnet-site2-002,claude-code,claude-sonnet-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model sonnet; allowedTools WebFetch Bash; fresh session; model-speed test
 c-claude-sh-haiku-site2-001,claude-code,claude-haiku-5-5,persona-c1,c-linux,local,mode headless; claude-code 2.1.331; --model haiku; allowedTools WebFetch Bash; fresh session; model-speed test
+c-t3-codex-site2-s1-001,codex-cli,gpt-6-luna,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; codex-cli 0.167.1; sandbox danger-full-access; default model; fresh session
+c-t3-claude-wf-site1-s1-002,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,"Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch, Bash disallowed; default model; fresh session"
+c-t3-claude-wf-site2-s1-001,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,"Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch, Bash disallowed; default model; fresh session"
+c-t3-claude-wf-site1-s1-001,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,"Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch, Bash disallowed; default model; fresh session"
+c-t3-claude-sh-site2-s1-002,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch Bash; default model; fresh session
+c-t3-claude-sh-site1-s1-002,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch Bash; default model; fresh session
+c-t3-claude-sh-site2-s1-001,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch Bash; default model; fresh session
+c-t3-claude-sh-site2-s1-003,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch Bash; default model; fresh session
+c-t3-codex-site2-s1-003,codex-cli,gpt-6-luna,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; codex-cli 0.167.1; sandbox danger-full-access; default model; fresh session
+c-t3-codex-site1-s1-002,codex-cli,gpt-6-luna,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; codex-cli 0.167.1; sandbox danger-full-access; default model; fresh session
+c-t3-codex-site1-s1-001,codex-cli,gpt-6-luna,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; codex-cli 0.167.1; sandbox danger-full-access; default model; fresh session
+c-t3-claude-wf-site2-s1-002,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,"Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch, Bash disallowed; default model; fresh session"
+c-t3-claude-wf-site2-s1-003,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,"Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch, Bash disallowed; default model; fresh session"
+c-t3-codex-site1-s1-003,codex-cli,gpt-6-luna,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; codex-cli 0.167.1; sandbox danger-full-access; default model; fresh session
+c-t3-codex-site2-s1-002,codex-cli,gpt-6-luna,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; codex-cli 0.167.1; sandbox danger-full-access; default model; fresh session
+c-t3-claude-sh-site1-s1-003,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch Bash; default model; fresh session
+c-t3-claude-sh-site1-s1-001,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch Bash; default model; fresh session
+c-t3-claude-wf-site1-s1-003,claude-code,claude-opus-5-5,persona-c1,c-linux,campus,"Track 3 setting 1; mode headless; claude-code 2.1.332; allowedTools WebFetch, Bash disallowed; default model; fresh session"
