@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ipaddress
+import re
 
 import pandas as pd
 
@@ -54,13 +55,21 @@ def ip_prefix(value) -> str | None:
     return str(ipaddress.ip_network(f"{address}/{24 if address.version == 4 else 64}", strict=False))
 
 
+BROWSER_TOKENS = re.compile(r"\b(?:Chrome|Firefox|Safari|Edg|OPR)/\d")
+
+
 def tool_of(ua) -> str:
-    """Which client sent a request, from its User-Agent: webfetch, curl, browser, or the UA family."""
+    """Which client sent a request, from its User-Agent: webfetch, curl, powershell, browser, or the family.
+
+    A "Mozilla/5.0" prefix alone is not a browser: PowerShell sends one ("... PowerShell/7.6.9"), and an
+    agent can write its own ("Mozilla/5.0 (compatible; ClaudeCode)"). A browser also names its engine."""
     ua = "" if pd.isna(ua) else str(ua)
     if ua.startswith("Claude-User"):
         return "webfetch"
+    if "powershell" in ua.lower():
+        return "powershell"
     if ua.lower().startswith("mozilla/"):
-        return "browser"
+        return "browser" if BROWSER_TOKENS.search(ua) else "custom-mozilla"
     return ua.split("/")[0].lower() or "missing"
 
 
