@@ -1,5 +1,6 @@
-% Related work (owner: B). Every claim below is taken from the cited paper's abstract or from our
-% notes in AGENTS.md; entries marked TODO in references.bib still need their full metadata checked.
+% Related work (owner: B). Every claim about prior work is taken from the cited paper's abstract or
+% from our notes in AGENTS.md; sentences on our own data say "our runs" or "our measurements".
+% Entries marked TODO in references.bib still need their full metadata checked.
 
 \section{Related Work}
 \label{sec:related}
@@ -29,9 +30,12 @@ agents expose the host machine's attributes while cloud agents expose a fixed re
 They also observe that agents produce mouse events only at click time and paste rather than type, so
 human behavioural biometrics do not transfer. Lugoloobi et al.~\cite{lugoloobi2026actions} identify
 which of 14 models drives a browser agent from its UI traces, but this needs rich interaction that
-coding agents do not produce. Fayolle et al.~\cite{fayolle2026browser} also study browser agents.
-Unlike all of these, we study coding and command-line agents, which make only a handful of plain HTTP
-requests and run no JavaScript.
+coding agents do not produce. Fayolle et al.~\cite{fayolle2026browser} send six web agents to
+honeysites protected by anti-bot mechanisms (robots.txt, CAPTCHAs, proof-of-work and Cloudflare's
+free tier). Some agents bypass all of them, yet network-, HTTP- and browser-level fingerprints tell
+every agent apart from humans and from each other, and stealth features often make agents easier to
+detect. Unlike all of these, we study coding and command-line agents, which make only a handful of
+plain HTTP requests and run no JavaScript.
 
 \paragraph{Active detection.} A site can also probe the visitor. The LLM agent honeypot of
 Palisade~\cite{reworr2024honeypot} combines prompt injection with timing to detect LLM-driven
@@ -59,10 +63,14 @@ and that combining them with browser fingerprints works best. These are our base
 
 UID smuggling (Randall et al.~\cite{randall2022uid}) passes an identifier between sites through
 navigation URLs. We observe an agent variant of it: the agent relays the visited URL, including our
-per-visit identifier, to the user, whose own browser may then carry it. Older linking signals do not
-help in our setting: TCP timestamp clock skew~\cite{kohno2005clock} is randomised per connection on
-current Linux and absent by default on Windows, and TLS session tickets~\cite{sy2018tls} require
-resumption, which none of our agent connections used.
+per-visit identifier, to the user, whose own browser may then carry it. In 5 of our 27 Claude Code
+runs the agent's answer included the visited URL, all of them WebFetch runs.
+
+Two older linking signals are TCP timestamp clock skew~\cite{kohno2005clock} and TLS session
+tickets~\cite{sy2018tls}. In our measurements neither helps in our setting: the TCP timestamps were
+randomised per connection on current Linux and absent by default on Windows, and none of our agent
+connections resumed a TLS session, so no ticket links them.
+% TODO: point to our results section for these two measurements once it exists.
 
 Zhang et al.~\cite{zhang2025traffic} infer agent behaviour and some user attributes from encrypted
 traffic, but as an on-path network observer rather than the visited website. Ukani
