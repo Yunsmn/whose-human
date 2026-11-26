@@ -1,0 +1,47 @@
+% Track 3: user linking (joint). 3c method (C) below; 3b environment signature (A) and 3d hard cases (B)
+% to be added by their owners; results to be filled from the campaign (linking/hypotheses.md).
+
+\section{Whose Human? Linking Users}
+\label{sec:linking}
+
+\paragraph{Campaign.} Each of us ran the fixed task with our own agents against both partner sites on the
+shared VM, as one fictitious persona: every agent three times per site on one network (setting 1, which
+also covers the change of site), our own browser on both sites in the same sitting (setting 3), and the
+agents again on a second network, a mobile hotspot or a VPN (setting 4). A joint sitting on the campus
+network puts all three users behind one address (setting 5). Every visit carries its run identifier in
+the path, so the manifest gives the ground-truth user of each request.
+
+\paragraph{Sessions and pairs (3c).} We group requests into sessions: one per run, split into the
+agent's requests and any browser requests under the same run identifier. A browser request under an
+agent's run identifier can only come from the user opening a link the agent relayed, so such sessions
+share the identifier. Each session keeps its client address and its /24 (IPv4) or /64 (IPv6) prefix,
+the set of values it showed for each environment-signature field (JA4, JA3, HTTP/2 fingerprint, header
+order and set, User-Agent family and version, Accept, Accept-Encoding, key-exchange groups), the
+sequence of tools it used, and its timing. For every pair of sessions we compute whether the address and
+prefix match, which signature fields share a value, whether the tool sequences match, how close their
+pauses are, and whether they share a run identifier.
+
+\paragraph{Linking model.} A logistic regression gives each pair a same-user probability. We evaluate it
+with 5-fold cross-validation over sessions in which each pair is scored by a model trained on pairs that
+involve neither of its sessions: for folds $k$ and $m$, the pairs between them are scored by a model
+trained without both folds. Every pair is then scored out of sample. We report three feature sets:
+everything; everything but the address and prefix, which tests linking after an IP change (Track 3 H2);
+and the network trace alone, without the address, the relay identifier or the time between sessions,
+since that time partly reflects our campaign schedule rather than the user. We group sessions into users
+by average-linkage clustering on one minus the pair score and score the clusters with the adjusted Rand
+index and B-cubed precision, recall and F1. Connected components (single linkage) are not usable here:
+WebFetch sessions of different users look alike, and a single false link merges two users. Baselines are
+the same-address rule, the cross-device linking of Zimmeck et al.~\cite{zimmeck2017crossdevice} from
+address and browsing history, and re-identification from browsing histories~\cite{bird2020replication}.
+
+\paragraph{Dry run on the local data.} Before the campaign, we ran the pipeline on the 59 local agent
+sessions of two users, where every client address is the container's gateway, so it is linking without
+the IP. A session that used curl shared its JA4 with every curl session of its user (156 of 156 pairs)
+and with none of the other user's (0 of 169), because the system curl carries the machine's TLS stack
+(OpenSSL on Linux, Schannel on Windows). WebFetch sessions matched across users as often as within them
+(84 of 84 against 87 of 87), and no curl session matched a WebFetch session of the same user. On the
+network trace alone the pair model reached an AUC of 0.84. Two users on different operating systems are
+the easy case; the campaign results below measure the harder ones.
+
+% TODO (all): campaign results: per setting, linking with and without IP, cross-agent, cross-site,
+% agent-browser and IP-change slices; 3b signature stability; 3d shared IP and identical setups.
