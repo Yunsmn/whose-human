@@ -1,4 +1,20 @@
-# Track 3c: user linking
+# Track 3b: environment signatures
+
+`signatures.py` measures the 11-field, IP-free and timing-free environment signature declared in
+`sessions.SIGNATURE_COLUMNS`. It reports per-column coverage and population shares without printing the values,
+then exact composite stability for the same persona/machine and collisions between different personas/machines.
+Tool pairs, cross-site pairs and cross-network pairs stay separate so a provider-fixed WebFetch signature is not
+mistaken for a machine signature.
+
+```sh
+python -m linking.signatures <logs_dir> [--runs runs] [--include-baselines]
+```
+
+The report prints counts, rates, tool names and public labels only. It never prints an address or a raw signature
+value. `pairs.value_shares` supplies the same label-free population frequencies that 3c uses for rarity weighting;
+3c recomputes those shares from each cross-validation training fold.
+
+## Track 3c: user linking
 
 Three steps, each a small module:
 
