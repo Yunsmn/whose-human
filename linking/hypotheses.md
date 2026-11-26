@@ -12,6 +12,21 @@ Result: the user's own curl and every agent curl request have the same JA4, JA3,
 Conclusion: supported for agents that shell out: when an agent uses the system curl it carries the same environment signature as the user's own curl, across agents and sites. How identifying that is depends on how rare the build is; a rolling-release curl/OpenSSL pair is narrower than stock Windows curl. Inconclusive for agents with their own client (WebFetch). Based on one user run.
 Next: 3c combines this signature with IP and timing; test whether it survives an IP change (H2).
 
+## 3b campaign snapshot: exact environment-signature stability and collisions
+Status: preliminary (A's setting 4 and the joint setting 5 are not collected yet)
+
+Date: 2026-11-26
+Run ids: all 122 labelled Track 3 sessions in the private VM snapshot (`vm-20261125.jsonl` and the 1,376-row snapshot of `vm-20261126.jsonl`): 12 A, 57 B and 53 C sessions.
+Setup: `python -m linking.signatures data/logs --runs runs`. The declared environment signature is the 11 IP-free and timing-free fields in `sessions.SIGNATURE_COLUMNS`; a session keeps every value it showed for each field. We compared all 7,381 unordered session pairs: 3,040 same-person/same-machine pairs and 4,341 different-person/different-machine pairs. An exact match means the two sessions have equal value sets in all 11 fields. The report prints no address or raw signature value.
+Result:
+- Seven fields were present in all 122 sessions. HTTP/2 covered 46/122 (37.7%), User-Agent version 71/122 (58.2%), Accept-Encoding 83/122 (68.0%) and Accept 112/122 (91.8%). Individual columns had 2 to 25 population values; the largest value shares ranged from 40.2% to 73.8%, so a match's distinctiveness varies substantially by field and value.
+- Exact signatures matched 503/3,040 same-person pairs (16.5%) and 234/4,341 different-person pairs (5.4%). Every different-person exact collision was WebFetch against WebFetch: 234/234 (100%). Excluding that provider-fixed tool pair, exact different-person collisions were 0/4,107.
+- Curl against curl matched 205/266 same-person pairs (77.1%), including 111/142 cross-site pairs (78.2%) and 48/91 cross-network pairs (52.7%), versus 0/437 different-person curl pairs. WebFetch against WebFetch matched 231/231 same-person pairs and 234/234 different-person pairs (both 100%): it identifies the provider client, not the machine.
+- Mixed WebFetch-then-curl sessions matched 48/76 same-person pairs (63.2%; 14/28 cross-network) and 0/77 different-person pairs. Python urllib matched 11/16 same-person pairs and 0/20 different-person pairs. The browser signature matched only 2/45 same-person pairs, no cross-site pair, and 0/108 different-person pairs.
+- No cross-tool pair had an exact signature. In particular, exact environment equality did not link an agent's curl, WebFetch or Python session to the same person's browser.
+Conclusion: H1 is supported for agents that reuse a machine-specific runtime: curl and mixed WebFetch/curl signatures are stable enough to link many sessions and did not collide between the three measured machines. It is rejected for WebFetch alone, whose perfectly stable signature is shared by every user, and exact matching cannot bridge different tools or link agents to the browser. The rarity-weighted 3c model is therefore necessary: it discounts common provider-fixed values and combines partial signature matches, while IP and the relay token remain separate evidence. The exact-match rates are preliminary until A's second network and the three-user shared-IP sitting are added.
+Next: collect A's setting 4 after the team confirms its network label, then rerun this report and add setting 5 to measure same-network collisions in one sitting.
+
 ## H2: Linking still works when the IP changes, using environment and timing alone.
 Status: open
 

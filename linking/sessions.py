@@ -9,9 +9,9 @@ import pandas as pd
 
 from harness.features import extract_features
 
-# Placeholder environment signature; 3b (member A, environment signatures) owns and will replace this list.
-# Each session keeps the set of values it showed (an agent that reads with WebFetch and submits with curl
-# shows two JA4s); two sessions match on a column when their sets share a value.
+# Track 3b's declared IP-free, timing-free environment signature. Each session keeps the set of values it
+# showed (an agent that reads with WebFetch and submits with curl shows two JA4s); 3c compares the sets by
+# overlap, while signatures.py measures exact stability and different-user collisions.
 SIGNATURE_COLUMNS = [
     "tls_ja4",
     "tls_ja3_md5",
