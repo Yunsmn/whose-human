@@ -31,7 +31,17 @@ curl requests were labelled as the matching curl script, and agent against scrip
 F1 of 0.50, chance. H1 therefore holds for agents that shell out, on both systems, and fails for
 agents with their own client.
 
-\paragraph{Timing (H2).} What separates an agent's curl from a script's curl is the model in the loop.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/timing.pdf}
+  \caption{Slowest gap between consecutive requests of each run (cumulative share, log scale). Plain
+  scripts on three machines (Linux and two Windows) stay below 0.4\,s; every agent run is above 2\,s.
+  Scripts that pause 2 to 6\,s between requests overlap the agents. ``WebFetch'' counts every Claude Code
+  run that used WebFetch for at least one request.}
+  \label{fig:timing}
+\end{figure}
+
+\paragraph{Timing (H2).} What separates an agent's curl from a script's curl is the model in the loop (Figure~\ref{fig:timing}).
 A script moves from the page to the submit in milliseconds: on Linux the median gap is 0.005\,s and
 the slowest gap in any of 722 runs is 0.105\,s, and no script run on any of the three machines has a
 gap above 1\,s. Claude Code with curl waits 3.1 to 3.6\,s, with WebFetch 7.9 to
