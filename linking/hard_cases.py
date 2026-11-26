@@ -26,7 +26,7 @@ from linking.pairs import build_pairs
 from linking.sessions import SIGNATURE_COLUMNS, build_sessions
 
 # The scorers each table reports: the IP rule, and 3c's model without the IP (H2) and on the network trace
-# alone. Scores are NaN for pairs a cross-validation fold didn't score; rates count only scored pairs.
+# alone. 3c's cross-validation scores every pair out of sample (at least 3 folds).
 MODEL_SETS = ("no_ip", "network_only")
 
 
