@@ -32,7 +32,12 @@ def _same(left, right) -> bool:
 
 
 def _overlap(left, right) -> bool:
-    return bool(set(left or ()) & set(right or ()))
+    """Two sessions match on a signature column when their value sets share a value, or are equal.
+
+    Equal includes two empty sets: two WebFetch sessions both send no HTTP/2 and no UA version, and that
+    shared absence is part of their fingerprint (pointed out in #42)."""
+    left, right = set(left or ()), set(right or ())
+    return left == right or bool(left & right)
 
 
 def _abs_diff(left, right) -> float:
