@@ -49,3 +49,13 @@ def test_missing_timing_gives_nan_not_an_error():
 def test_pair_limit():
     with pytest.raises(ValueError):
         build_pairs(pd.DataFrame({"session_key": range(5001)}))
+
+
+def test_two_empty_value_sets_count_as_a_match():
+    # WebFetch sends no HTTP/2: both sessions have an empty h2_fp set, which is the same fingerprint.
+    a = session("a", "u", h2_fp=())
+    b = session("b", "v", h2_fp=())
+    c = session("c", "w", h2_fp=("h2-curl",))
+    pairs = build_pairs(sessions(a, b, c)).set_index(["a", "b"])
+    assert pairs.loc[("a", "b"), "same_h2_fp"]
+    assert not pairs.loc[("a", "c"), "same_h2_fp"]
