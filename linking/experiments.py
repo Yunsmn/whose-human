@@ -29,7 +29,15 @@ from sklearn.pipeline import Pipeline
 
 from infra.loader import load_logs
 from linking.link import cluster, cluster_metrics
-from linking.pairs import IP_FEATURES, NETWORK_FEATURES, SCHEDULE_FEATURES, TOKEN_FEATURES, build_pairs
+from linking.pairs import (
+    IP_FEATURES,
+    NETWORK_FEATURES,
+    SCHEDULE_FEATURES,
+    TOKEN_FEATURES,
+    build_pairs,
+    rarity_columns,
+    value_shares,
+)
 from linking.sessions import SIGNATURE_COLUMNS, build_sessions
 
 RARITY = ["signature_rarity", "rarest_match"]
@@ -196,6 +204,10 @@ def run(sessions, pairs, extra_pairs, seeds) -> pd.DataFrame:
     rows = []
     for seed in seeds:
         part = split_sessions(sessions, seed)
+        # rarity from this split's training sessions only, so evaluation sessions never shape it
+        train_keys = part.index[part.eq("train")]
+        shares = value_shares(sessions.loc[sessions.session_key.isin(train_keys)])
+        pairs = pairs.assign(**rarity_columns(pairs, sessions, shares))
         masks = pair_masks(pairs, part)
         train = pairs.loc[masks["train"]]
         round1 = ("logreg", "gboost", "extratrees")
