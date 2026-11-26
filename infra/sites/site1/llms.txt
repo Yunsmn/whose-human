@@ -1,0 +1,6 @@
+# Research Library
+
+This is an instrumented university research site for consenting participants using fictional data.
+
+- [Home](index.md): overview of the Research Library test site.
+- [Response page](input.md): visible study text and the two-sentence summary task.

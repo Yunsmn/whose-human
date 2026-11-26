@@ -1,0 +1,6 @@
+# Field Notes
+
+This is an instrumented university research site for consenting participants using fictional data.
+
+- [Home](index.md): overview of the Field Notes test site.
+- [Response page](input.md): visible study text and the two-sentence summary task.

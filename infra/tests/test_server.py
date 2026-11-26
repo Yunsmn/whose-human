@@ -209,3 +209,32 @@ def test_ipv4_host_keeps_an_ipv4_socket(tmp_path):
         assert server.address_family == socket.AF_INET
     finally:
         server.server_close()
+
+
+def test_site_hosts_map_the_vm_domains(tmp_path):
+    from infra.server.sites import parse_site_hosts, site_for_host
+
+    sites = ROOT / "infra" / "sites"
+    hosts = parse_site_hosts("wh-site1.duckdns.org=site1, WH-Site2.duckdns.org=site2")
+    assert hosts == {"wh-site1.duckdns.org": "site1", "wh-site2.duckdns.org": "site2"}
+    assert site_for_host("wh-site2.duckdns.org", sites, hosts) == ("site2", sites / "site2")
+    assert site_for_host("WH-SITE2.duckdns.org.:443", sites, hosts)[0] == "site2"
+    assert site_for_host("wh-site1.duckdns.org", sites, hosts)[0] == "site1"
+    # the local names keep working, and without the mapping a VM domain falls back to site1
+    assert site_for_host("site2.test:8443", sites, hosts)[0] == "site2"
+    assert site_for_host("wh-site2.duckdns.org", sites)[0] == "site1"
+    assert parse_site_hosts(None) == {}
+    with pytest.raises(ValueError, match="host=site"):
+        parse_site_hosts("wh-site1.duckdns.org")
+
+
+def test_site_hosts_with_an_unknown_site_is_refused(tmp_path, capsys):
+    from infra.certs import generate as make_certs
+    from infra.server.__main__ import main
+
+    _, cert, key = make_certs(tmp_path / "certs")
+    argv = ["--source", "dev-test", "--port", "0", "--cert", str(cert), "--key", str(key)]
+    argv += ["--log-dir", str(tmp_path / "logs"), "--site-hosts", "wh-site3.duckdns.org=site3"]
+    with pytest.raises(SystemExit):
+        main(argv)
+    assert "no folder" in capsys.readouterr().err
