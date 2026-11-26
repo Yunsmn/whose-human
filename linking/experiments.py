@@ -46,13 +46,31 @@ from linking.sessions import SIGNATURE_COLUMNS, build_sessions
 
 RARITY = ["signature_rarity", "rarest_match"]
 TRACE = [f for f in NETWORK_FEATURES if f not in RARITY]
-ORG = ["same_ip_16"]  # stand-in for "same network owner" (ASN): the /16 around an IPv4 address
+ORG = ["same_ip_16"]
+# Signals found by linking.signal_survey beyond the declared 3b signature: the OS through source-port parity
+# and range (they bridge tools, the browser included), the full User-Agent (tool versions), and ClientHello
+# details JA4 leaves out.
+EXTRA_SIGNALS = [
+    "net_port_parity",
+    "net_port_range",
+    "http_ua_full",
+    "tls_key_share",
+    "tls_cert_compress",
+    "tls_cipher_order",
+    "tls_hello_len",
+    "tls_ext_order_raw",
+]
+EXTRA = [
+    f"same_{c}" for c in EXTRA_SIGNALS
+]  # stand-in for "same network owner" (ASN): the /16 around an IPv4 address
 FEATURE_SETS = {
     "trace": TRACE,
     "trace+rarity": TRACE + RARITY,
     "trace+rarity+org": TRACE + RARITY + ORG,
     "trace+rarity+ip": TRACE + RARITY + IP_FEATURES,
     "trace+rarity+org+ip": TRACE + RARITY + ORG + IP_FEATURES,
+    "trace+rarity+extra": TRACE + RARITY + EXTRA,
+    "trace+rarity+ip+extra": TRACE + RARITY + IP_FEATURES + EXTRA,
     "all+schedule (diagnostic)": TRACE + RARITY + ORG + IP_FEATURES + TOKEN_FEATURES + SCHEDULE_FEATURES,
 }
 MODELS = {
@@ -87,7 +105,7 @@ for _leaf in (1, 3, 10):
             class_weight="balanced",
             random_state=0,
         )
-ROUND2 = ("trace+rarity", "trace+rarity+ip")
+ROUND2 = ("trace+rarity", "trace+rarity+ip", "trace+rarity+extra", "trace+rarity+ip+extra")
 THRESHOLDS = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
 FS_COLUMNS = [*SIGNATURE_COLUMNS, "tools"]
 
@@ -129,6 +147,21 @@ def add_org(sessions: pd.DataFrame, pairs: pd.DataFrame) -> pd.DataFrame:
     org = sessions.set_index("session_key")["ip"].map(_ip16)
     a, b = pairs["a"].map(org), pairs["b"].map(org)
     return pairs.assign(same_ip_16=(a.notna() & b.notna() & a.eq(b)))
+
+
+def add_extra(logs: pd.DataFrame, sessions: pd.DataFrame, pairs: pd.DataFrame) -> pd.DataFrame:
+    """same_<signal> for the survey's extra signals: the two sessions' value sets share a value."""
+    from linking.signal_survey import session_signals
+
+    signals = session_signals(logs, sessions)
+    added = {}
+    for column in EXTRA_SIGNALS:
+        cells = signals[column] if column in signals else pd.Series(index=signals.index, dtype=object)
+        left, right = pairs["a"].map(cells), pairs["b"].map(cells)
+        added[f"same_{column}"] = [
+            bool(x) and bool(y) and bool(set(x) & set(y)) for x, y in zip(left, right, strict=True)
+        ]
+    return pairs.assign(**added)
 
 
 # ---- scorers --------------------------------------------------------------------------------------
@@ -290,7 +323,7 @@ def main(argv: list[str] | None = None) -> int:
     logs = load_logs(args.logs_dir, runs_dir=args.runs)
     t3 = logs.loc[logs["run_id"].astype(str).str.contains("-t3-")]
     sessions = build_sessions(t3).reset_index(drop=True)
-    pairs = add_org(sessions, build_pairs(sessions))
+    pairs = add_extra(t3, sessions, add_org(sessions, build_pairs(sessions)))
     extra_pairs = None
     if args.extra_train:
         local = build_sessions(load_logs(args.extra_train, runs_dir=args.runs))
