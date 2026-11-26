@@ -25,6 +25,14 @@ TLS_FIELDS = (
 THANK_YOU = b"<!doctype html><html><body><p>Thank you for contributing.</p></body></html>"
 HTML = "text/html; charset=utf-8"
 TEXT = "text/plain; charset=utf-8"
+# llms.txt and the Markdown copies of each page (linking/protocol.md, "Site changes on the VM", B);
+# any other file goes out as application/octet-stream.
+CONTENT_TYPES = {
+    ".html": HTML,
+    ".htm": HTML,
+    ".md": "text/markdown; charset=utf-8",
+    ".txt": TEXT,
+}
 
 
 def split_run_id(path: str) -> tuple[str | None, str]:
@@ -92,8 +100,7 @@ def route(request: dict, root: Path, run_id: str | None) -> dict:
         body = None
     if body is None:
         return {**result, "status": 404, "body": b"Not Found", "content_type": TEXT}
-    is_html = candidate.suffix.lower() in (".html", ".htm")
-    content_type = HTML if is_html else "application/octet-stream"
+    content_type = CONTENT_TYPES.get(candidate.suffix.lower(), "application/octet-stream")
     return {**result, "status": 200, "body": body if method != "HEAD" else b"", "content_type": content_type}
 
 
