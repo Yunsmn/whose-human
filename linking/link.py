@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+from itertools import combinations_with_replacement
 
 import numpy as np
 import pandas as pd
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import adjusted_rand_score, roc_auc_score
@@ -58,6 +60,9 @@ def score(model, pairs: pd.DataFrame) -> pd.Series:
 def cross_val_scores(
     sessions: pd.DataFrame, pairs: pd.DataFrame, features=PAIR_FEATURES, n_splits: int = 5, seed: int = 0
 ) -> pd.Series:
+    """Out-of-sample same-user probability for every pair; needs n_splits >= 3 to score pairs across folds."""
+    if n_splits < 3:
+        raise ValueError("n_splits must be at least 3: pairs across two folds need a third to train on")
     labels = sessions.label_user
     if labels.value_counts().min() >= n_splits:
         splitter = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
@@ -71,10 +76,12 @@ def cross_val_scores(
             fold_by_session[sessions.iloc[index].session_key] = fold
     scores = pd.Series(np.nan, index=pairs.index, dtype=float)
     fold_a, fold_b = pairs.a.map(fold_by_session), pairs.b.map(fold_by_session)
-    for fold in range(n_splits):
-        # A pair is tested only when both sessions are held out, and trained on only when neither is.
-        test_mask = fold_a.eq(fold) & fold_b.eq(fold)
-        train_mask = fold_a.ne(fold) & fold_b.ne(fold)
+    low, high = np.minimum(fold_a, fold_b), np.maximum(fold_a, fold_b)
+    # Every pair is scored by a model that saw neither of its sessions: the pairs between folds k and m
+    # (k == m for pairs inside one fold) are scored by a model trained only on pairs touching neither fold.
+    for k, m in combinations_with_replacement(range(n_splits), 2):
+        test_mask = low.eq(k) & high.eq(m)
+        train_mask = ~fold_a.isin([k, m]) & ~fold_b.isin([k, m])
         train, test = pairs.loc[train_mask], pairs.loc[test_mask]
         if train.empty or test.empty or train.same_user.nunique() < 2:
             continue
@@ -120,10 +127,8 @@ def evaluate(pairs: pd.DataFrame, scores: pd.Series, threshold: float = 0.5) -> 
     return pd.DataFrame(rows)
 
 
-def cluster(
-    sessions: pd.DataFrame, pairs: pd.DataFrame, scores: pd.Series, threshold: float = 0.5
-) -> pd.Series:
-    parent = {key: key for key in sessions.session_key}
+def _connected_components(keys: list, pairs: pd.DataFrame, linked: pd.Series) -> list[int]:
+    parent = {key: key for key in keys}
 
     def find(key):
         while parent[key] != key:
@@ -131,14 +136,48 @@ def cluster(
             key = parent[key]
         return key
 
-    for index, pair in pairs.iterrows():
-        if pd.notna(scores.get(index)) and scores[index] >= threshold:
-            left, right = find(pair.a), find(pair.b)
-            parent[right] = left
-    names = {}
-    return pd.Series(
-        [names.setdefault(find(key), len(names)) for key in sessions.session_key], index=sessions.session_key
+    for a, b in zip(pairs.a[linked], pairs.b[linked], strict=True):
+        parent[find(b)] = find(a)
+    names: dict = {}
+    return [names.setdefault(find(key), len(names)) for key in keys]
+
+
+def _average_linkage(keys: list, pairs: pd.DataFrame, scores: pd.Series, threshold: float) -> list[int]:
+    if len(keys) < 2:
+        return [0] * len(keys)
+    position = {key: i for i, key in enumerate(keys)}
+    distance = np.ones((len(keys), len(keys)))  # unscored pairs count as unlinked
+    np.fill_diagonal(distance, 0.0)
+    rows, cols = pairs.a.map(position).to_numpy(), pairs.b.map(position).to_numpy()
+    values = 1.0 - scores.reindex(pairs.index).fillna(0.0).to_numpy()
+    distance[rows, cols] = distance[cols, rows] = values
+    model = AgglomerativeClustering(
+        n_clusters=None, metric="precomputed", linkage="average", distance_threshold=1.0 - threshold
     )
+    return model.fit_predict(distance).tolist()
+
+
+def cluster(
+    sessions: pd.DataFrame,
+    pairs: pd.DataFrame,
+    scores: pd.Series,
+    threshold: float = 0.5,
+    method: str = "average",
+) -> pd.Series:
+    """Group sessions into users from pair scores.
+
+    "average" (default) merges two groups when their pairs' mean score reaches the threshold, so a few false
+    links don't merge two people. "components" links every pair at or above the threshold (single linkage):
+    one false link merges two users, as happens with WebFetch, whose sessions look the same for everyone.
+    """
+    keys = sessions.session_key.tolist()
+    if method == "components":
+        labels = _connected_components(keys, pairs, scores.ge(threshold) & scores.notna())
+    elif method == "average":
+        labels = _average_linkage(keys, pairs, scores, threshold)
+    else:
+        raise ValueError(f"unknown clustering method {method!r}")
+    return pd.Series(labels, index=sessions.session_key)
 
 
 def cluster_metrics(sessions: pd.DataFrame, clusters: pd.Series) -> dict:
@@ -163,8 +202,9 @@ def cluster_metrics(sessions: pd.DataFrame, clusters: pd.Series) -> dict:
 def _report(name, sessions, pairs, scores, threshold):
     print(f"\n{name}")
     print(evaluate(pairs, scores, threshold).to_string(index=False))
-    metrics = cluster_metrics(sessions, cluster(sessions, pairs, scores, threshold))
-    print("cluster metrics:", ", ".join(f"{key}={value:.3f}" for key, value in metrics.items()))
+    for method in ("average", "components"):
+        metrics = cluster_metrics(sessions, cluster(sessions, pairs, scores, threshold, method))
+        print(f"clusters ({method}):", ", ".join(f"{key}={value:.3f}" for key, value in metrics.items()))
 
 
 def main(argv: list[str] | None = None) -> int:

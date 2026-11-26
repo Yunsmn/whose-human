@@ -1,4 +1,4 @@
-import numpy as np
+import pytest
 
 import linking.link as linking
 from linking.link import cluster, cluster_metrics, cross_val_scores, evaluate
@@ -47,7 +47,33 @@ def test_cv_evaluate_and_clusters(monkeypatch):
         return ObservedModel(original_fit(train_pairs, features), train_pairs)
 
     monkeypatch.setattr(linking, "fit_pair_model", observing_fit)
-    cv = cross_val_scores(sessions, pairs, features=["same_tls_ja4"], n_splits=2)
-    assert cv.notna().sum() > 0
-    assert np.isnan(cv).any()
-    assert checked_splits and all(checked_splits)
+    cv = cross_val_scores(sessions, pairs, features=["same_tls_ja4"], n_splits=4)
+    assert cv.notna().all()  # every pair scored, including pairs across folds
+    assert checked_splits and all(checked_splits)  # never by a model trained on either of its sessions
+    clusters = cluster(sessions, pairs, cv)
+    assert cluster_metrics(sessions, clusters)["bcubed_f1"] == 1
+
+
+def test_cv_needs_three_folds():
+    sessions = toy_sessions()
+    with pytest.raises(ValueError):
+        cross_val_scores(sessions, build_pairs(sessions), features=["same_tls_ja4"], n_splits=2)
+
+
+def test_average_linkage_survives_one_false_link_that_merges_components():
+    frame = toy_sessions()
+    pairs = build_pairs(frame)
+    scores = pairs.same_user.astype(float)
+    false_link = pairs.index[(pairs.a == "u0") & (pairs.b == "v0")]
+    scores.loc[false_link] = 0.9
+    assert cluster(frame, pairs, scores, method="components").nunique() == 1
+    clusters = cluster(frame, pairs, scores, method="average")
+    assert clusters.nunique() == 2
+    assert cluster_metrics(frame, clusters)["bcubed_f1"] == 1
+
+
+def test_unknown_cluster_method():
+    frame = toy_sessions()
+    pairs = build_pairs(frame)
+    with pytest.raises(ValueError):
+        cluster(frame, pairs, pairs.same_user.astype(float), method="single")
