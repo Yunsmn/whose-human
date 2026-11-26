@@ -1,6 +1,7 @@
 """Figure: slowest gap between consecutive requests of each run, scripts vs agents (H2).
 
-Usage, from the repository root: python paper/figures/timing.py <logs_dir> [--runs runs] [--out paper/figures/timing.pdf]
+Usage, from the repository root:
+    python paper/figures/timing.py <logs_dir> [--runs runs] [--out paper/figures/timing.pdf]
 Reads the private logs; writes only the figure (no addresses).
 """
 
@@ -48,13 +49,19 @@ def main() -> None:
         features = extract_features(logs)
     requests = logs.loc[logs["kind"].eq("request")].reset_index(drop=True)
     features["notes"] = requests["notes"].astype(str).to_numpy() if "notes" in requests else ""
-    runs = features.dropna(subset=["label_agent"]).groupby("run_id").agg(
-        agent=("label_agent", "first"),
-        gap=("run_max_gap_s", "first"),
-        uas=("http_ua", lambda s: set(s.dropna())),
-        notes=("notes", "first"),
+    runs = (
+        features.dropna(subset=["label_agent"])
+        .groupby("run_id")
+        .agg(
+            agent=("label_agent", "first"),
+            gap=("run_max_gap_s", "first"),
+            uas=("http_ua", lambda s: set(s.dropna())),
+            notes=("notes", "first"),
+        )
     )
-    runs["group"] = [group_of(r, a, u, n) for r, a, u, n in zip(runs.index, runs.agent, runs.uas, runs.notes)]
+    runs["group"] = [
+        group_of(r, a, u, n) for r, a, u, n in zip(runs.index, runs.agent, runs.uas, runs.notes, strict=True)
+    ]
     runs = runs.dropna(subset=["group", "gap"])
 
     fig, ax = plt.subplots(figsize=(3.4, 2.7))
@@ -62,9 +69,16 @@ def main() -> None:
         gaps = np.sort(runs.loc[runs.group == label, "gap"].to_numpy())
         if not len(gaps):
             continue
-        ax.step(gaps, np.arange(1, len(gaps) + 1) / len(gaps), where="post", color=colour, linestyle=style,
-                lw=1.4, label=f"{label} ({len(gaps)})")
-        print(f"{label}: n={len(gaps)} min={gaps.min():.3f} median={np.median(gaps):.3f} max={gaps.max():.3f}")
+        ax.step(
+            gaps,
+            np.arange(1, len(gaps) + 1) / len(gaps),
+            where="post",
+            color=colour,
+            linestyle=style,
+            lw=1.4,
+            label=f"{label} ({len(gaps)})",
+        )
+        print(f"{label}: n={len(gaps)} min={gaps.min():.3f} median={np.median(gaps):.3f}")
     ax.axvline(1.0, color="black", lw=0.8, linestyle=":")
     ax.text(0.9, 0.9, "1 s", fontsize=7, ha="right")
     ax.set_xscale("log")
