@@ -3,7 +3,7 @@
 Record each finished experiment here before starting the next one (template in AGENTS.md).
 
 ## H1: Requests from different agents on the same machine share the IP and an environment signature (runtime and TLS stack versions).
-Status: open (first observation below)
+Status: supported for the IP on the VM (every member's agents shared one address per setting); for the environment signature only between agents that use the same system tool (see "Campaign, first results").
 
 Date: 2026-11-18
 Run ids: c-user-curl-001 (site2), compared with the 7 natural headless Claude Code runs that used curl (c-claude-h-001, c-claude-sh-site{1,2}-00{1,2,3}; site1 and site2) and c-codex-h-001 (site1). The directed curl session in c-claude-i-001 is not used, as in the harness entry.
@@ -13,7 +13,7 @@ Conclusion: supported for agents that shell out: when an agent uses the system c
 Next: 3c combines this signature with IP and timing; test whether it survives an IP change (H2).
 
 ## H2: Linking still works when the IP changes, using environment and timing alone.
-Status: open
+Status: partly supported, first campaign data (see "Campaign, first results" below); one user changed network, so the IP-change case rests on one person.
 
 ## Observation: the agent passes the visit's identifier on to the user
 Status: observation, not a test yet (2026-11-24)
@@ -58,3 +58,20 @@ Result:
 - Shared IP (here: every pair of different users): the `network_only` model falsely links 20.1% of the 174 scored pairs, and the `no_ip` model 13.8%. The false links come from mixed tool pairs (curl / WebFetch 42.6%, WebFetch / WebFetch-then-curl 34.6%), not from curl against curl (0 of 32) or WebFetch against WebFetch (0 of 15).
 Conclusion: the pipeline runs. With two users on two OSes, the identical-setup case is exactly WebFetch, as 3c found: its sessions collide between users, while a user's system curl keeps them apart. The false links under a shared IP are the model's mistakes on mixed tool pairs, not collisions of environment.
 Next: the campaign's settings 4 (IP change) and 5 (three users on one campus IP). Then the identical-setup question needs two users with the same OS and curl build.
+
+## Campaign, first results (settings 1, 3, 4)
+Date: 2026-11-26
+Run ids: every `<letter>-t3-...` run in runs/a.csv, b.csv, c.csv up to setting 4: A's Codex and browser runs (settings 1 and 3), B's Claude Code, Codex and browser runs (1 and 3), C's Claude Code, Codex and browser runs (1, 3 and 4). Setting 5 not run yet.
+Setup: the shared VM log of 2026-11-25 and a snapshot of 2026-11-26 (data repo, `logs/vm-*.jsonl`); `python -m linking.campaign` and `python -m linking.paper_tables` (#51, #56) with the rarity features and browser-detection fix of #55. 72 sessions of 3 users, 2,556 pairs, every pair scored out of sample (5 folds), clusters by average linkage. Only counts and rates leave the private data; no address is printed.
+Result:
+- Coverage: every planned run is in the log. Not submitted: 3 of B's 6 Codex runs (its web tool, PowerShell and curl failed in the sandbox) and C's `c-t3-claude-wf-site1-s4-002` (WebFetch reported the page as not loading; no request logged). Browser visits: every visit logged, one human submit per site.
+- Addresses: within each member and setting, all agents and the browser came from one address. C's setting 4 used a different address from setting 1 (the IP change). B's setting 1 and C's setting 4 came from the same address: two different people behind one campus IP, a first shared-IP case before setting 5. No client used IPv6.
+- Environment signature: each member's agents showed 5 different JA4 sets (WebFetch, curl, Python requests and urllib); of 7 agent JA4 values, 2 were seen for more than one user (WebFetch's, and Windows Schannel curl). 79% of sessions have a signature no other user shares.
+- Linking (pair AUC / ARI / B-cubed F1): same-IP rule 0.58 / 0.15 / 0.64; model with every feature 0.90 / 0.69 / 0.85; without the IP 0.87 / 0.69 / 0.85; network trace only 0.70 / 0.38 / 0.65. Recall of same-person pairs, model with every feature: across agents 0.80, across sites 0.82, agent and browser 0.79.
+- IP change (C's settings 1 vs 4, 360 same-person pairs): same-IP rule 0%, model without the IP 34%, network trace only 89%. The model without the IP also uses the time between sessions; C's setting 4 ran hours after setting 1 while different people ran at different times, so that feature reads the change as a different person. It measures our schedule, not the user.
+- Shared IP (747 pairs of different people behind one address): the same-IP rule links all of them; false links: model without the IP 23%, network trace only 41%.
+- Per-visit sentence (decision A): the submitted summary names the keyword of a sentence its page served in 81% of 31 Claude Code runs and 95% of 19 Codex runs, against 8% of 12 human browser submits; summaries named a keyword of a pool sentence the run was not served 0% of the time.
+- No agent requested `robots.txt`, `llms.txt`, a favicon or the Markdown copies, although every VM page links `llms.txt` and its `.md` copy.
+- Two agent requests carried a `Mozilla/5.0` User-Agent: Codex through PowerShell 7 on A's machine, and a Claude Code run on B's machine that wrote its own (`Mozilla/5.0 (compatible; ClaudeCode)`). Counting them as browser visits made them look like relayed links; #55 fixes the detection. No real relayed-link visit occurred in these runs.
+Conclusion: preliminary, three users. The IP alone links poorly here, because one user changed network and two shared an address; the model without the IP keeps AUC 0.87, and the network trace alone links one person across an IP change (89% of pairs) at the cost of false links behind a shared IP (41%). The time between sessions should be left out of headline numbers. The per-visit sentence is a strong sign of an LLM in the loop: agents repeat it, people don't.
+Next: setting 5 (all three behind one campus IP at once); A's runs are labelled `home` but share B's campus address, to be confirmed with A; rerun the tables when the 2026-11-26 log is final.
