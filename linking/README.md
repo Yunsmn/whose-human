@@ -7,8 +7,13 @@ Tool pairs, cross-site pairs and cross-network pairs stay separate so a provider
 mistaken for a machine signature.
 
 ```sh
-python -m linking.signatures <logs_dir> [--runs runs] [--include-baselines]
+python -m linking.signatures <logs_dir> [--runs runs] [--all-labelled]
 ```
+
+By default the report keeps only controlled Track 3 run ids starting `a-t3-`, `b-t3-` or `c-t3-`;
+`--all-labelled` restores the wider exploratory corpus. A cross-network pair means that both sessions have a
+privately observed address and those addresses differ. The public network-kind labels remain a secondary split
+because two campus networks can have different egress addresses.
 
 The report prints counts, rates, tool names and public labels only. It never prints an address or a raw signature
 value. `pairs.value_shares` supplies the same label-free population frequencies that 3c uses for rarity weighting;
