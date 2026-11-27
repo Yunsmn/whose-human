@@ -3,7 +3,7 @@
 Record each finished experiment here before starting the next one (template in AGENTS.md).
 
 ## H1: Requests from different agents on the same machine share the IP and an environment signature (runtime and TLS stack versions).
-Status: supported for the IP on the VM (every member's agents shared one address per setting); for the environment signature only between agents that use the same system tool (see "Campaign, first results").
+Status: supported for the IP on the VM (every member's agents shared one address per setting); for the environment signature only between agents that use the same system tool (see "Campaign results").
 
 Date: 2026-11-18
 Run ids: c-user-curl-001 (site2), compared with the 7 natural headless Claude Code runs that used curl (c-claude-h-001, c-claude-sh-site{1,2}-00{1,2,3}; site1 and site2) and c-codex-h-001 (site1). The directed curl session in c-claude-i-001 is not used, as in the harness entry.
@@ -29,7 +29,7 @@ Conclusion: H1 is supported for agents that reuse a machine-specific runtime: cu
 Next: rerun after A's setting 4 manifest merges, then add setting 5 to measure same-network collisions in one sitting.
 
 ## H2: Linking still works when the IP changes, using environment and timing alone.
-Status: partly supported, first campaign data (see "Campaign, first results" below); one user changed network, so the IP-change case rests on one person.
+Status: supported for the one IP change in the campaign (see "Campaign results" below); it rests on one person, so preliminary.
 
 ## Observation: the agent passes the visit's identifier on to the user
 Status: observation, not a test yet (2026-11-24)
@@ -75,19 +75,19 @@ Result:
 Conclusion: the pipeline runs. With two users on two OSes, the identical-setup case is exactly WebFetch, as 3c found: its sessions collide between users, while a user's system curl keeps them apart. The false links under a shared IP are the model's mistakes on mixed tool pairs, not collisions of environment.
 Next: the campaign's settings 4 (IP change) and 5 (three users on one campus IP). Then the identical-setup question needs two users with the same OS and curl build.
 
-## Campaign, first results (settings 1, 3, 4)
-Date: 2026-11-26
-Run ids: every `<letter>-t3-...` run in runs/a.csv, b.csv, c.csv up to setting 4: A's Codex and browser runs (settings 1 and 3), B's Claude Code, Codex and browser runs (1 and 3), C's Claude Code, Codex and browser runs (1, 3 and 4). Setting 5 not run yet.
-Setup: the shared VM log of 2026-11-25 and a snapshot of 2026-11-26 (data repo, `logs/vm-*.jsonl`); `python -m linking.campaign` and `python -m linking.paper_tables` (#51, #56) with the rarity features and browser-detection fix of #55. 72 sessions of 3 users, 2,556 pairs, every pair scored out of sample (5 folds), clusters by average linkage. Only counts and rates leave the private data; no address is printed.
+## Campaign results (settings 1, 3, 4; final before setting 5)
+Date: 2026-11-27
+Run ids: every `a-t3-`, `b-t3-`, `c-t3-` run in runs/a.csv, b.csv, c.csv for settings 1, 3 and 4 (A: Codex and browser; B: Claude Code, Codex and browser; C: Claude Code, Codex and browser). 80 sessions, 3 users, 3,160 pairs. Setting 5 not run yet.
+Setup: VM logs `vm-20261125.jsonl` and `vm-20261126.jsonl` (data repo, final for these settings). `linking.campaign` for coverage and per-visit sentences; `linking.paper_tables` for 5-fold logistic-regression scores on clean feature sets; `linking.experiments` (5 seeds, 60/20/20 split by session, selection on validation) for the headline; `linking.signal_survey` for single signals. Clean features only: the time between sessions and the shared run id are excluded everywhere (they encode our schedule and labelling: alone they score B-cubed F1 1.000). Counts and rates only; no address printed.
 Result:
-- Coverage: every planned run is in the log. Not submitted: 3 of B's 6 Codex runs (its web tool, PowerShell and curl failed in the sandbox) and C's `c-t3-claude-wf-site1-s4-002` (WebFetch reported the page as not loading; no request logged). Browser visits: every visit logged, one human submit per site.
-- Addresses: within each member and setting, all agents and the browser came from one address. C's setting 4 used a different address from setting 1 (the IP change). B's setting 1 and C's setting 4 came from the same address: two different people behind one campus IP, a first shared-IP case before setting 5. No client used IPv6.
-- Environment signature: B's and C's agents each showed 5 different JA4 sets (WebFetch, curl, Python requests and urllib), A's Codex 2 (curl and PowerShell). Of 8 agent JA4 values, 2 were seen for more than one user: WebFetch's (B and C) and Windows Schannel curl's (A and B); every Python and Linux curl JA4 belonged to one user. 79% of sessions have a signature no other user shares.
-- Linking (pair AUC / ARI / B-cubed F1): same-IP rule 0.58 / 0.15 / 0.64; model with every feature 0.90 / 0.69 / 0.85; without the IP 0.87 / 0.69 / 0.85; network trace only 0.70 / 0.38 / 0.65. Recall of same-person pairs, model with every feature: across agents 0.80, across sites 0.82, agent and browser 0.79.
-- IP change (C's settings 1 vs 4, 360 same-person pairs): same-IP rule 0%, model without the IP 34%, network trace only 89%. The model without the IP also uses the time between sessions; C's setting 4 ran hours after setting 1 while different people ran at different times, so that feature reads the change as a different person. It measures our schedule, not the user.
-- Shared IP (747 pairs of different people behind one address): the same-IP rule links all of them; false links: model without the IP 23%, network trace only 41%.
-- Per-visit sentence (decision A): the submitted summary names the keyword of a sentence its page served in 81% of 31 Claude Code runs and 95% of 19 Codex runs, against 8% of 12 human browser submits; summaries named a keyword of a pool sentence the run was not served 0% of the time.
-- No agent requested `robots.txt`, `llms.txt`, a favicon or the Markdown copies, although every VM page links `llms.txt` and its `.md` copy.
-- Two agent requests carried a `Mozilla/5.0` User-Agent: Codex through PowerShell 7 on A's machine, and a Claude Code run on B's machine that wrote its own (`Mozilla/5.0 (compatible; ClaudeCode)`). Counting them as browser visits made them look like relayed links; #55 fixes the detection. No real relayed-link visit occurred in these runs.
-Conclusion: preliminary, three users. The IP alone links poorly here, because one user changed network and two shared an address; the model without the IP keeps AUC 0.87, and the network trace alone links one person across an IP change (89% of pairs) at the cost of false links behind a shared IP (41%). The time between sessions should be left out of headline numbers. The per-visit sentence is a strong sign of an LLM in the loop: agents repeat it, people don't.
-Next: setting 5 (all three behind one campus IP at once); A's runs are labelled `home` but share B's campus address, to be confirmed with A; rerun the tables when the 2026-11-26 log is final.
+- Coverage: every planned run is in the log. Not submitted: 3 of B's 6 Codex setting-1 runs (sandbox), C's `c-t3-claude-wf-site1-s4-002` (WebFetch: page did not load), and A's `a-t3-codex-site1-s4-002` (no traffic; replaced by `-003`).
+- Addresses: the whole campaign used two public addresses. A's runs (all settings), B's runs and C's setting 4 left through one; C's settings 1 and 3 through the other. So C's setting 4 is the only real IP change (A's setting 4, labelled a second network, kept A's address), and most different-person pairs share an address: colleagues behind one campus NAT, the hard case for IP. Within each user and setting, agents and browser shared one address. No IPv6 client.
+- Linking, logistic regression on clean features (5-fold, every pair out of sample; pair AUC / B-cubed F1): same-IP rule 0.59 / 0.63; network trace 0.66 / 0.56; trace + IP 0.69 / 0.58. A linear model on the 3b signature alone does not beat the address.
+- Linking, model selection (test, mean ± sd over 5 splits): network trace + rarity + the survey signals (OS from source-port parity and range, full User-Agent, ClientHello details), gradient boosting, no IP: B-cubed F1 0.821 ± 0.092, pair AUC 0.934 ± 0.019, ARI 0.74; same-IP rule 0.637, 0.589, 0.11. Validation: trace 0.72, trace + rarity 0.73, + IP 0.71, + survey signals 0.85 (0.84 with IP); Fellegi-Sunter 0.59.
+- IP change (C, 360 same-person pairs across the two addresses): same-IP rule 0%, trace model 86%, trace + IP model 51%.
+- Shared address (1,035 different-person pairs behind one address): the IP rule links all; trace model false links 45%, trace + IP 55%.
+- Signals (single, 80 sessions): source-port parity matches 94% of same-person pairs across tools (browser included) against 54% of different-person pairs; full User-Agent 100% within a tool and 0% between people; key-share groups next. 81% of sessions have a 3b signature no other user shares; WebFetch's is shared by all.
+- Per-visit sentence (decision A): summaries named the served sentence's keyword in 81% of 31 Claude Code runs and 96% of 23 Codex runs, in 21% of 14 summaries people wrote themselves, and never named a sentence the run was not served.
+- No agent requested `robots.txt`, `llms.txt`, a favicon or the Markdown copies.
+Conclusion: H1 supported for the address (one per user and setting) and for the environment signature within a tool; H2 supported for the one IP change we have: linking without the address recovers most of the person's sessions (86% of same-person pairs across the change; test B-cubed F1 0.82 with no IP feature at all). The gain over the address comes from signals outside the TLS fingerprint (OS through source ports, tool versions) and nonlinear models; a linear model on the TLS/HTTP signature alone does not beat the address. Preliminary: three users, two of them Windows, all on one campus; OS and version signals are coarse in a large population.
+Next: setting 5; capture TCP SYN fields on the VM; rerun with the selected configuration fixed in advance.
