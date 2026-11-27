@@ -21,18 +21,24 @@ sequence of tools it used, and its timing. For every pair of sessions we compute
 prefix match, which signature fields share a value, whether the tool sequences match, how close their
 pauses are, and whether they share a run identifier.
 
-\paragraph{Linking model.} A logistic regression gives each pair a same-user probability. We evaluate it
-with 5-fold cross-validation over sessions in which each pair is scored by a model trained on pairs that
-involve neither of its sessions: for folds $k$ and $m$, the pairs between them are scored by a model
-trained without both folds. Every pair is then scored out of sample. We report three feature sets:
-everything; everything but the address and prefix, which tests linking after an IP change (Track 3 H2);
-and the network trace alone, without the address, the relay identifier or the time between sessions,
-since that time partly reflects our campaign schedule rather than the user. We group sessions into users
-by average-linkage clustering on one minus the pair score and score the clusters with the adjusted Rand
-index and B-cubed precision, recall and F1. Connected components (single linkage) are not usable here:
-WebFetch sessions of different users look alike, and a single false link merges two users. Baselines are
-the same-address rule, the cross-device linking of Zimmeck et al.~\cite{zimmeck2017crossdevice} from
-address and browsing history, and re-identification from browsing histories~\cite{bird2020replication}.
+\paragraph{Linking model.} A pair model gives each pair of sessions a same-user probability. Besides the
+signature matches it sees how rare each shared value is (the negative log of its share among training
+sessions, so that a match on a value everyone shows, such as WebFetch's fingerprint, counts for little), and
+signals outside the TLS fingerprint that our signal survey found: the operating system through the
+source-port parity and range the server observes, the full User-Agent with its tool versions, and
+ClientHello details that JA4 discards. We never use the time between two sessions or a shared run
+identifier as features: in our campaign each user ran in their own time blocks, and those two alone link
+every session perfectly, which measures our schedule, not the user. We choose the model on held-out data:
+sessions are split 60/20/20 into training, validation and test sets, stratified by user and setting, so a
+pair used for training never involves a validation or test session, and rarity shares are computed from
+the training sessions only. Across five random splits we compare feature sets, seven model families and a
+supervised Fellegi--Sunter scorer with value-specific weights, select on mean validation B-cubed F1 and
+report the test score of the selected model. For a simpler reference we also score a logistic regression
+with 5-fold cross-validation in which every pair is scored by a model trained on neither of its sessions.
+We group sessions into users by average-linkage clustering on one minus the pair score and score the
+clusters with the adjusted Rand index and B-cubed F1. Connected components (single linkage) are not usable
+here: WebFetch sessions of different users look alike, and a single false link merges two users. The
+baseline is the same-address rule, the core of cross-device linking~\cite{zimmeck2017crossdevice}.
 
 \paragraph{Dry run on the local data.} Before the campaign, we ran the pipeline on the 59 local agent
 sessions of two users, where every client address is the container's gateway, so it is linking without
@@ -43,38 +49,66 @@ and with none of the other user's (0 of 169), because the system curl carries th
 network trace alone the pair model reached an AUC of 0.84. Two users on different operating systems are
 the easy case; the campaign results below measure the harder ones.
 
-\paragraph{Campaign results (settings 1, 3 and 4).} Three users ran 72 sessions on the shared server
-(Table~\ref{tab:t3-coverage}); every planned run reached the log, and the four that did not submit are
-three Codex runs whose tools failed inside their sandbox on Windows and one WebFetch run that reported
-the page as unreachable. Within each user and setting, every agent and the user's own browser came from
-one address, and no client used IPv6. Two settings broke the address as an identifier: one user changed
-network between settings 1 and 4, and two different users happened to leave the campus through the same
-address. The same-address rule therefore links poorly (pair AUC 0.58), while the pair model reaches an AUC
-of 0.90 with every feature and 0.87 without the address (Table~\ref{tab:t3-linking}); it recovers 80\% of
-same-person pairs across agents, 82\% across sites and 79\% between an agent and the user's browser
-(Table~\ref{tab:t3-slices}).
+\paragraph{Campaign results (settings 1, 3 and 4).} Three users ran 80 sessions on the shared server
+(Table~\ref{tab:t3-coverage}); the five runs that did not submit are four Codex runs whose fetching tools
+failed or never reached the server and one WebFetch run that reported the page as unreachable. The whole campaign left the university through two public addresses: one user's first
+settings used one, and every other session, including the second network of that user and all sessions of
+the two other users, the other. Most pairs of different users therefore share an address, the realistic
+hard case of colleagues behind one campus NAT, and one user's change of network is the only real address
+change. No client used IPv6. Within each user and setting, every agent and the user's browser came from
+one address.
 
-\paragraph{Changing network, sharing an address.} For the user who changed network, the same-address
-rule recovers none of the 360 same-person pairs that span the change, and the network trace alone
-recovers 89\% (Table~\ref{tab:t3-ip_change}). The model that also sees the time between sessions does
-worse (34\%): the second network was used hours later, while different users ran at different times, so
-that feature reads a gap in time as a different person. It measures our schedule rather than the user,
-and we leave it out of the headline numbers. Behind one shared address the trade-off reverses: of 747
-pairs of different users with the same address, the address rule links all, the model without the address
-23\%, and the trace alone 41\%, mostly pairs where one side is WebFetch, whose fingerprint is the same for
-everyone. Of the eight client fingerprints our agents showed, only two were seen for more than one user,
-WebFetch's and Windows' built-in curl; 79\% of sessions carry a signature no other user shares.
+\paragraph{Linking.} The same-address rule links poorly here (test B-cubed F1 0.64, pair AUC 0.59;
+Table~\ref{tab:t3-experiment}), and so does a linear model on the TLS and HTTP signature alone (B-cubed
+F1 0.56--0.58, AUC 0.66--0.69; Table~\ref{tab:t3-linking}): WebFetch looks the same for everyone, and
+different tools of one user share nothing at that layer. The selected model, gradient boosting on the
+signature matches, their rarity and the survey signals, and \emph{without the address}, reaches a test
+B-cubed F1 of 0.82 and a pair AUC of 0.93 (Table~\ref{tab:t3-experiment}). The gain comes from two
+signals outside the TLS fingerprint. The source-port parity and range reveal the operating system for
+every tool, the browser included: one user's Linux machine used only even ports in the Linux range, the
+two Windows machines the Windows range, and the same user's sessions matched on it in 94\% of pairs
+across tools against 54\% for different users. The User-Agent's tool versions never collided between users,
+because each of us updated Claude Code at a different time. In an ablation each of the two raised validation
+B-cubed F1 by about 0.08 on its own; the TLS details JA4 discards add little.
+
+\paragraph{Changing network, sharing an address.} For the user who changed network, the address rule
+recovers none of the 360 same-person pairs that span the change, and the signature model recovers 86\%
+(Table~\ref{tab:t3-ip_change}). Behind the shared address, the address rule links every pair of different
+users, while the signature model falsely links 45\% of them, mostly pairs where one side is WebFetch.
+Both strong signals are coarse in a large population: many people share an operating system and a tool
+version, and ports survive only where no carrier-grade NAT rewrites them. They add evidence to the
+signature rather than identify a person on their own, and three users on two operating systems is a
+favourable case for them; setting 5 and more users will tell how far they carry.
 
 \paragraph{The per-visit sentence.} The sentence that changes on every visit separates an LLM in the
 loop from a person: the submitted summary named the served sentence's keyword in 81\% of 31 Claude Code
-runs and 95\% of 19 Codex runs, in 8\% of 12 summaries our users wrote themselves, and never named a
+runs and 96\% of 23 Codex runs, in 21\% of 14 summaries our users wrote themselves, and never named a
 keyword from a sentence the run had not been served. No agent fetched \texttt{llms.txt}, the Markdown
 copies of the pages, \texttt{robots.txt} or a favicon, although every page links them.
 
+\begin{table}[t]
+\centering\small
+\caption{Linking sessions to users on held-out sessions (mean over five splits; test sets scored once
+for the model selected on validation). No feature uses the time between sessions or the run identifier.}
+\label{tab:t3-experiment}
+\resizebox{\ifdim\width>\columnwidth\columnwidth\else\width\fi}{!}{%
+\begin{tabular}{lrrr}
+\toprule
+Scorer & Val. B-cubed F1 & Test B-cubed F1 & Test AUC \\
+\midrule
+Same address (rule) & 0.64 & 0.64 & 0.59 \\
+Signature (extra trees) & 0.72 & -- & -- \\
+Signature + rarity & 0.73 & -- & -- \\
+Signature + rarity + address & 0.71 & -- & -- \\
+Signature + rarity + survey signals (selected) & 0.85 & 0.82 $\pm$ 0.09 & 0.93 \\
+Fellegi--Sunter, value-specific weights & 0.59 & -- & -- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
 \input{tables/t3_coverage}
 \input{tables/t3_linking}
-\input{tables/t3_slices}
 \input{tables/t3_ip_change}
 
-% TODO (all): setting 5 (all three users behind one campus address at once); 3b signature (A) and 3d
-% tables (B) when they land. Numbers are preliminary: three users, settings 1, 3 and 4.
+% TODO (all): setting 5 (all three users behind one campus address at once); numbers are preliminary
+% (three users, settings 1, 3 and 4).
