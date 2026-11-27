@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering\small
+\caption{Linking sessions to people: pair scores and clusters.}
+\label{tab:t3-linking}
+\resizebox{\ifdim\width>\columnwidth\columnwidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Scorer & AUC & Precision & Recall & ARI & B-cubed F1 \\
+\midrule
+Same IP (rule) & 0.59 & 0.43 & 0.68 & 0.15 & 0.63 \\
+Model: trace & 0.66 & 0.47 & 0.73 & 0.21 & 0.56 \\
+Model: trace + IP & 0.69 & 0.48 & 0.66 & 0.23 & 0.58 \\
+\bottomrule
+\end{tabular}}
+\end{table}

@@ -1,0 +1,36 @@
+% Paper skeleton (ACM sigconf, AsiaCCS style). Each section file names its owner (TEAM.md).
+% Build: latexmk -pdf main.tex   (or pdflatex, bibtex, pdflatex, pdflatex)
+\documentclass[sigconf,anonymous,review]{acmart}
+\settopmatter{printacmref=false}
+\setcopyright{none}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+\begin{document}
+
+\title{Whose Human Are You? Identifying the Agent, the Model and the User Behind Coding-Agent Web Requests}
+
+\author{Anonymous Authors}
+\affiliation{\institution{Anonymous Institution}\country{}}
+
+\begin{abstract}
+% TODO (A): abstract, once the Track 3 results are in.
+\end{abstract}
+
+\maketitle
+
+\input{sections/introduction}   % A
+\input{sections/threat_model}   % A (threat model and ethics)
+\input{sections/related_work}   % B
+\input{sections/setup}          % C: shared measurement setup
+\input{sections/harness}        % C (1c) with A (1a) and B (1b)
+\input{sections/model}          % B (2c) with C (2b) and A (2a)
+\input{sections/linking}        % everyone; 3c (C), 3b (A), 3d (B)
+\input{sections/discussion}     % C: discussion, limitations, defenses
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

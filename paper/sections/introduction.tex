@@ -1,0 +1,42 @@
+% Introduction (owner: A).
+\section{Introduction}
+\label{sec:intro}
+
+Coding agents routinely leave the editor to retrieve documentation, inspect a web page, or submit a
+result.  Some use a built-in fetch service; others ask the operating system's curl or Python runtime
+to make the request.  In the latter case the visited site does not merely see an ``AI agent.''  It
+sees a connection produced by software installed on the user's machine, together with its TLS and
+HTTP choices, the user's network address, and the delay while a model decides what to do next.  A
+network of sites could therefore use ordinary requests to infer which agent and model are active and,
+more consequentially, to link different agents back to the same machine or operator.
+
+Prior work fingerprints browser agents from rich network and UI traces
+\cite{kang2026whose,lugoloobi2026actions,wang2026fpagent,fayolle2026browser}, identifies models from
+their generated text~\cite{pasquini2025llmmap,sun2025idiosyncrasies}, or links conventional browsing
+histories across devices~\cite{zimmeck2017crossdevice,bird2020replication}.  Coding agents occupy a
+different point in this space: they often execute no JavaScript, make only a few HTTP requests, and
+may delegate networking to generic command-line tools.  This creates a gap between \emph{agent
+identification} and \emph{user linking}.  A built-in client can identify the agent while hiding the
+local environment; a shell command can be indistinguishable from a script yet expose that
+environment.  We ask three questions: (1) can a site distinguish an agent from a plain program using
+the same HTTP stack, (2) can it infer the model from submitted text or request behaviour, and (3) can
+cooperating sites link visits across agents, sites, network changes, and the user's browser?
+
+We answer these questions with a logging HTTPS server that records TLS, HTTP/1.1, HTTP/2, timing, and
+submitted-text features.  We compare Claude Code and Codex CLI against 12 plain HTTP stacks on one
+Linux and two Windows machines, then run a controlled campaign on two public hostnames.  Every run
+has ground-truth labels, but those labels are excluded from the observable feature sets.  The design
+uses no browser JavaScript, hidden instruction, or prompt injection: each page visibly asks the agent
+to summarize and submit its contents, and all participants are the authors operating fictitious
+personas on their own machines.
+
+Our contributions are:
+\begin{itemize}
+  \item a reproducible, multi-layer measurement harness and same-machine script baselines for coding
+  agents, separating what belongs to the agent from what belongs to the user's networking stack;
+  \item evidence that shell-using agents can match ordinary scripts at the TLS and HTTP layers while
+  model-in-the-loop timing and within-run tool choice still expose agent and model information; and
+  \item a cross-site linking protocol that measures the stability and collisions of network and
+  environment evidence across agents, browsers, machines, and changed IP addresses, while reporting
+  separately the cases that cannot support a reliable link.
+\end{itemize}

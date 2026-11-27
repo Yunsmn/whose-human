@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering\small
+\caption{Same person, different IP: recall by network pair.}
+\label{tab:t3-ip_change}
+\resizebox{\ifdim\width>\columnwidth\columnwidth\else\width\fi}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Networks & Pairs & Same prefix & Same IP (rule) & Model: trace & Model: trace + IP \\
+\midrule
+all & 360 & 0.00 & 0.00 & 0.86 & 0.51 \\
+campus / campus & 360 & 0.00 & 0.00 & 0.86 & 0.51 \\
+\bottomrule
+\end{tabular}}
+\end{table}
