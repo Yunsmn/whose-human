@@ -145,3 +145,21 @@ def test_baselines_are_dropped_by_default():
     features = pd.DataFrame({"tls_ja4": ["x"], "http_ua": ["curl/8"], "http_ua_family": ["curl"]})
     assert build_sessions(logs, features=features).empty
     assert len(build_sessions(logs, include_baselines=True, features=features)) == 1
+
+
+def test_mozilla_prefix_alone_is_not_a_browser():
+    from linking.sessions import tool_of
+
+    chrome = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/158.0 Safari/537.36"
+    )
+    assert tool_of(chrome) == "browser"
+    assert tool_of("Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0") == "browser"
+    assert (
+        tool_of("Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.9")
+        == "powershell"
+    )
+    assert tool_of("Mozilla/5.0 (compatible; ClaudeCode)") == "custom-mozilla"
+    assert tool_of("Claude-User (claude-code/2.1.332; +https://support.anthropic.com/)") == "webfetch"
+    assert tool_of("curl/8.23.0") == "curl"

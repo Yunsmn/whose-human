@@ -13,14 +13,18 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import adjusted_rand_score, roc_auc_score
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from infra.loader import load_logs
 from linking.pairs import (
     IP_FEATURES,
     NETWORK_FEATURES,
     PAIR_FEATURES,
+    RARITY_FEATURES,
     SLICE_COLUMNS,
     build_pairs,
+    rarity_columns,
+    value_shares,
 )
 from linking.sessions import SIGNATURE_COLUMNS, build_sessions
 
@@ -42,6 +46,7 @@ def fit_pair_model(pairs: pd.DataFrame, features=PAIR_FEATURES) -> Pipeline:
     model = Pipeline(
         [
             ("imputer", SimpleImputer(strategy="constant", fill_value=0)),
+            ("scaler", StandardScaler()),  # rarity sums are on another scale than 0/1 matches
             ("classifier", LogisticRegression(class_weight="balanced", max_iter=1000)),
         ]
     )
@@ -85,6 +90,12 @@ def cross_val_scores(
         train, test = pairs.loc[train_mask], pairs.loc[test_mask]
         if train.empty or test.empty or train.same_user.nunique() < 2:
             continue
+        if set(features) & set(RARITY_FEATURES):
+            # value shares from this fold's training sessions only: test sessions don't shape their features
+            in_train = sessions.session_key.map(fold_by_session).isin([k, m]).eq(False)
+            shares = value_shares(sessions.loc[in_train])
+            train = train.assign(**rarity_columns(train, sessions, shares))
+            test = test.assign(**rarity_columns(test, sessions, shares))
         model = fit_pair_model(train, features)
         positive_index = list(model.classes_).index(True)
         scores.loc[test.index] = model.predict_proba(test[list(features)].astype(float))[:, positive_index]

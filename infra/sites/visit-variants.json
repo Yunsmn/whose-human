@@ -15,7 +15,7 @@
     {"id": "amber", "text": "An amber specimen is described in a short catalog record."},
     {"id": "falcon", "text": "A falcon observation appears in the library's wildlife bibliography."},
     {"id": "meadow", "text": "The archive stores a meadow survey with the university field reports."},
-    {"id": "archive", "text": "The archive register notes when each study document was reviewed."},
+    {"id": "saffron", "text": "A saffron label marks the register entry for each recently reviewed study document."},
     {"id": "canyon", "text": "A canyon map is indexed with the collection's geography materials."},
     {"id": "walnut", "text": "The catalog records a walnut sample from a teaching collection."},
     {"id": "prism", "text": "A prism diagram is included in the library's optics notes."},

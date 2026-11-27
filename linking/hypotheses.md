@@ -12,6 +12,22 @@ Result: the user's own curl and every agent curl request have the same JA4, JA3,
 Conclusion: supported for agents that shell out: when an agent uses the system curl it carries the same environment signature as the user's own curl, across agents and sites. How identifying that is depends on how rare the build is; a rolling-release curl/OpenSSL pair is narrower than stock Windows curl. Inconclusive for agents with their own client (WebFetch). Based on one user run.
 Next: 3c combines this signature with IP and timing; test whether it survives an IP change (H2).
 
+## 3b campaign snapshot: exact environment-signature stability and collisions
+Status: preliminary (only runs whose manifests are merged on public `main`; setting 5 is not collected)
+
+Date: 2026-11-26
+Run ids: the 57 controlled Track 3 sessions whose `a-t3-`, `b-t3-` or `c-t3-` manifests are on public `main`, found in the private `vm-20261125.jsonl` and 2,590-row `vm-20261126.jsonl` snapshot: 12 A, 21 B and 24 C sessions. The earlier 122-session calculation mixed Track 1/local runs into the campaign and is superseded by this entry.
+Setup: `python -m linking.signatures data/logs --runs runs`. The declared environment signature is the 11 IP-free and timing-free fields in `sessions.SIGNATURE_COLUMNS`; a session keeps every value it showed for each field. The default report now filters to controlled Track 3 run ids. We compared all 1,596 unordered session pairs: 552 same-person/same-machine pairs and 1,044 different-person/different-machine pairs. An exact match means the two sessions have equal value sets in all 11 fields. Address changes are computed privately from observed addresses, not from the public network-kind label; the report prints no address or raw signature value.
+Result:
+- Seven fields were present in all 57 sessions. HTTP/2 covered 24/57 (42.1%), User-Agent version 25/57 (43.9%), Accept-Encoding 44/57 (77.2%) and Accept 48/57 (84.2%). Individual columns had 2 to 23 population values; largest shares ranged from 28.1% to 77.2%.
+- Exact signatures matched 58/552 same-person pairs (10.5%) and 36/1,044 different-person pairs (3.4%). Every different-person collision was WebFetch against WebFetch: 36/36 (100%); all other different-person tool pairs had zero exact collisions.
+- Curl against curl matched 13/19 same-person pairs (68.4%), including 9/12 cross-site pairs (75.0%), versus 0/47 different-person curl pairs. WebFetch against WebFetch matched 30/30 same-person and 36/36 different-person pairs (both 100%): it identifies the provider client, not the machine.
+- Python urllib matched 11/13 same-person pairs (84.6%) and 0/15 different-person pairs. The browser signature matched only 2/45 same-person pairs, no cross-site pair, and 0/108 different-person pairs.
+- No currently merged same-person pair crosses an observed address, so this snapshot does not yet measure same-person signature stability after an IP change. Of the 1,044 different-person pairs, 792 cross an observed address; their 36 exact collisions are all WebFetch/WebFetch. The public network labels are all `campus`, so the secondary label-based split has zero pairs.
+- No cross-tool pair had an exact signature. In particular, exact environment equality did not link an agent's curl, WebFetch or Python session to the same person's browser.
+Conclusion: H1 is supported for agents that reuse a machine-specific runtime: curl and Python urllib signatures are stable enough to link many sessions and did not collide exactly between the measured machines. It is rejected for WebFetch alone, whose perfectly stable signature is shared by every user, and exact matching cannot bridge different tools or link agents to the browser. The rarity-weighted 3c model is therefore necessary: it discounts common provider-fixed values and combines partial signature matches, while IP and the relay token remain separate evidence.
+Next: rerun after A's setting 4 manifest merges, then add setting 5 to measure same-network collisions in one sitting.
+
 ## H2: Linking still works when the IP changes, using environment and timing alone.
 Status: open
 

@@ -59,3 +59,25 @@ def test_two_empty_value_sets_count_as_a_match():
     pairs = build_pairs(sessions(a, b, c)).set_index(["a", "b"])
     assert pairs.loc[("a", "b"), "same_h2_fp"]
     assert not pairs.loc[("a", "c"), "same_h2_fp"]
+
+
+def test_rare_shared_values_weigh_more_than_common_ones():
+    # three sessions share the common "webfetch" JA4; only a and d share the rare "curl-rare" JA4
+    a = session("a", "u", tls_ja4=("curl-rare",))
+    d = session("d", "u", tls_ja4=("curl-rare",))
+    w = [session(k, "v", tls_ja4=("webfetch",)) for k in ("w1", "w2", "w3", "w4")]
+    pairs = build_pairs(sessions(a, d, *w)).set_index(["a", "b"])
+    rare = pairs.loc[("a", "d")]
+    common = pairs.loc[("w1", "w2")]
+    assert rare.same_tls_ja4 and common.same_tls_ja4  # both match...
+    assert rare.rarest_match > common.rarest_match  # ...but the rare match carries more weight
+    assert pairs.loc[("a", "w1"), "signature_rarity"] < rare.signature_rarity
+
+
+def test_rarity_uses_no_labels():
+    a = session("a", "u", tls_ja4=("x",))
+    b = session("b", "v", tls_ja4=("x",))
+    relabelled = [session("a", "z", tls_ja4=("x",)), session("b", "z", tls_ja4=("x",))]
+    first = build_pairs(sessions(a, b)).signature_rarity.iloc[0]
+    second = build_pairs(sessions(*relabelled)).signature_rarity.iloc[0]
+    assert first == second
