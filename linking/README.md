@@ -66,8 +66,10 @@ per-visit sentence its page carried (`visit_variant`).
 python -m linking.hard_cases <logs_dir> [--runs runs] [--threshold 0.5]
 ```
 
-It reuses 3c's sessions, pairs and cross-validated scores, and reports four tables. Each one compares the IP rule
-with 3c's model without the IP (`no_ip`) and on the network trace alone (`network_only`):
+It reuses 3c's sessions, pairs and cross-validated scores, and reports four tables, on Track 3 runs only
+(`--all-runs` for every labelled run). Each one compares the IP rule with 3c's model on the network trace alone
+(`trace`) and on the trace plus the address (`trace_ip`); like `linking.paper_tables`, it never uses the time
+between sessions or the run id, which measure our schedule:
 
 - **IP change** (H2, setting 4): pairs of one user's sessions whose IPs differ, by the two networks' labels
   (`home / vpn`, `home / mobile`, ...). For each: recall, and how often the /24 or /64 prefix still matched.

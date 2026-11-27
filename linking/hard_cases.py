@@ -11,7 +11,9 @@ Built on 3c's sessions and pairs (`linking.sessions`, `linking.pairs`) and its c
   network trace can't tell them apart? Different-user pairs whose every signature column matches, and each
   session's anonymity set: how many other users have a session with its exact signature.
 
-`python -m linking.hard_cases <logs_dir> [--runs runs] [--threshold 0.5]`
+`python -m linking.hard_cases <logs_dir> [--runs runs] [--threshold 0.5] [--all-runs]`
+
+By default only Track 3 runs (`<letter>-t3-...`); `--all-runs` uses every labelled run.
 """
 
 from __future__ import annotations
@@ -21,13 +23,16 @@ import argparse
 import pandas as pd
 
 from infra.loader import load_logs
-from linking.link import FEATURE_SETS, cross_val_scores, rule_same_ip
-from linking.pairs import build_pairs
+from linking.link import cross_val_scores, rule_same_ip
+from linking.pairs import IP_FEATURES, NETWORK_FEATURES, build_pairs
 from linking.sessions import SIGNATURE_COLUMNS, build_sessions
 
-# The scorers each table reports: the IP rule, and 3c's model without the IP (H2) and on the network trace
-# alone. 3c's cross-validation scores every pair out of sample (at least 3 folds).
-MODEL_SETS = ("no_ip", "network_only")
+# The scorers each table reports: the IP rule, and 3c's model on the network trace alone (H2: no address) and
+# on the trace plus the address. Clean feature sets only, as in `linking.paper_tables`: the time between
+# sessions and the shared run id measure our campaign schedule and labelling, not the user. 3c's
+# cross-validation scores every pair out of sample (at least 3 folds).
+MODEL_SETS = {"trace": NETWORK_FEATURES, "trace_ip": NETWORK_FEATURES + IP_FEATURES}
+TRACK3 = "-t3-"
 
 
 def with_session_labels(sessions: pd.DataFrame, pairs: pd.DataFrame) -> pd.DataFrame:
@@ -50,8 +55,8 @@ def with_session_labels(sessions: pd.DataFrame, pairs: pd.DataFrame) -> pd.DataF
 
 def scores_by_scorer(sessions: pd.DataFrame, pairs: pd.DataFrame, seed: int = 0) -> dict[str, pd.Series]:
     scores = {"rule_same_ip": rule_same_ip(pairs)}
-    for name in MODEL_SETS:
-        scores[f"model_{name}"] = cross_val_scores(sessions, pairs, features=FEATURE_SETS[name], seed=seed)
+    for name, features in MODEL_SETS.items():
+        scores[f"model_{name}"] = cross_val_scores(sessions, pairs, features=features, seed=seed)
     return scores
 
 
@@ -161,10 +166,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--runs", default="runs")
     parser.add_argument("--include-baselines", action="store_true")
     parser.add_argument("--threshold", type=float, default=0.5)
-    args = parser.parse_args(argv)
-    sessions = build_sessions(
-        load_logs(args.logs_dir, runs_dir=args.runs), include_baselines=args.include_baselines
+    parser.add_argument(
+        "--all-runs", action="store_true", help="every labelled run, not only Track 3 (for the local data)"
     )
+    args = parser.parse_args(argv)
+    logs = load_logs(args.logs_dir, runs_dir=args.runs)
+    if not args.all_runs:
+        logs = logs.loc[logs["run_id"].astype(str).str.contains(TRACK3)]
+    sessions = build_sessions(logs, include_baselines=args.include_baselines)
     pairs = build_pairs(sessions)
     data = with_session_labels(sessions, pairs)
     scores = scores_by_scorer(sessions, pairs)
