@@ -1,0 +1,84 @@
+% Track 2: model identification (owner: B, 2c; 2b: C; 2a: A). Numbers from model/hypotheses.md (H1 first
+% and second test, H2) and model/sun_classifier/README.md.
+
+\section{Which Model? Model Identification}
+\label{sec:model}
+
+A site that receives text from an agent, here the two-sentence summary our page asks for, can try to
+name the model that wrote it. We ask how far two short sentences go (H1), and whether text written
+inside an agent session is harder to classify than a direct call to the same model (H2).
+
+\paragraph{Classifier.} We reuse the chat-model classifier of Sun et al.~\cite{sun2025idiosyncrasies}:
+an LLM2Vec encoder~\cite{behnamghader2024llm2vec} (Llama-3-8B-Instruct with bidirectional attention)
+with their LoRA adapters merged in, mean-pooled into one 4,096-dimensional vector per text. We quantize
+it to 4 bits so that it runs on a 6\,GB laptop GPU; on 1,000 of their held-out answers the 4-bit
+backbone with their original head reaches 96.1\% against the published 97.1\%, so the conversion is
+faithful. Their head names 2024 chatbots, so we keep the backbone frozen and train two new linear
+heads (logistic regression) on the vectors: a six-way head over the models we study and a two-way head
+over the providers. Each outputs a probability per class. The models are three tiers per provider:
+Claude Opus, Sonnet and Haiku through Anthropic's coding-agent CLI, and gpt-6-astra, gpt-6.1-sol and
+gpt-6-luna through the Codex CLI. Every text therefore passes through the provider's own harness,
+which matches our threat model, since an agent's text reaches a site through the same harness.
+
+\paragraph{Training data.} Matching the task mattered more than the amount of data. A first head,
+trained on 2,359 two-sentence answers to generic chat questions, names the provider of held-out
+questions 92.8\% of the time, but only 43\% of the time on summaries of our site pages. We therefore
+train on the task itself: 1,200 two-sentence summaries of 100 practice pages, 200 per model,
+collected with the same command and instruction as the reference corpus below, in both of its
+conditions. The practice pages are model-written paragraphs from Sun et al.'s data on unrelated
+topics; none of our site pages is in training.
+
+\input{sections/corpus}   % 2b (C)
+
+\paragraph{Two sentences name the provider (H1).} On the 120 reference summaries of our two site pages
+(Table~\ref{tab:model}), the provider head names the provider 89.2\% of the time (chance 50\%). The
+texts are not independent: they form 24 groups (model, page, condition) of five near-paraphrases, and
+resampling the groups gives a 95\% interval of 81--96\%. Summing the six-way head's probabilities per
+provider gives only 72.5\%, because its errors are mostly GPT models called Haiku; a head that does not
+have to tell the tiers apart first does better. The exact model is named 35.8\% of the time (chance
+16.7\%). The small tiers stand out (Haiku 17 of 20, gpt-6-luna 15 of 20), while Opus and Sonnet are
+named in only 1 of 20 each and most often called Haiku (10 and 16 of 20), so tiers within a provider
+are largely confused. Two short
+sentences thus identify the provider through its harness on our pages, but not, in general, the exact
+model. Two pages are few, and the result needs more pages before it is general.
+
+\begin{table}[t]
+  \centering
+  \caption{2c on our two site pages. Reference: the 120 summaries of the reference corpus. Agent
+  sessions: the 53 summaries agents submitted during their own runs (Claude Code 46, Codex 7, all
+  gpt-6-luna). Provider: the two-way head; chance 50\% for the provider and 16.7\% for the model.}
+  \label{tab:model}
+  \begin{tabular}{lrrr}
+    \toprule
+    Text & $n$ & Provider & Exact model \\
+    \midrule
+    Reference, both conditions & 120 & 89.2\% & 35.8\% \\
+    \quad default system prompt & 60 & 85.0\% & 33.3\% \\
+    \quad minimal system prompt & 60 & 93.3\% & 38.3\% \\
+    Agent sessions & 53 & 79.2\% & 13.2\% \\
+    \quad Claude Code & 46 & 82.6\% & -- \\
+    \quad Codex CLI & 7 & 4 of 7 & 1 of 7 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{The agent session costs accuracy (H2).} The same heads, unchanged, score lower on the 53
+summaries that agents submitted on our pages during their own runs on Linux and Windows: 79.2\% for the
+provider (95\% interval 67--88\%) against 89.2\%, and 13.2\% for the exact model against 35.8\%.
+Claude Code's summaries are named Anthropic 82.6\% of the time, against 91.7\% for the Claude models in
+the reference corpus, and Opus is named exactly in only 1 of its 34 summaries, mostly called Haiku as
+in the reference corpus. The GPT side drops most: gpt-6-luna,
+named exactly in 15 of 20 reference summaries, is named in 1 of 7 agent summaries and given the right
+provider in only 4. Agent summaries are also longer (median 44 words against 35). Text written inside
+an agent session, after tool calls and with the agent's own framing, is harder for a head trained on
+direct calls. The intervals overlap and the GPT side is seven texts from one model, so we read this as
+a direction rather than a result. In the reference corpus itself, the minimal condition is easier than
+the default one (93.3\% against 85.0\% for the provider), which fits the same reading: the more of the
+harness's prompt surrounds the request, the more the text shifts. As noted above, we had no direct API
+access, so neither comparison measures the effect of the harness against raw API output, which is what
+H2 asks.
+
+\paragraph{Text and trace together.} The text is not the only signal for the model. The sequence of
+client fingerprints in a visit carries information about the tier (Section~\ref{sec:harness}), the
+case where the text is weakest, since the tiers within a provider are what the head confuses. We leave
+combining the two to future work.

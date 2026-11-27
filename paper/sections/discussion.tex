@@ -1,0 +1,78 @@
+% Discussion, limitations and defenses (owner: C). Numbers from harness/, model/ and linking/
+% hypotheses.md; the Track 3 parts are to be updated once the campaign results are final.
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Agents look like their environment.} The central observation across our tracks is that a
+coding agent's network identity is mostly not its own. When it shells out, the request is the system's
+curl, or whatever Python the agent finds first on the path, byte for byte; the TLS and header layers
+then describe the user's machine, not the agent. Only built-in tools such as Claude Code's WebFetch have
+a fingerprint of their own, and that fingerprint is the same on every machine. This cuts both ways for
+tracking. An agent that shells out is hard to tell from a script (H1) but carries the user's
+environment, which links its sessions to each other and to the user's own command-line use; an agent
+with its own client is easy to recognise but carries nothing about the user beyond the IP address.
+
+\paragraph{What a passive site learns without any text.} Prompt injection is the obvious way for a site
+to make an agent reveal more, but it is visible, detectable and increasingly resisted. Our results show
+that a site learns a good deal from traffic it receives anyway. The pause before the submit separates an
+LLM in the loop from a script; the sequence of client fingerprints within a visit points to the model
+tier; and the agent's own answer to its user sometimes repeats the visited URL (in 5 of our 27 Claude
+Code runs, all with WebFetch), so a per-visit identifier in that URL can reach the user's browser if
+the user follows the link. This is UID smuggling~\cite{randall2022uid} with the agent as the carrier,
+and it needs no cookie and no shared IP address. The per-visit sentence on our VM pages follows the
+same logic: an ordinary sentence of the page, different on each visit, which ties a submitted summary
+to the one visit an LLM read, even when the request is indistinguishable from a script that pauses.
+
+\paragraph{Signals that did not work.} Several classic linking signals failed for coding agents. We
+did not find TCP timestamps usable: current Linux randomises their offset per connection and Windows
+does not send them by default. No agent connection resumed a TLS session, so session tickets link
+nothing~\cite{sy2018tls}. In our local runs no agent requested \texttt{robots.txt}, \texttt{llms.txt} or a favicon
+(the VM pages also link an \texttt{llms.txt} and Markdown copies; the campaign log tells whether any
+agent follows them), and the cookie our server sets came back in none of 56 Claude Code requests, because each fetch or curl call
+starts with an empty cookie jar. Cookies therefore link a person's browser visits but never an agent to
+that browser, which is why linking has to rest on the network and the environment.
+
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Scale.} Our study covers two agents, three members' machines (one Linux, two Windows) and two
+sites, with tens of agent runs per condition. Several results rest on few runs: the model-tier pattern
+on 12 to 19 runs per model, and the GPT side of the model classifier on 7 texts from one model. The
+users are the three authors under fictitious personas, so linking is measured among three people; with
+two Linux users or two identical Windows installs the environment signature would collide, and our
+anonymity sets are an upper bound on how distinct users are.
+
+\paragraph{Construction.} Our baseline scripts make the same requests as the task with no delay, so the
+timing result separates an LLM in the loop from an automated script, not an agent from a script built to
+pause; 48 of 48 deliberately slowed script runs were flagged as agents. The pause also measures
+provider latency, which drifted by more than a second between two days. Our model classifier was trained
+on output from the same CLIs the agents run, because we had no direct API access, so we cannot separate
+the effect of the harness's system prompt from that of the agent session. Time between sessions is a
+property of our campaign schedule as much as of the user, and we report linking without it.
+
+\paragraph{Versions.} Agents update themselves often; we ran four Claude Code versions (2.1.319 to 2.1.332), and
+one member's Codex CLI updated itself on a re-login during the study. Fingerprints of built-in tools, and which tool
+a model chooses, can change with any release, so our numbers describe the versions we measured.
+
+\section{Defenses}
+\label{sec:defenses}
+
+\paragraph{For agent developers.} The cheapest defense removes the per-visit identifier from what the
+agent shows its user, or at least strips query strings and path tokens from cited URLs; that closes the
+relay channel we observed. A built-in fetch tool with a common fingerprint (a widespread browser's TLS
+and header profile) would remove the agent-specific signature, but routing all fetches through the
+provider's servers, as chat assistants do, is the only change that removes the user's IP address and
+environment as well, at the cost of local network access. Shelling out to the system curl hides the
+agent among scripts but exposes the user's environment; agents that do so could use a bundled client
+with a fixed, common fingerprint instead.
+
+\paragraph{For users.} Running agents behind a VPN or proxy shared by many users, and in a container
+with a common runtime, removes the IP and most of the environment signature; it does not remove the
+timing pattern of an LLM in the loop or the agent's relay of URLs.
+
+\paragraph{For sites that want to detect agents.} The same signals that track users can be used to
+label agent traffic honestly. Here the defense and the attack coincide: a site that wants to treat
+agents differently can rely on the timing pattern and on fetch-tool fingerprints, and agent developers
+who want agents to be recognised can adopt explicit signals such as signed agent requests rather than
+leaving sites to infer them.
