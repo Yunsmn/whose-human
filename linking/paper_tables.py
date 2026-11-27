@@ -18,11 +18,14 @@ from sklearn.metrics import roc_auc_score
 from infra.loader import load_logs
 from linking.campaign import coverage, manifest_runs
 from linking.hard_cases import anonymity_sets, ip_change_table, shared_ip_table, with_session_labels
-from linking.link import FEATURE_SETS, cluster, cluster_metrics, cross_val_scores, evaluate, rule_same_ip
-from linking.pairs import build_pairs
+from linking.link import cluster, cluster_metrics, cross_val_scores, evaluate, rule_same_ip
+from linking.pairs import IP_FEATURES, NETWORK_FEATURES, build_pairs
 from linking.sessions import build_sessions
 
-SCORERS = {"Same IP (rule)": None, **{f"Model: {name}": name for name in ("all", "no_ip", "network_only")}}
+# Clean feature sets only: the time between sessions and the shared run id measure our campaign schedule and
+# labelling, so the paper's tables leave them out (see linking/hypotheses.md, model-selection experiment).
+CLEAN_SETS = {"trace": NETWORK_FEATURES, "trace + IP": NETWORK_FEATURES + IP_FEATURES}
+SCORERS = {"Same IP (rule)": None, **{f"Model: {name}": name for name in CLEAN_SETS}}
 SLICES = {"cross_agent": "Across agents", "cross_site": "Across sites", "agent_browser": "Agent and browser"}
 
 
@@ -56,7 +59,7 @@ def _tex(value) -> str:
 
 def scores(sessions: pd.DataFrame, pairs: pd.DataFrame) -> dict[str, pd.Series]:
     return {
-        name: rule_same_ip(pairs) if key is None else cross_val_scores(sessions, pairs, FEATURE_SETS[key])
+        name: rule_same_ip(pairs) if key is None else cross_val_scores(sessions, pairs, CLEAN_SETS[key])
         for name, key in SCORERS.items()
     }
 
@@ -104,7 +107,7 @@ def _compact(table: pd.DataFrame, group: str, rate: str, keep: tuple[str, ...] =
 
 def hard_case_tables(sessions, pairs, all_scores) -> tuple[pd.DataFrame, pd.DataFrame, float]:
     data = with_session_labels(sessions, pairs)
-    chosen = {name: all_scores[name] for name in ("Same IP (rule)", "Model: no_ip", "Model: network_only")}
+    chosen = {name: all_scores[name] for name in ("Same IP (rule)", "Model: trace", "Model: trace + IP")}
     anonymity = anonymity_sets(sessions, data)
     return (
         _compact(ip_change_table(data, chosen), "network_pair", "recall", keep=("same_prefix",)),
