@@ -67,9 +67,12 @@ B-cubed F1 of 0.82 and a pair AUC of 0.93 (Table~\ref{tab:t3-experiment}). The g
 signals outside the TLS fingerprint. The source-port parity and range reveal the operating system for
 every tool, the browser included: one user's Linux machine used only even ports in the Linux range, the
 two Windows machines the Windows range, and the same user's sessions matched on it in 94\% of pairs
-across tools against 54\% for different users. The User-Agent's tool versions never collided between users,
-because each of us updated Claude Code at a different time. In an ablation each of the two raised validation
-B-cubed F1 by about 0.08 on its own; the TLS details JA4 discards add little.
+across tools against 54\% for different users; Windows mixes both parities, so between two Windows users
+it adds little. The User-Agent's tool versions never collided between users, because each of us updated
+Claude Code at a different time; this is update timing, so in a large population most users share the latest
+version, and one user's own update breaks the match (our one Codex update did, across the address change).
+In an ablation on an earlier snapshot each of the two raised validation B-cubed F1 by about 0.08 on its own;
+the TLS details JA4 discards add little.
 
 \paragraph{Changing network, sharing an address.} For the user who changed network, the address rule
 recovers none of the 360 same-person pairs that span the change, and the signature model recovers 86\%
