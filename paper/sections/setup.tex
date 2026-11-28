@@ -1,0 +1,31 @@
+% Measurement setup (owner: C). Numbers from harness/hypotheses.md and linking/protocol.md.
+
+\section{Measurement Setup}
+\label{sec:setup}
+
+\paragraph{Logging server.} Our partner sites run on one logging HTTPS server we wrote for this study.
+For every connection it records the raw TLS ClientHello (from which we derive JA3 and JA4), the ALPN
+offer, and for every request the HTTP version, the ordered header list, the HTTP/2 SETTINGS, window
+update and pseudo-header order (an Akamai-style fingerprint), timestamps, the client address, and any
+text submitted on the page. Each visit goes to a path that carries its run identifier
+(\texttt{/r/<run\_id>/}), which joins the log to a run manifest holding the ground truth: the agent, the
+model and the (fictitious) user.
+
+\paragraph{Pages and task.} Each site serves a short page with a visible request: summarize this page in
+two sentences and submit it in a form, with a visible GET link as a fallback for tools that cannot
+POST. Every agent receives the same fixed task in a fresh session (visit the page, summarize it,
+submit). There is no hidden text and no injected instruction; the visible request stands in for what a
+malicious site could obtain through prompt injection.
+
+\paragraph{Local and shared deployments.} Tracks 1 and 2 ran on each member's own machine against a
+local instance of the server (Linux, and two Windows 11 machines). A local container hides the client
+address, so Track 3 runs against a shared cloud VM with two public hostnames and publicly trusted
+certificates, listening on IPv4 and IPv6. On the VM only, each page view also carries one ordinary
+sentence on the page's topic drawn from a pool of 20 per site, and the server logs which one it served
+(Section~\ref{sec:discussion}).
+
+\paragraph{Agents and baselines.} We study Claude Code (headless, with WebFetch only, or with WebFetch
+and a shell) and the Codex CLI, on Linux and Windows. As baselines we run 12 plain HTTP stacks that the
+agents' runtimes use (Node: axios in two versions, got, \texttt{https}, \texttt{fetch}; Python:
+requests, httpx, aiohttp, urllib; curl; Go: net/http and Colly), each 30 times per site on each machine
+and making the same requests as the task: 722 runs on Linux and 660 and 720 runs on the two Windows machines.

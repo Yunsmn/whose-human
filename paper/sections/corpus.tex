@@ -1,0 +1,16 @@
+% 2b: reference corpus (owner: C). To be \input from the model section (B). Facts from model/README.md
+% and model/hypotheses.md (H1 second test).
+
+\paragraph{Reference corpus.} To separate what the model writes from what the agent session adds, we
+collect reference summaries of the same pages outside any agent session. Each of six models (Claude
+Opus, Sonnet and Haiku through Anthropic's coding-agent CLI; gpt-6-astra, gpt-6.1-sol and gpt-6-luna
+through the Codex CLI) receives the page text read from the live page, followed by the same visible
+instruction (``Summarize this page in two sentences. Reply with only your summary.''), in a single call
+with no tools and no task framing. Each call runs in two conditions: \emph{default}, with the CLI's own
+system prompt, and \emph{minimal}, with the system prompt replaced by a one-line assistant prompt. We use
+no sampling parameters and no refusal fallback, so every text is labelled with the model that wrote it.
+The corpus holds 120 summaries: six models, two pages, two conditions and five samples each. The
+minimal condition is not raw API output: Claude Code still prepends one line of its own, and Codex
+keeps its tool definitions and environment context (about 11.8k input tokens against 15.2k by
+default). We had no direct API access, so this corpus compares the agent session with a direct call
+through the same CLI; it does not measure the effect of the harness against raw API output.

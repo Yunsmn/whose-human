@@ -233,7 +233,7 @@ def run(sessions, pairs, extra_pairs, seeds) -> pd.DataFrame:
         round1 = ROUND1
         configs = [("ip rule", "-", None)] + [(f, m, None) for f in FEATURE_SETS for m in round1]
         configs += [(f, m, None) for f in ROUND2 for m in MODELS if m.startswith("extratrees-")]
-        configs += [("fellegi-sunter", "fs", None), ("fellegi-sunter+org+ip", "fs", None)]
+        configs += [("fellegi-sunter", "fs", None), ("fellegi-sunter+ip", "fs", None)]
         configs += [(f, "ensemble", None) for f in ROUND2]  # mean of extra trees, random forest, k-NN
         if extra_pairs is not None:
             configs += [(f, m, "local") for f in ("trace", "trace+rarity") for m in round1]
