@@ -134,7 +134,7 @@ Next:
   Against scripts that pause like an agent, the false-positive rate is 1, so the precision falls to the share of agents itself. The number a site gets depends on whether its ordinary scripts pause, which we can't measure from our own baselines.
 
 ## H3: The network trace alone reveals which model tier drives Claude Code.
-Status: supported for the tool sequence on two machines (Linux, Windows); the submit pause drifts between days, so it works only against runs from the same sitting (step 2). This is not one of the starting hypotheses: it came out of the timing results. It is a Track 2 signal that needs no text.
+Status: mixed. Within one sitting the pause separates Sonnet from Opus on curl (steps 1 and 3); the tool sequence is not stable across Claude Code versions or days (step 3: Haiku switched from WebFetch-only to WebFetch then curl), so it is not a reliable model signature on its own.
 Date: 2026-11-24
 Run ids: c-claude-sh-{haiku,sonnet}-site{1,2}-00{1,2,3} (new), compared with the Opus runs that had Bash allowed: c-claude-h-001 and c-claude-sh-site{1,2}-00{1,2,3} (Linux, 2026-11-18), and b-claude-sh-site{1,2}-00{1,2,3} (B's Windows machine, #29).
 Setup: Claude Code 2.1.331, headless, `--model haiku` or `--model sonnet`, `--allowedTools WebFetch Bash`, the fixed task, 3 runs per site, shuffled. These are the same condition and task as the Opus runs. The two server-side measures are the tool, read from the fingerprint (WebFetch's JA4 and User-Agent, or curl's), and the time from the page fetch to the submit.
@@ -185,3 +185,21 @@ Next:
 - Compare runs only within one sitting, or normalise each pause against a reference run made at the same time.
 - More curl-only Sonnet runs, to test Sonnet vs Opus on timing within one sitting.
 - 2c: use the tool sequence as a text-free model feature.
+
+### H3, step 3: the three models interleaved, on Linux (C)
+Date: 2026-11-26
+Run ids: c-claude-il-{haiku,sonnet,opus}-site{1,2}-00{1,2,3} (runs/c.csv)
+Setup: C's Linux machine, Claude Code 2.1.332 (step 1 used 2.1.331), headless, `--allowedTools WebFetch Bash`, the fixed task, local server; 6 runs per model (2 sites × 3), all 18 interleaved in one sitting in a fixed shuffled order. All 18 submitted. Times are the slowest gap between consecutive requests of the run: for runs that read with WebFetch and then re-fetch or submit with curl, the gap just before the submit is the curl command's own (0.02 s in one run), while the model's work sits in the WebFetch-to-curl gap.
+Result:
+- Tools (read, then submit):
+
+  | Model | WebFetch, then curl | curl only | Slowest gap |
+  |---|---|---|---|
+  | Haiku | 5 of 6 (4 submitted through the GET link) | 1 | WebFetch runs 8.1 to 9.6 s; curl run 4.0 s |
+  | Sonnet | 0 | 6 of 6 | 2.10 to 2.36 s |
+  | Opus | 1 | 5 of 6 | curl runs 4.55 to 5.26 s; WebFetch run 10.5 s |
+
+- Haiku changed tool: in step 1 (2.1.331, two days earlier) it used WebFetch for both steps in 6 of 6 runs; here it read with WebFetch and submitted with curl in 5 of 6. Across all runs, WebFetch then curl is no longer Sonnet's pattern: Haiku 5 of 18, Sonnet 6 of 18, Opus 2 of 25.
+- Within this sitting, on curl-only runs, Sonnet (2.10 to 2.36 s, 6 runs) and Opus (4.55 to 5.26 s, 5 runs) do not overlap; the single curl-only Haiku run (4.0 s) sits just below Opus. Opus again paused longer than on 2026-11-18 (3.1 to 3.6 s), as in B's step 2.
+Conclusion: the pause ranks Sonnet below Opus within one sitting on two machines, but absolute times drift between days. The tool sequence depends on the model and also on the Claude Code version or the day (one patch version apart here, so we can't tell which), so it is a weak model signal, not a signature.
+Next: for the paper, report H3 as "tool choice and pause carry information about the tier within one sitting", not as a fixed rule.

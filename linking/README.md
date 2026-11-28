@@ -7,8 +7,13 @@ Tool pairs, cross-site pairs and cross-network pairs stay separate so a provider
 mistaken for a machine signature.
 
 ```sh
-python -m linking.signatures <logs_dir> [--runs runs] [--include-baselines]
+python -m linking.signatures <logs_dir> [--runs runs] [--all-labelled]
 ```
+
+By default the report keeps only controlled Track 3 run ids starting `a-t3-`, `b-t3-` or `c-t3-`;
+`--all-labelled` restores the wider exploratory corpus. A cross-network pair means that both sessions have a
+privately observed address and those addresses differ. The public network-kind labels remain a secondary split
+because two campus networks can have different egress addresses.
 
 The report prints counts, rates, tool names and public labels only. It never prints an address or a raw signature
 value. `pairs.value_shares` supplies the same label-free population frequencies that 3c uses for rarity weighting;
@@ -45,6 +50,15 @@ Evaluation details:
   connected-components result is printed next to it: single linkage merges two users on one false link.
 - `log_dt_start` measures our campaign schedule as much as the user; `network_only` leaves it out.
 - `SIGNATURE_COLUMNS` is a placeholder; 3b (A) owns the environment signature and will replace it.
+
+## Campaign report (`campaign.py`)
+
+Run first, as soon as a VM log lands in the data repo: `python -m linking.campaign <logs_dir> [--runs runs]`.
+It checks every Track 3 run in the manifests against the log (missing, fetched only, submitted; agent runs that
+didn't submit are listed), counts distinct addresses and /24 or /64 prefixes per user, setting and network,
+the IPv6 share and whether browser visits shared the agents' address (counts only, never an address), lists
+each agent's tool sequences, and checks decision A: whether a submitted summary names the keyword of the
+per-visit sentence its page carried (`visit_variant`).
 
 ## Track 3d: hard cases (`hard_cases.py`, B)
 
