@@ -80,6 +80,20 @@ version, and ports survive only where no carrier-grade NAT rewrites them. They a
 signature rather than identify a person on their own, and three users on two operating systems is a
 favourable case for them; setting 5 and more users will tell how far they carry.
 
+\paragraph{Who collides (3d).} Of the 2,019 pairs of sessions of different users, 54 (2.7\%) have exactly
+the same environment signature on every field, and all 54 are pairs of WebFetch sessions: no other pair of
+tools ever collided, not curl against curl (91 pairs) and not browser against browser (220). Accordingly,
+81\% of sessions carry a signature that no other user shows: every browser, curl, Python and PowerShell
+session, and none of the 15 WebFetch sessions. Behind the shared address the signature model's false links
+follow the same line: 94\% of pairs of two WebFetch sessions and 78\% of pairs of WebFetch and a browser,
+against 15\% of browser pairs and 41\% of curl pairs. The browser is identifying for a different reason
+than curl. Two of us ran the same Brave release on Windows~11, and every HTTP field matched between our
+visits, but no JA4 did: each user's Brave showed two to six JA4 values, all with the same cipher suites,
+16 or 17 extensions, and an extension part that varied between connections. No value was shared
+between the two Brave users, but each of them shared one value with the third user's browser. The
+browser's TLS fingerprint thus does not stay fixed for one person, and a single value is weak evidence
+for or against two visits being the same person.
+
 \paragraph{The per-visit sentence.} The sentence that changes on every visit separates an LLM in the
 loop from a person: the submitted summary named the served sentence's keyword in 81\% of 31 Claude Code
 runs and 96\% of 23 Codex runs, in 21\% of 14 summaries our users wrote themselves, and never named a
